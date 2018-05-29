@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<head xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript"
+            src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script type="text/javascript" src="./js/global.js"></script>
+    <script type="text/javascript" src="./js/cookies.js"></script>
+    <script type="text/javascript" src="./js/store.js"></script>
+</head>
+<body>
+<div id="summary">
+    <div class="layui-row">
+        <div class="layui-col-md10">
+            <div class="x-body layui-anim layui-anim-up">
+                <div v-if="superFlag !=1">
+                    <blockquote class="layui-elem-quote">当前项目：
+                        <span class="x-a" style="font-size: 16px">{{projectInfo.projectName}}</span>
+                    </blockquote>
+                </div>
+                <div v-else>
+                    <blockquote class="layui-elem-quote">
+                        <div style="width: 300px;">
+                            <form >
+                                <select name="projectId" lay-verify="required"
+                                        v-model="projectId" >
+                                    <option v-for="(item,index) in projectIds.resultList"
+                                            :value="item.id">
+                                        {{item.projectName}}
+                                    </option>
+                                </select>
+                            </form>
+                        </div>
+                    </blockquote>
+                    <hr class="layui-bg-red">
+                </div>
+                <fieldset class="layui-elem-field">
+                    <legend>项目概要</legend>
+                    <div class="layui-field-box">
+                        <div class="layui-col-md12">
+                            <div class="layui-card">
+                                <div class="layui-card-body">
+                                    <div class="layui-carousel x-admin-carousel x-admin-backlog"
+                                         lay-anim="" lay-indicator="inside" lay-arrow="none"
+                                         style="width: 100%; height: 90px;">
+                                        <div carousel-item="">
+                                            <ul class="layui-row layui-col-space10 layui-this">
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>项目类型</h3>
+                                                        <p>
+                                                            <cite>{{projectInfo.projectType |
+                                                                convertType }}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>版本号</h3>
+                                                        <p>
+                                                            <cite>V{{projectInfo.projectVersion}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>最后更新时间</h3>
+                                                        <p>
+                                                            <cite style="font-size: 16px">{{projectInfo.lastUpdateTime
+                                                                | convertDate}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>24小时内项目动态</h3>
+                                                        <p>
+                                                            <cite>{{projectInfo.logCount}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md12">
+                            <div class="layui-card">
+                                <div class="layui-card-body">
+                                    <div class="layui-carousel x-admin-carousel x-admin-backlog"
+                                         lay-anim="" lay-indicator="inside" lay-arrow="none"
+                                         style="width: 100%; height: 90px;">
+                                        <div carousel-item="">
+                                            <ul class="layui-row layui-col-space10 layui-this">
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>契约总数</h3>
+                                                        <p>
+                                                            <cite>{{projectInfo.contractCount}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>接口总数</h3>
+                                                        <p>
+                                                            <cite>{{projectInfo.apiCount}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>状态码总数</h3>
+                                                        <p>
+                                                            <cite>{{projectInfo.statusCodeCount}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3">
+                                                    <a href="javascript:;"
+                                                       class="x-admin-backlog-body">
+                                                        <h3>项目成员</h3>
+                                                        <p>
+                                                            <cite>{{projectInfo.partnerCount}}</cite>
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div style="margin-top: 20px;margin-bottom: 10px"><a><i class="iconfont">&#xe6bf;</i>
+                项目动态(24小时内)</a></div>
+
+            <ul class="layui-timeline">
+                <div v-for="(item,index) in projectInfo.logList">
+                    <li class="layui-timeline-item">
+                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                        <div class="layui-timeline-content layui-text">
+                            <a class="layui-timeline-title"
+                               style="font-size: 12px">{{item.opTime}}</a>
+                            <p>
+                            <div style="font-size: 10px">{{item.userNickName}}
+                                {{item.opType}}{{item.opTarget}}:'{{item.opDesc}}'
+                            </div>
+                            </p>
+                        </div>
+                    </li>
+                </div>
+                <li class="layui-timeline-item">
+                    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                    <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">更多</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    let vm = new Vue({
+        el: '#summary',
+        data () {
+            return {
+                superFlag: 0,
+                projectId: '',
+                projectIds: {},
+                projectInfo: {}
+            }
+        },//过滤器
+        filters: {
+            convertType (value) {
+                return projectTypeArray[value]
+            },
+            convertDate (value) {
+                return dateFormat(value)
+            }
+        },
+        beforeCreate () {
+            // alert("-----")
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = parseInt(getCookie('superFlag'))
+            // 查询项目信息
+            if (this.superFlag != 1) {
+                axios.get(_hostUrl + '/project/summary/' + parseInt(getCookie('projectId'))).then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.projectInfo = response.data.data
+                    }
+                })
+            } else {
+                //超级管理员 查询所有项目列表
+                axios.get(_hostUrl + '/projects').then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.projectIds = response.data.data
+                        this.projectId= response.data.data.resultList[0].id
+                    }
+                })
+            }
+
+        },
+        methods: {
+            getSummary () {
+                // layer.msg(this.projectId)
+            }
+        },
+        watch:{
+            projectId(){
+                axios.get(_hostUrl + '/project/summary/' + parseInt(this.projectId)).then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.projectInfo = response.data.data
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>
