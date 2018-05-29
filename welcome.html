@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="./css/font.css">
     <link rel="stylesheet" href="./css/xadmin.css">
     <script type="text/javascript"
-            src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+            src="./lib/vue/jquery.min.js"></script>
     <script src="./lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/xadmin.js"></script>
-    <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.min.js"></script>
-    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="./lib/vue/vue.min.js"></script>
+    <script src="./lib/vue/axios.min.js"></script>
     <script type="text/javascript" src="./js/global.js"></script>
     <script type="text/javascript" src="./js/cookies.js"></script>
     <script type="text/javascript" src="./js/store.js"></script>
@@ -32,7 +32,7 @@
                 <div v-else>
                     <blockquote class="layui-elem-quote">
                         <div style="width: 300px;">
-                            <form >
+                            <form>
                                 <select name="projectId" lay-verify="required"
                                         v-model="projectId" >
                                     <option v-for="(item,index) in projectIds.resultList"
@@ -226,6 +226,8 @@
             }
 
         },
+        mounted(){
+        },
         methods: {
             getSummary () {
                 // layer.msg(this.projectId)
@@ -238,7 +240,9 @@
                         this.projectInfo = response.data.data
                     }
                 })
+                setCookie('projectId', this.projectId)
             }
+
         }
     })
 </script>
