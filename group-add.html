@@ -24,55 +24,52 @@
 
 <body>
 <div class="x-body layui-anim layui-anim-up">
-    <form class="layui-form" lay-filter="editForm">
+    <form class="layui-form">
         <div class="layui-form-item" hidden>
             <div class="layui-input-inline">
-                <input type="text" id="L_projectId" name="id" required=""
+                <input type="text" id="L_groupId" name="id" required=""
+                       lay-verify=""
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" hidden>
+            <div class="layui-input-inline">
+                <input type="text" id="L_projectId" name="projectId" required=""
                        lay-verify=""
                        autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label for="L_projectName" class="layui-form-label">
-                <span class="x-red">*</span>项目名称
+            <label for="L_groupName" class="layui-form-label">
+                <span class="x-red">*</span>分组名称
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_projectName" name="projectName" required=""
-                       lay-verify="projectName"
+                <input type="text" id="L_groupName" name="groupName" required=""
+                       lay-verify="groupName"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>项目名称不可与现有项目同名
+                <span class="x-red">*</span>分组名称不可为空且唯一
             </div>
         </div>
         <div class="layui-form-item">
-            <label for="L_projectVersion" class="layui-form-label">
-                <span class="x-red">*</span>项目类型
+            <label for="L_groupCode" class="layui-form-label">
+                <span class="x-red">*</span>分组名称
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_projectVersion" name="projectVersion" required=""
-                       lay-verify="projectVersion"
+                <input type="text" id="L_groupCode" name="groupCode" required=""
+                       lay-verify="groupCode"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>直接填写版本号不需要"V"
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label for="L_projectType" class="layui-form-label">
-                <span class="x-red">*</span>项目类型
-            </label>
-            <div class="layui-input-inline">
-                <select id="L_projectType" name="projectType" lay-verify="projectType">
-                    <option value="-1">请选择项目类型</option>
-                </select>
+                <span class="x-red">*</span>分组编号不可为空且唯一
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">
             </label>
-            <button class="layui-btn" lay-filter="edit" lay-submit="">
-                保存
+            <button class="layui-btn" lay-filter="add" lay-submit="">
+                新增
             </button>
         </div>
     </form>
@@ -82,42 +79,25 @@
         $ = layui.jquery
         var form = layui.form
             , layer = layui.layer
-        // layer.msg(parent.$("#editProject").val())
-        for(var i=1;i<5;i++){
-            $('#L_projectType').append(new Option(projectTypeArray[i],i));// 下拉菜单里添加元素
-        }
-        //获取选中的数据 进行格式转换，并加载到form表单中
-        var editData = parent.$("#editProject").val();
-        var editArray = JSON.parse(editData)
-        $('#L_projectId').val(editArray.id)
-        $('#L_projectName').val(editArray.projectName)
-        $('#L_projectType').val(editArray.projectType)
-        $('#L_projectVersion').val(editArray.projectVersion)
-        form.render();//下拉菜单渲染 把内容加载进去
         //自定义验证规则
         form.verify({
-            projectName: function (value) {
+            groupName: function (value) {
                 if (value.length < 1) {
-                    return '项目名称不可为空'
+                    return '分组名称不可为空'
                 }
             },
-            projectVersion: function (value) {
+            groupCode: function (value) {
                 if (value.length < 1) {
-                    return '项目版本不可为空'
-                }
-            },
-            projectType: function (value) {
-                if (value < 0) {
-                    return '请选择项目类型'
+                    return '分组编号不可为空'
                 }
             }
         })
-
         //监听提交
-        form.on('submit(edit)', function (data) {
-            $.putForm(_hostUrl + "/project", data.field, function (res) {
+        form.on('submit(add)', function (data) {
+            data.field.projectId = parseInt(getCookie('projectId'))
+            $.post(_hostUrl + "/group", data.field, function (res) {
                 if (res.responseCode == 201) {
-                    layer.msg('修改项目成功', {
+                    layer.msg('添加分组成功', {
                         icon: 1,
                         time: 2000
                     });
@@ -126,12 +106,13 @@
                     //关闭当前frame
                     parent.layer.close(index)
                     var table = parent.window.layui.table;
-                    table.reload('projectList')
+                    table.reload('groupList')
 
                 } else {
                     layer.msg(res.responseMsg)
                 }
-            })
+            }, 'json')
+
             return false
         })
 

@@ -19,7 +19,7 @@
     <script src="./lib/vue/vue.min.js"></script>
     <script src="./lib/vue/axios.min.js"></script>
 </head>
-<body>
+<body onload="checkLogin()">
 <div id="app">
     <!-- 顶部开始 -->
     <div class="container">
@@ -62,7 +62,7 @@
                 </a>
             </li>
             <li v-if="superFlag==1">
-                <a _href="project-list.html">
+                <a _href="group-list.html">
                     <i class="iconfont">&#xe70c;</i>
                     <cite>分组管理</cite>
                 </a>
@@ -322,6 +322,26 @@
     </div>
     <!-- 底部结束 -->
 </div>
+<script>
+    function checkLogin () {
+        if (getCookie('username') == null || getCookie('username') == '') {
+            location.href = 'login.html'
+        }
+        $.ajax({
+            url: _hostUrl + "/user/" + getCookie('username'),
+            type: "get",
+            timeout: 3000,
+            success: function (res) {
+                if (!res || res.responseCode != 200) {
+                    location.href = 'login.html'
+                }
+            },
+            error: function () {
+                location.href = 'login.html'
+            }
+        });
+    }
+</script>
     <script>
         let vm = new Vue({
            el:'#app',
@@ -333,9 +353,6 @@
                }
             },
             beforeCreate(){
-                if (getCookie('username') == null || getCookie('username') == '') {
-                    location.href = 'login.html'
-                }
             },
             //渲染之前加载cookie数据
             beforeMount () {
@@ -347,7 +364,10 @@
                     axios.get(_hostUrl +'/logout').then(response=>{
                         if(response.data.responseCode == 200){
                             setCookie('userId', '')
-                            setCookie('username', '')
+                            var remember = getCookie('remember')
+                            if (!remember || remember != '1') {
+                                setCookie('username', '')
+                            }
                             setCookie('nickName', '')
                             setCookie('superFlag', '')
                             layer.msg('退出成功', {time: 1000}, function () {

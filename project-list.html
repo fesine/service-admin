@@ -46,9 +46,9 @@
         </xblock>
         <table id="projectList" lay-filter="projectList"></table>
     </div>
-    <input hidden id="editFlag" value="" />
+    <input hidden id="editProject" value="" />
 </div>
-<script type="text/html" id="barDemo">
+<script type="text/html" id="projectBar">
     {{#  if(d.projectStatus == 1){ }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="updateStatus">归档</a>
@@ -97,7 +97,7 @@
                         }
                     }
                 }
-                , {title:'操作',fixed: 'right',  align: 'center', toolbar: '#barDemo'}
+                , {title:'操作',fixed: 'right',  align: 'center', toolbar: '#projectBar'}
             ]]
             , response: {
                 statusName: 'responseCode' //数据状态的字段名称，默认：code
@@ -163,9 +163,9 @@
                 }
 
             } else if (obj.event === 'edit') {
-                $("#editFlag").val(JSON.stringify(data))
+                $("#editProject").val(JSON.stringify(data))
                 // layer.alert('编辑行：<br>' + JSON.stringify(data))
-                // layer.msg($("#editFlag").val())
+                // layer.msg($("#editProject").val())
                 x_admin_show('修改项目', './project-edit.html', 600, 450)
             }
         })
@@ -242,7 +242,6 @@
         })
     })
 
-    }
 
     /*用户-删除*/
     function member_del (obj, id) {

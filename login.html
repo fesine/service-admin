@@ -19,16 +19,22 @@
 
 </head>
 <body class="login-bg">
-    
+
     <div class="login layui-anim layui-anim-up">
         <div class="message">服务接口管理系统-管理登录</div>
         <div id="darkbannerwrap"></div>
-        
+
         <form method="post" class="layui-form" >
-            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+            <input id="username" name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
             <hr class="hr15">
             <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
             <hr class="hr15">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="padding: 5px;text-align: left;width: 50px">记住我</label>
+                <div class="layui-input-block" style="margin-left: 0px">
+                    <input id="remember" checked type="checkbox" name="switch" lay-text="开|关" lay-skin="switch" lay-filter="remember">
+                </div>
+            </div>
             <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
             <hr class="hr20" >
         </form>
@@ -36,9 +42,26 @@
 
     <script>
         $(function  () {
+            var username = getCookie('username')
+            var remember = getCookie('remember')
+            if(remember && remember=='1' && username && username !=''){
+                $("#username").val(username)
+                $("#remember").attr("checked","")
+
+            }else{
+                $("#remember").removeAttr("checked")
+            }
             layui.use('form', function(){
               var form = layui.form;
-              //监听提交
+                form.on('switch(remember)', function (data) {
+                    //记住用户名
+                    if(data.elem.checked){
+                        setCookie('remember','1')
+                    }else{
+                        setCookie('remember', '0')
+                    }
+                });
+                //监听提交
               form.on('submit(login)', function(data){
                   $.post(_hostUrl+'/login', data.field, function (res) {
                       if (res.responseCode == 200) {
@@ -59,7 +82,7 @@
             });
         })
 
-        
+
     </script>
 </body>
 </html>

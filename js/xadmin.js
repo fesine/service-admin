@@ -258,6 +258,21 @@ $.putJSON = function (url, data, callback) {
     });
 };
 
+$.putForm = function (url, data, callback) {
+    $.ajax({
+        url: url,
+        type: "put",
+        data: data,
+        timeout: 20000,
+        success: function (msg) {
+            callback(msg);
+        },
+        error: function (xhr, textstatus, thrown) {
+
+        }
+    });
+};
+
 $.deleteJSON = function (url, data, callback) {
     $.ajax({
         url: url,
