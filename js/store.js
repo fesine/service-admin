@@ -5,6 +5,11 @@ projectTypeArray[2]='Web'
 projectTypeArray[3]='App'
 projectTypeArray[4]='其他'
 
+projectStatusArray = new Array()
+projectStatusArray[0] = '已归档'
+projectStatusArray[1] = '正常'
+projectStatusArray[2] = '已归档'
+
 /**
  * 日期格式转换
  * @param value
