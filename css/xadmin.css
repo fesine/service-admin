@@ -118,7 +118,7 @@ body{
     width: 100%;
 }
 .x-body{
-    padding: 20px;
+    padding: 10px;
 }
 .x-nav{
     padding: 0 20px;
@@ -131,7 +131,7 @@ body{
 }
 xblock{
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     padding: 5px;
     line-height: 22px;
     /* border-left: 5px solid #009688; */

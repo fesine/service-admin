@@ -24,7 +24,14 @@
 
 <body>
 <div class="x-body layui-anim layui-anim-up">
-    <form class="layui-form">
+    <form class="layui-form" lay-filter="editForm">
+        <div class="layui-form-item" hidden>
+            <div class="layui-input-inline">
+                <input type="text" id="L_projectId" name="id" required=""
+                       lay-verify=""
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
         <div class="layui-form-item">
             <label for="L_projectName" class="layui-form-label">
                 <span class="x-red">*</span>项目名称
@@ -64,8 +71,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">
             </label>
-            <button class="layui-btn" lay-filter="add" lay-submit="">
-                增加
+            <button class="layui-btn" lay-filter="edit" lay-submit="">
+                保存
             </button>
         </div>
     </form>
@@ -75,9 +82,17 @@
         $ = layui.jquery
         var form = layui.form
             , layer = layui.layer
+        // layer.msg(parent.$("#editFlag").val())
         for(var i=1;i<5;i++){
             $('#L_projectType').append(new Option(projectTypeArray[i],i));// 下拉菜单里添加元素
         }
+        //获取选中的数据 进行格式转换，并加载到form表单中
+        var editData = parent.$("#editFlag").val();
+        var editArray = JSON.parse(editData)
+        $('#L_projectId').val(editArray.id)
+        $('#L_projectName').val(editArray.projectName)
+        $('#L_projectType').val(editArray.projectType)
+        $('#L_projectVersion').val(editArray.projectVersion)
         form.render();//下拉菜单渲染 把内容加载进去
         //自定义验证规则
         form.verify({
@@ -99,25 +114,33 @@
         })
 
         //监听提交
-        form.on('submit(add)', function (data) {
-            $.post(_hostUrl+"/project", data.field, function (res) {
-                if (res.responseCode == 201) {
-                    layer.msg('添加项目成功', {
-                        icon: 1,
-                        time: 2000
-                    });
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name)
-                    //关闭当前frame
-                    parent.layer.close(index)
-                    var table = parent.window.layui.table;
-                    table.reload('projectList')
+        form.on('submit(edit)', function (data) {
+            $.ajax({
+                url: _hostUrl + "/project",
+                type: "put",
+                data: data.field,
+                timeout: 20000,
+                success: function (res) {
+                    if (res.responseCode == 201) {
+                        layer.msg('修改项目成功', {
+                            icon: 1,
+                            time: 2000
+                        });
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name)
+                        //关闭当前frame
+                        parent.layer.close(index)
+                        var table = parent.window.layui.table;
+                        table.reload('projectList')
 
-                } else {
-                    layer.msg(res.responseMsg)
+                    } else {
+                        layer.msg(res.responseMsg)
+                    }
+                },
+                error: function (xhr, textstatus, thrown) {
+
                 }
-            }, 'json')
-
+            });
             return false
         })
 

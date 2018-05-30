@@ -40,12 +40,13 @@
             <button class="layui-btn" onclick="x_admin_show('添加项目','./project-add.html',600,450)"><i
                     class="layui-icon"></i>新增项目
             </button>
-            <button class="layui-btn layui-btn-danger" onclick="delAll()"><i
-                    class="layui-icon"></i>导入项目
-            </button>
+            <!--<button class="layui-btn layui-btn-danger" onclick="delAll()"><i-->
+                    <!--class="layui-icon"></i>导入项目-->
+            <!--</button>-->
         </xblock>
         <table id="projectList" lay-filter="projectList"></table>
     </div>
+    <input hidden id="editFlag" value="" />
 </div>
 <script type="text/html" id="barDemo">
     {{#  if(d.projectStatus == 1){ }}
@@ -65,7 +66,7 @@
             , url: '/service/v1/projects' //数据接口
             , page: true //开启分页
             , cols: [[ //表头
-                {field: 'checkbox', title: 'checkbox', width: 50, checkbox: true, align: 'center'}
+                {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
                 ,{field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
                 , {field: 'projectName', title: '项目名称', width: 240, align: 'center'}
                 , {
@@ -75,13 +76,19 @@
                     }
                 }
                 , {
-                    field: 'projectVersion', title: '项目版本', width: 180, align: 'center'
+                    field: 'projectVersion', title: '项目版本', width: 100, align: 'center'
                     , templet: function (d) {
                         return 'V' + d.projectVersion
                     }
                 }
                 , {
-                    field: 'projectStatus', title: '项目状态', width: 177, sort: true, align: 'center'
+                    field: 'lastUpdateTime', title: '最后修改时间', width: 180, align: 'center'
+                    , templet: function (d) {
+                        return dateFormat(d.lastUpdateTime)
+                    }
+                }
+                , {
+                    field: 'projectStatus', title: '项目状态', width: 100, sort: true, align: 'center'
                     , templet: function (d) {
                         if (d.projectStatus == 1) {
                             return '<span class="layui-btn layui-btn-normal layui-btn-sm">正&nbsp;&nbsp;&nbsp;&nbsp;常</span>'
@@ -100,11 +107,6 @@
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
             }
-            , done: function (res, curr, count) {
-                //如果是异步请求数据方式，res即为你接口返回的信息。
-                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                // console.log(res)
-            }
         })
         //监听表格复选框选择
         table.on('checkbox(projectList)', function (obj) {
@@ -116,7 +118,10 @@
                 layer.confirm('确定删除[<span style="color: red">' + data.projectName + '</span>]项目?', function (index) {
                     $.deleteJSON(_hostUrl + "/project/" + data.id,null, function (res) {
                         if (res.responseCode == 204) {
-                            layer.msg('删除成功')
+                            layer.msg('删除成功', {
+                                icon: 1,
+                                time: 2000
+                            })
                             table.reload('projectList')
                         }else{
                             layer.error(res.responseMsg)
@@ -131,7 +136,10 @@
                     layer.confirm('确定归档[<span style="color: red">'+data.projectName+'</span>]项目?', function (index) {
                         $.putJSON(_hostUrl + "/project/archive/" + data.id+"?projectStatus=2", null, function (res) {
                             if (res.responseCode == 201) {
-                                layer.msg('归档成功')
+                                layer.msg('归档成功', {
+                                    icon: 1,
+                                    time: 2000
+                                })
                                 table.reload('projectList')
                             } else {
                                 layer.error(res.responseMsg)
@@ -142,7 +150,10 @@
                     layer.confirm('确定开放[<span style="color: red">'+data.projectName+'</span>]项目?', function (index) {
                         $.putJSON(_hostUrl + "/project/archive/" + data.id+ "?projectStatus=1", null, function (res) {
                             if (res.responseCode == 201) {
-                                layer.msg('开放成功')
+                                layer.msg('开放成功', {
+                                    icon: 1,
+                                    time: 2000
+                                })
                                 table.reload('projectList')
                             } else {
                                 layer.msg(res.responseMsg)
@@ -152,7 +163,10 @@
                 }
 
             } else if (obj.event === 'edit') {
-                layer.alert('编辑行：<br>' + JSON.stringify(data))
+                $("#editFlag").val(JSON.stringify(data))
+                // layer.alert('编辑行：<br>' + JSON.stringify(data))
+                // layer.msg($("#editFlag").val())
+                x_admin_show('修改项目', './project-edit.html', 600, 450)
             }
         })
 
@@ -228,31 +242,6 @@
         })
     })
 
-    /*更新状态*/
-    function updateStatus (obj, id) {
-        var checkStatus = table.checkStatus('project')
-        console.log(checkStatus.data)
-        // if($(obj).attr('title') == '正常')
-        // layer.confirm('确认要归档吗？', function (index) {
-        //
-        //     if ($(obj).attr('title') == '启用') {
-        //
-        //         //发异步把用户状态进行更改
-        //         $(obj).attr('title', '停用')
-        //         $(obj).find('i').html('&#xe62f;')
-        //
-        //         $(obj).parents('tr').find('.td-status').find('span').addClass('layui-btn-disabled').html('已停用')
-        //         layer.msg('已停用!', {icon: 5, time: 1000})
-        //
-        //     } else {
-        //         $(obj).attr('title', '启用')
-        //         $(obj).find('i').html('&#xe601;')
-        //
-        //         $(obj).parents('tr').find('.td-status').find('span').removeClass('layui-btn-disabled').html('已启用')
-        //         layer.msg('已启用!', {icon: 5, time: 1000})
-        //     }
-        //
-        // })
     }
 
     /*用户-删除*/
