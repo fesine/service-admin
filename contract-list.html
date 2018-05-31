@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript"
+            src="./lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <script type="text/javascript" src="./js/global.js"></script>
+    <script type="text/javascript" src="./js/store.js"></script>
+    <script type="text/javascript" src="./js/cookies.js"></script>
+    <script src="./lib/vue/vue.min.js"></script>
+    <script src="./lib/vue/axios.min.js"></script>
+    <style type="text/css">
+        .nohover tbody tr:hover {
+            background-color: #ffffff
+        }
+
+        .nohover tbody tr td ul li:hover {
+            background-color: #E2F2E4;
+        }
+
+        .nohover tbody tr td ul li {
+            height: 35px;
+            padding: 5px 0px 1px 30px;
+        }
+
+        .backup{
+            display: block;
+            padding: 5px 0px 5px 5px;
+        }
+
+        .backup:hover{
+            background-color: #E2F2E4;
+        }
+    </style>
+</head>
+
+<body class="layui-anim layui-anim-up" onload="checkLogin ()">
+<div id="project">
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a>首页</a>
+        <a>契约管理</a>
+        <a>
+          <cite>契约列表</cite></a>
+      </span>
+        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+           href="javascript:location.replace(location.href);" title="刷新">
+            <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+        <xblock>
+            <button class="layui-btn" onclick="x_admin_show('添加契约','./contract-add.html',600,400)">
+                <i
+                        class="layui-icon"></i>新增契约
+            </button>
+        </xblock>
+        <div class="layui-row">
+            <div class="layui-col-md2">
+                <table class="layui-table nohover">
+                    <thead>
+                    <tr>
+                        <th style="align-content: center"><h3>分组</h3></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="padding: 0px;">
+                            <ul>
+                                <li>
+                                    <a class="backup" href="javascript:;">
+                                        <i class="iconfont">&#xe699;</i>
+                                        <cite>所有契约</cite></a>
+                                </li>
+                                <li>
+                                    <a class="backup" href="javascript:;">
+                                        <i class="iconfont">&#xe69d;</i>
+                                        <cite>回收站</cite></a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px;">
+                            <ul id="groupTree" style="overflow: auto;overflow-x: hidden; "></ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="layui-col-md10">
+                <table id="contractList" lay-filter="contractList"></table>
+            </div>
+        </div>
+
+    </div>
+    <input hidden id="editContract" value=""/>
+</div>
+<script type="text/html" id="contractBar">
+    <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
+</script>
+<script>
+    layui.use(['table', 'tree'], function () {
+        var table = layui.table
+        //第一个实例
+        var contractTable = table.render({
+            elem: '#contractList'
+            , url: _hostUrl+'/contracts/'  //数据接口
+            , where: {
+                projectId:parseInt(getCookie('projectId'))
+            }
+            , page: true //开启分页
+            , cols: [[ //表头
+                {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
+                // , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
+                , {field: 'serviceCode', title: '契约编号', width: 240, align: 'center'}
+                , {field: 'serviceName', title: '契约名称', width: 240, align: 'center'}
+                , {
+                    field: 'lastUpdateTime', title: '最后修改时间', width: 180, align: 'center'
+                    , templet: function (d) {
+                        return dateFormat(d.lastUpdateTime)
+                    }
+                }
+                , {title: '操作', fixed: 'right', align: 'center', toolbar: '#contractBar'}
+            ]]
+            , response: {
+                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                , statusCode: 200 //成功的状态码，默认：0
+                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , rootName: 'data'
+                , countName: 'totalRecord'
+                , dataName: 'resultList'
+            }
+        })
+        //监听工具条
+        table.on('tool(contractList)', function (obj) {
+            var data = obj.data
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除[<span style="color: red">' + data.contractName + '</span>]项目?', function (index) {
+                    $.deleteJSON(_hostUrl + '/contract/' + data.id, null, function (res) {
+                        if (res.responseCode == 204) {
+                            layer.msg('删除成功', {
+                                icon: 1,
+                                time: 2000
+                            })
+                            table.reload('contractList')
+                        } else {
+                            layer.error(res.responseMsg)
+                        }
+                    })
+                })
+            } else if (obj.event === 'edit') {
+                $('#editContract').val(JSON.stringify(data))
+                x_admin_show('修改契约', './contract-edit.html', 600, 450)
+            } else if (obj.event === 'detail') {
+                // $('#editContract').val(JSON.stringify(data))
+                x_admin_show('契约详情', './contract-edit.html', 600, 450,true)
+            }
+        })
+        $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
+            var objData = res.data;
+            // var jsonData = JSON.stringify(objData)
+            // var arrayData = JSON.parse(jsonData)
+            // arrayData.push({
+            //     id:0,
+            //     name:'回收站',
+            //     groupCode:jsonData[0].groupCode
+            // })
+            layui.tree({
+                elem: '#groupTree' //传入元素选择器
+                , nodes: JSON.parse(JSON.stringify(objData))
+                , click: function (item) { //点击节点回调
+                    // 查询点击分组的契约数据
+                    contractTable.reload({
+                        where:{
+                            projectId: parseInt(getCookie('projectId'))
+                            ,groupId: item.id
+                        }
+                    })
+                }
+            })
+        })
+    })
+</script>
+</body>
+
+</html>

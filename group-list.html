@@ -55,7 +55,7 @@
         //第一个实例
         table.render({
             elem: '#groupList'
-            , url: '/service/v1/groups/'+parseInt(getCookie('projectId')) //数据接口
+            , url: _hostUrl+'/groups/'+parseInt(getCookie('projectId')) //数据接口
             , page: true //开启分页
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
