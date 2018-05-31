@@ -19,7 +19,7 @@
     <script src="./lib/vue/vue.min.js"></script>
     <script src="./lib/vue/axios.min.js"></script>
 </head>
-<body onload="checkLogin()">
+<body>
 <div id="app">
     <!-- 顶部开始 -->
     <div class="container">
@@ -323,24 +323,6 @@
     <!-- 底部结束 -->
 </div>
 <script>
-    function checkLogin () {
-        if (getCookie('username') == null || getCookie('username') == '') {
-            location.href = 'login.html'
-        }
-        $.ajax({
-            url: _hostUrl + "/user/" + getCookie('username'),
-            type: "get",
-            timeout: 3000,
-            success: function (res) {
-                if (!res || res.responseCode != 200) {
-                    location.href = 'login.html'
-                }
-            },
-            error: function () {
-                location.href = 'login.html'
-            }
-        });
-    }
 </script>
     <script>
         let vm = new Vue({
@@ -356,6 +338,7 @@
             },
             //渲染之前加载cookie数据
             beforeMount () {
+                checkLogin()
                 this.nickName = getCookie('nickName')
                 this.superFlag = getCookie('superFlag')
             },
@@ -363,14 +346,8 @@
                logout(){
                     axios.get(_hostUrl +'/logout').then(response=>{
                         if(response.data.responseCode == 200){
-                            setCookie('userId', '')
-                            var remember = getCookie('remember')
-                            if (!remember || remember != '1') {
-                                setCookie('username', '')
-                            }
-                            setCookie('nickName', '')
-                            setCookie('superFlag', '')
-                            layer.msg('退出成功', {time: 1000}, function () {
+                            clearCookies()
+                            layer.msg('退出成功', {icon: 1,time: 1000}, function () {
                                 location.href = 'login.html'
                             });
                         }

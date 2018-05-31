@@ -22,7 +22,7 @@
     <script src="./lib/vue/axios.min.js"></script>
 </head>
 
-<body class="layui-anim layui-anim-up">
+<body class="layui-anim layui-anim-up" onload="checkLogin ()">
 <div id="project">
     <div class="x-nav">
       <span class="layui-breadcrumb">
@@ -47,7 +47,7 @@
 </div>
 <script type="text/html" id="groupBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
 </script>
 <script>
     layui.use('table', function () {

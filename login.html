@@ -65,12 +65,13 @@
               form.on('submit(login)', function(data){
                   $.post(_hostUrl+'/login', data.field, function (res) {
                       if (res.responseCode == 200) {
+                          setCookie('login','true')
                           setCookie('userId',res.data.user.id)
                           setCookie('username',res.data.user.username)
                           setCookie('nickName',res.data.user.nickName)
                           setCookie('superFlag',res.data.user.superFlag)
                           setCookie('projectId',res.data.projectId)
-                          layer.msg('登录成功', {time: 1000}, function () {
+                          layer.msg('登录成功', {icon:1,time: 1000}, function () {
                               location.href = 'index.html'
                           });
                       } else {
