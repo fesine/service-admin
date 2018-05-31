@@ -220,6 +220,13 @@
                     if (response.data.responseCode == 200) {
                         this.projectIds = response.data.data
                         this.projectId= response.data.data.resultList[0].id
+                        // setTimeout(function () {
+                        // layui.use(['form'], function () {
+                        //     $ = layui.jquery
+                        //     var form = layui.form
+                        //     form.render()
+                        // })
+                        // }, 10);
                     }
                 })
             }

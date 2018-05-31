@@ -65,6 +65,11 @@
               form.on('submit(login)', function(data){
                   $.post(_hostUrl+'/login', data.field, function (res) {
                       if (res.responseCode == 200) {
+                          //判断没有被添加分组的用户，无法登录
+                          if(res.data.user.superFlag != 1 && res.data.projectId == -1){
+                              layer.msg('您没有加入任何项目或分组，请联系系统管理员!', {icon: 2,time: 2000})
+                              return
+                          }
                           setCookie('login','true')
                           setCookie('userId',res.data.user.id)
                           setCookie('username',res.data.user.username)

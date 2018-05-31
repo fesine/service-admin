@@ -34,12 +34,12 @@
             padding: 5px 0px 1px 30px;
         }
 
-        .backup{
+        .backup {
             display: block;
             padding: 5px 0px 5px 5px;
         }
 
-        .backup:hover{
+        .backup:hover {
             background-color: #E2F2E4;
         }
     </style>
@@ -60,7 +60,8 @@
     </div>
     <div class="x-body">
         <xblock>
-            <button class="layui-btn" onclick="x_admin_show('添加契约','./contract-add.html',600,400)">
+            <button class="layui-btn"
+                    onclick="x_admin_show('添加契约','./contract-add.html',600,400,true)">
                 <i
                         class="layui-icon"></i>新增契约
             </button>
@@ -77,13 +78,13 @@
                     <tr>
                         <td style="padding: 0px;">
                             <ul>
-                                <li>
+                                <li v-if="superFlag == 1" lay-filter="allContract">
                                     <a class="backup" href="javascript:;">
                                         <i class="iconfont">&#xe699;</i>
                                         <cite>所有契约</cite></a>
                                 </li>
                                 <li>
-                                    <a class="backup" href="javascript:;">
+                                    <a class="backup" href="javascript:;" lay-filter="backup">
                                         <i class="iconfont">&#xe69d;</i>
                                         <cite>回收站</cite></a>
                                 </li>
@@ -118,16 +119,20 @@
         //第一个实例
         var contractTable = table.render({
             elem: '#contractList'
-            , url: _hostUrl+'/contracts/'  //数据接口
+            , url: _hostUrl + '/contracts/'  //数据接口
+            , request: {
+                pageName: 'pageIndex' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
             , where: {
-                projectId:parseInt(getCookie('projectId'))
+                projectId: parseInt(getCookie('projectId'))
             }
             , page: true //开启分页
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
-                // , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
                 , {field: 'serviceCode', title: '契约编号', width: 240, align: 'center'}
                 , {field: 'serviceName', title: '契约名称', width: 240, align: 'center'}
+                , {field: 'versionNo', title: '版本号', width: 100, sort: true, align: 'center'}
                 , {
                     field: 'lastUpdateTime', title: '最后修改时间', width: 180, align: 'center'
                     , templet: function (d) {
@@ -167,32 +172,42 @@
                 x_admin_show('修改契约', './contract-edit.html', 600, 450)
             } else if (obj.event === 'detail') {
                 // $('#editContract').val(JSON.stringify(data))
-                x_admin_show('契约详情', './contract-edit.html', 600, 450,true)
+                x_admin_show('契约详情', './contract-edit.html', 600, 450, true)
             }
         })
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
-            var objData = res.data;
-            // var jsonData = JSON.stringify(objData)
-            // var arrayData = JSON.parse(jsonData)
-            // arrayData.push({
-            //     id:0,
-            //     name:'回收站',
-            //     groupCode:jsonData[0].groupCode
-            // })
+            var objData = res.data
             layui.tree({
                 elem: '#groupTree' //传入元素选择器
                 , nodes: JSON.parse(JSON.stringify(objData))
                 , click: function (item) { //点击节点回调
                     // 查询点击分组的契约数据
                     contractTable.reload({
-                        where:{
+                        where: {
                             projectId: parseInt(getCookie('projectId'))
-                            ,groupId: item.id
+                            , groupId: item.id
                         }
                     })
                 }
             })
         })
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#project',
+        data () {
+            return {
+                superFlag: 0,
+            }
+        },
+        beforeCreate () {
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = getCookie('superFlag')
+        },
+        methods: {}
     })
 </script>
 </body>
