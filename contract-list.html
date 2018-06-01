@@ -61,7 +61,7 @@
     <div class="x-body">
         <xblock>
             <button class="layui-btn"
-                    onclick="x_admin_show('添加契约','./contract-add.html',600,400,true)">
+                    onclick="x_admin_show('添加契约','./contract-add.html',600,550,true)">
                 <i
                         class="layui-icon"></i>新增契约
             </button>
@@ -78,12 +78,12 @@
                     <tr>
                         <td style="padding: 0px;">
                             <ul>
-                                <li v-if="superFlag == 1" lay-filter="allContract">
+                                <li v-if="superFlag == 1" id="allContract">
                                     <a class="backup" href="javascript:;">
                                         <i class="iconfont">&#xe699;</i>
                                         <cite>所有契约</cite></a>
                                 </li>
-                                <li>
+                                <li id="backupContent">
                                     <a class="backup" href="javascript:;" lay-filter="backup">
                                         <i class="iconfont">&#xe69d;</i>
                                         <cite>回收站</cite></a>
@@ -107,6 +107,7 @@
 
     </div>
     <input hidden id="editContract" value=""/>
+    <input hidden id="groupArray" value=""/>
 </div>
 <script type="text/html" id="contractBar">
     <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
@@ -115,6 +116,7 @@
 </script>
 <script>
     layui.use(['table', 'tree'], function () {
+        var groupArray;
         var table = layui.table
         //第一个实例
         var contractTable = table.render({
@@ -134,7 +136,7 @@
                 , {field: 'serviceName', title: '契约名称', width: 240, align: 'center'}
                 , {field: 'versionNo', title: '版本号', width: 100, sort: true, align: 'center'}
                 , {
-                    field: 'lastUpdateTime', title: '最后修改时间', width: 180, align: 'center'
+                    field: 'lastUpdateTime', title: '最后修改时间', width: 160, align: 'center'
                     , templet: function (d) {
                         return dateFormat(d.lastUpdateTime)
                     }
@@ -154,7 +156,7 @@
         table.on('tool(contractList)', function (obj) {
             var data = obj.data
             if (obj.event === 'delete') {
-                layer.confirm('确定删除[<span style="color: red">' + data.contractName + '</span>]项目?', function (index) {
+                layer.confirm('确定删除[<span style="color: red">' + data.serviceName + '</span>]契约?', function (index) {
                     $.deleteJSON(_hostUrl + '/contract/' + data.id, null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('删除成功', {
@@ -175,11 +177,13 @@
                 x_admin_show('契约详情', './contract-edit.html', 600, 450, true)
             }
         })
+        // 获取分组列表
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
-            var objData = res.data
+            groupArray = res.data
+            $('#groupArray').val(JSON.stringify(groupArray))
             layui.tree({
                 elem: '#groupTree' //传入元素选择器
-                , nodes: JSON.parse(JSON.stringify(objData))
+                , nodes: groupArray
                 , click: function (item) { //点击节点回调
                     // 查询点击分组的契约数据
                     contractTable.reload({
@@ -188,6 +192,25 @@
                             , groupId: item.id
                         }
                     })
+                }
+            })
+        })
+
+        //监听回收站
+        $('#backupContent').click(function () {
+            // 查询点击分组的契约数据
+            contractTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
+                    , removeFlag: 1
+                }
+            })
+        })
+        $('#allContract').click(function () {
+            // 查询点击分组的契约数据
+            contractTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
                 }
             })
         })

@@ -18,6 +18,15 @@
     <script type="text/javascript" src="./js/global.js"></script>
     <script type="text/javascript" src="./js/cookies.js"></script>
     <script type="text/javascript" src="./js/store.js"></script>
+    <style>
+        .layui-form-select dl {
+            max-height: 200px;
+        }
+
+        .layui-unselect {
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
 <div id="summary">
@@ -32,15 +41,11 @@
                 <div v-else>
                     <blockquote class="layui-elem-quote">
                         <div style="width: 300px;">
-                            <form>
-                                <select name="projectId" lay-verify="required"
-                                        v-model="projectId" >
-                                    <option v-for="(item,index) in projectIds.resultList"
-                                            :value="item.id">
-                                        {{item.projectName}}
-                                    </option>
+                            <form class="layui-form">
+                                <select id="selectPid" name="projectId" lay-filter="selectPid">
                                 </select>
                             </form>
+
                         </div>
                     </blockquote>
                     <hr class="layui-bg-red">
@@ -189,7 +194,6 @@
             return {
                 superFlag: 0,
                 projectId: '',
-                projectIds: {},
                 projectInfo: {}
             }
         },//过滤器
@@ -200,9 +204,6 @@
             convertDate (value) {
                 return dateFormat(value)
             }
-        },
-        beforeCreate () {
-            // alert("-----")
         },
         //渲染之前加载cookie数据
         beforeMount () {
@@ -218,29 +219,25 @@
                 //超级管理员 查询所有项目列表
                 axios.get(_hostUrl + '/projects').then(response => {
                     if (response.data.responseCode == 200) {
-                        this.projectIds = response.data.data
-                        this.projectId= response.data.data.resultList[0].id
-                        // setTimeout(function () {
-                        // layui.use(['form'], function () {
-                        //     $ = layui.jquery
-                        //     var form = layui.form
-                        //     form.render()
-                        // })
-                        // }, 10);
+                        var projectIds = response.data.data.resultList
+                        this.projectId = response.data.data.resultList[0].id
+                        layui.use(['form'], function () {
+                            $ = layui.jquery
+                            var form = layui.form
+                            $.each(projectIds, function (index, item) {
+                                $('#selectPid').append(new Option(item.projectName, item.id))
+                            })
+                            //默认加载第一个
+                            $('#selectPid').val(projectIds[0].id)
+                            form.render()
+                        })
                     }
                 })
             }
 
         },
-        mounted(){
-        },
-        methods: {
-            getSummary () {
-                // layer.msg(this.projectId)
-            }
-        },
-        watch:{
-            projectId(){
+        watch: {
+            projectId () {
                 axios.get(_hostUrl + '/project/summary/' + parseInt(this.projectId)).then(response => {
                     if (response.data.responseCode == 200) {
                         this.projectInfo = response.data.data
@@ -250,6 +247,15 @@
             }
 
         }
+    })
+</script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery
+        var form = layui.form
+        form.on('select(selectPid)', function (data) {
+            vm.projectId = data.value
+        })
     })
 </script>
 </body>
