@@ -127,7 +127,8 @@
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
             , where: {
-                projectId: parseInt(getCookie('projectId'))
+                projectId: parseInt(getCookie('projectId')),
+                userId: parseInt(getCookie('userId')) //查询当前用户所在所有组的数据
             }
             , page: true //开启分页
             , cols: [[ //表头
