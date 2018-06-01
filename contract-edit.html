@@ -23,99 +23,356 @@
 </head>
 
 <body>
-<div class="x-body layui-anim layui-anim-up">
+<div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
     <form class="layui-form">
-        <div class="layui-form-item" hidden>
-            <div class="layui-input-inline">
-                <input type="text" id="L_groupId" name="id" required=""
-                       lay-verify=""
-                       autocomplete="off" class="layui-input">
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">基本信息</li>
+                <li>依赖配置</li>
+                <li>详细描述</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form-item" hidden>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_groupId" name="groupId" required=""
+                                   lay-verify=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <!--契约id-->
+                    <div class="layui-form-item" hidden>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_id" name="id" required=""
+                                   lay-verify=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <!--项目id-->
+                    <div class="layui-form-item" hidden>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_projectId" name="projectId" required=""
+                                   lay-verify=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label for="L_groupCode" class="layui-form-label" style="width: 100px">
+                                <span class="x-red">*</span>所属分组
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <select id="L_groupCode" name="groupCode" lay-filter="groupCode">
+                                </select>
+                            </div>
+                            <label for="L_versionNo" class="layui-form-label" style="width: 100px">
+                                <span class="x-red">*</span>版本号
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <input type="text" id="L_versionNo" name="versionNo" required=""
+                                       lay-verify="versionNo" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">
+                                <span class="x-red">*</span>直接填写版本号不需要"V"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label for="L_serviceCode" class="layui-form-label"
+                                   style="width: 100px">
+                                <span class="x-red">*</span>服务编号
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <input type="text" id="L_serviceCode" name="serviceCode" required=""
+                                       lay-verify="serviceCode" class="layui-input">
+                            </div>
+                            <label for="L_serviceName" class="layui-form-label"
+                                   style="width: 100px">
+                                <span class="x-red">*</span>服务名称
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <input type="text" id="L_serviceName" name="serviceName" required=""
+                                       lay-verify="serviceName" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <!--0:企业外共享 1:企业内共享 2:业务域共享 3:应用系统内部共享-->
+                        <label class="layui-form-label" style="width: 100px">
+                            <span class="x-red">*</span>共享范围
+                        </label>
+                        <div class="layui-input-inline" style="width: 500px;">
+                            <input type="radio" name="shareSpace" value="3" title="应用系统内部" checked>
+                            <input type="radio" name="shareSpace" value="2" title="业务域">
+                            <input type="radio" name="shareSpace" value="1" title="企业内">
+                            <input type="radio" name="shareSpace" value="0" title="企业外">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_consumerGroup" class="layui-form-label" style="width: 100px">
+                            <span class="x-red">*</span>服务消费方
+                        </label>
+                        <div class="layui-input-inline" style="width: 300px;">
+                            <div id="L_consumerGroup" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width: 100px">
+                            <span class="x-red">*</span>操作列表
+                        </label>
+                        <!--1:添加 2:修改 3:查询 4:删除-->
+                        <div class="layui-input-inline" style="width: 400px;">
+                            <input type="checkbox" lay-filter="operateType" name="operateType"
+                                   value="1" title="添加">
+                            <input type="checkbox" lay-filter="operateType" name="operateType"
+                                   value="2" title="修改">
+                            <input type="checkbox" lay-filter="operateType" name="operateType"
+                                   value="3" title="查询">
+                            <input type="checkbox" lay-filter="operateType" name="operateType"
+                                   value="4" title="删除">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <!-- 1:只读(查询) 2:写入(提交) 3:读出写入-->
+                        <label class="layui-form-label" style="width: 100px">
+                            <span class="x-red">*</span>数据存储类型
+                        </label>
+                        <div class="layui-input-inline" style="width: 500px;">
+                            <input type="radio" name="dataType" value="1" title="只读(查询)" checked>
+                            <input type="radio" name="dataType" value="2" title="写入(提交)">
+                            <input type="radio" name="dataType" value="3" title="读出写入">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label for="L_timeout" class="layui-form-label" style="width: 100px">
+                                <span class="x-red">*</span>超时时间(秒)
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <input type="text" id="L_timeout" name="timeout" required=""
+                                       lay-verify="number" class="layui-input">
+                            </div>
+                            <label for="L_idempotentFlag" class="layui-form-label"
+                                   style="width: 100px">
+                                <span class="x-red">*</span>是否等幂
+                            </label>
+                            <div class="layui-input-inline" style="margin-top: 8px">
+                                <input id="L_idempotentFlag" type="checkbox" name="idempotentFlag"
+                                       lay-text="是|否" lay-skin="switch" lay-filter="idempotentFlag">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                        </label>
+                        <button class="layui-btn layui-btn-lg" lay-filter="edit" lay-submit="">
+                            保存
+                        </button>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <label for="L_relyGroup" class="layui-form-label" style="width: 120px">
+                            依赖分组
+                        </label>
+                        <div class="layui-input-inline" style="width: 600px;">
+                            <div id="L_relyGroup">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"
+                               style="width: 120px">依赖分组编号
+                        </label>
+                        <div class="layui-input-inline" style="width: 300px;">
+                            <textarea name="relyServiceCode" placeholder="如果有多个，用英文逗号分隔！"
+                                      class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label for="L_businessOwner" class="layui-form-label"
+                                   style="width: 100px">
+                                业务负责人
+                            </label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" id="L_businessOwner" name="businessOwner"
+                                       class="layui-input">
+                            </div>
+                            <label for="L_developer" class="layui-form-label"
+                                   style="width: 100px">开发负责人
+                            </label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" id="L_developer" name="developer"
+                                       class="layui-input">
+                            </div>
+                            <label for="L_maintainer" class="layui-form-label"
+                                   style="width: 100px">维护负责人
+                            </label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" id="L_maintainer" name="maintainer"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"
+                               style="width: 120px">
+                            服务描述
+                        </label>
+                        <div class="layui-input-inline" style="width: 500px;">
+                            <textarea name="memo"
+                                      class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"
+                               style="width: 120px">
+                            服务质量
+                        </label>
+                        <div class="layui-input-inline" style="width: 500px;">
+                            <textarea name="quality"  class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"
+                               style="width: 120px">
+                            安全要求
+                        </label>
+                        <div class="layui-input-inline" style="width: 500px;">
+                            <textarea name="secure"  class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item" hidden>
-            <div class="layui-input-inline">
-                <input type="text" id="L_projectId" name="projectId" required=""
-                       lay-verify=""
-                       autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label for="L_groupName" class="layui-form-label">
-                <span class="x-red">*</span>分组名称
-            </label>
-            <div class="layui-input-inline">
-                <input type="text" id="L_groupName" name="groupName" required=""
-                       lay-verify="groupName"
-                       autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>分组名称不可为空且唯一
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label for="L_groupCode" class="layui-form-label">
-                <span class="x-red">*</span>分组编号
-            </label>
-            <div class="layui-input-inline">
-                <input type="text" id="L_groupCode" name="groupCode" required=""
-                       lay-verify="groupCode"
-                       autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>分组编号不可为空且唯一
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">
-            </label>
-            <button class="layui-btn" lay-filter="edit" lay-submit="">
-                保存
-            </button>
         </div>
     </form>
 </div>
 <script>
     layui.use(['form', 'layer'], function () {
+        var groupArray
+        var consumerGroupValue = ''
+        var idempotentFlagValue = 0
+        var operateTypeValue = ''
+        var relyGroupValue = ''
         $ = layui.jquery
         var form = layui.form
             , layer = layui.layer
-        //获取选中的数据 进行格式转换，并加载到form表单中
-        var editData = parent.$("#editGroup").val();
-        var editArray = JSON.parse(editData)
-        $('#L_groupId').val(editArray.id)
-        $('#L_projectId').val(editArray.projectId)
-        $('#L_groupName').val(editArray.groupName)
-        $('#L_groupCode').val(editArray.groupCode)
-        form.render();//下拉菜单渲染 把内容加载进去
+        //获取所有的分组信息
+        $.get(_hostUrl + '/groups/' + parseInt(getCookie('projectId')), function (res) {
+            if (res.responseCode == 200) {
+                $.each(res.data.resultList, function (index, item) {
+                    $('#L_relyGroup').append("<input type='checkbox' name='relyGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='relyGroup'>")
+                    $('#L_consumerGroup').append("<input type='checkbox' name='consumerGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='consumerGroup'>")
+
+                })
+                //获取选中的数据 进行格式转换，并加载到form表单中
+                var groupString = parent.$('#groupArray').val()
+                groupArray = JSON.parse(groupString)
+                for (var i = 0; i < groupArray.length; i++) {
+                    $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
+                }
+                //默认加载第一个
+                //获取选中的数据 进行格式转换，并加载到form表单中
+                var editData = parent.$("#editContract").val();
+                var editArray = JSON.parse(editData)
+                loadJsonDataToForm(editArray)
+                if(editArray.idempotentFlag == 1){
+                    $('#L_idempotentFlag').attr("checked", "")
+                }
+                form.render()//下拉菜单渲染 把内容加载进去
+                operateTypeValue = getCheckboxValue('operateType')
+                consumerGroupValue = getCheckboxValue('consumerGroup')
+                relyGroupValue = getCheckboxValue('relyGroup')
+            }
+
+        })
+
         //自定义验证规则
         form.verify({
-            groupName: function (value) {
+            versionNo: function (value) {
                 if (value.length < 1) {
-                    return '分组名称不可为空'
+                    return '版本号不可为空'
                 }
             },
-            groupCode: function (value) {
+            serviceCode: function (value) {
                 if (value.length < 1) {
-                    return '分组编号不可为空'
+                    return '服务编号不可为空'
+                }
+            },
+            serviceName: function (value) {
+                if (value.length < 1) {
+                    return '服务名称不可为空'
+                }
+            },
+            consumerGroup: function (value) {
+                if (value.length < 1) {
+                    return '请选择服务消费方'
                 }
             }
         })
 
+        //监控分组选择事件
+        form.on('select(groupCode)', function (data) {
+            $.each(groupArray, function (i, item) {
+                if (item.groupCode == data.value) {
+                    $('#L_groupId').val(item.id)
+                    return
+                }
+            })
+        })
+
+        form.on('switch(idempotentFlag)', function (data) {
+            //记住用户名
+            if (data.elem.checked) {
+                idempotentFlagValue = 1
+            } else {
+                idempotentFlagValue = 0
+            }
+        });
+
+        //监控操作列表选择事件
+        form.on('checkbox(operateType)', function () {
+            operateTypeValue = getCheckboxValue('operateType')
+        })
+
+        //监控操作列表选择事件
+        form.on('checkbox(consumerGroup)', function () {
+            consumerGroupValue = getCheckboxValue('consumerGroup')
+        })
+
+        //监控操作列表选择事件
+        form.on('checkbox(relyGroup)', function () {
+            relyGroupValue = getCheckboxValue('relyGroup')
+        })
         //监听提交
         form.on('submit(edit)', function (data) {
-            $.putForm(_hostUrl + "/group", data.field, function (res) {
+            if(consumerGroupValue == ''){
+                layer.msg('服务消费方不能为空!', {icon: 5, shift: 6});
+                return
+            }
+            data.field.consumerGroup=consumerGroupValue
+            data.field.relyGroup= relyGroupValue
+            data.field.operateType= operateTypeValue
+            data.field.idempotentFlag= idempotentFlagValue
+            $.putForm(_hostUrl + '/contract', data.field, function (res) {
                 if (res.responseCode == 201) {
-                    layer.msg('修改分组成功', {
+                    layer.msg('修改契约成功', {
                         icon: 1,
                         time: 2000
-                    });
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name)
-                    //关闭当前frame
-                    parent.layer.close(index)
-                    var table = parent.window.layui.table;
-                    table.reload('groupList')
-
+                    },function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name)
+                        //关闭当前frame
+                        parent.layer.close(index)
+                        var table = parent.window.layui.table
+                        table.reload('contractList')
+                    })
                 } else {
                     layer.msg(res.responseMsg)
                 }

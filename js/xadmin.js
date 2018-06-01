@@ -353,3 +353,67 @@ function clearCookies () {
     setCookie('superFlag', '')
 }
 
+
+/**
+ * 加载json的数据到页面的表单中，以name为唯一标示符加载
+ * @param {String} jsonStr json表单数据
+ */
+function loadJsonDataToForm (jsonStr) {
+    try {
+        //var obj = eval("("+jsonStr+")");
+        var obj = jsonStr;
+        var key, value, tagName, type, arr;
+        for (x in obj) {
+            key = x;
+            value = obj[x];
+            $("[name='" + key + "'],[name='" + key + "[]']").each(function () {
+                tagName = $(this)[0].tagName;
+                type = $(this).attr('type');
+                if (tagName == 'INPUT') {
+                    if (type == 'radio') {
+                        $(this).attr('checked', $(this).val() == value);
+                    } else if (type == 'checkbox') {
+                        if(value){
+                            value = value+''
+                            if(value.indexOf(",") != -1){
+                                arr = value.split(',');
+                            }else {
+                                arr = new Array()
+                                arr[0] = value
+                            }
+                            for (var i = 0; i < arr.length; i++) {
+                                if ($(this).val() == arr[i]) {
+                                    $(this).attr('checked', true);
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        $(this).val(value);
+                    }
+                } else if (tagName == 'SELECT' || tagName == 'TEXTAREA') {
+                    $(this).val(value);
+                }
+
+            });
+        }
+    } catch (e) {
+        alert("加载表单：" + e.message + ",数据内容" + JSON.stringify(jsonStr));
+    }
+}
+
+/**
+ * 通用拼接checkbox数据
+ * @param checkboxName
+ * @returns {string}
+ */
+function getCheckboxValue (checkboxName) {
+    var value = ''
+    // 遍历name=operateType的多选框
+    var element = 'input:checkbox[name=\"' + checkboxName + '\"]:checked'
+    $(element).each(function () {
+        value += ',' + $(this).val()
+    })
+    value = value.substr(1)
+    return value
+}

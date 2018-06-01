@@ -257,6 +257,11 @@
 </div>
 <script>
     layui.use(['form', 'layer'], function () {
+        var consumerGroupValue = ''
+        var idempotentFlagValue = 0
+        var operateTypeValue = ''
+        var relyGroupValue = ''
+
         $ = layui.jquery
         var form = layui.form
             , layer = layui.layer
@@ -320,7 +325,6 @@
             }
 
         })
-        var idempotentFlagValue = 0
         form.on('switch(idempotentFlag)', function (data) {
             //记住用户名
             if (data.elem.checked) {
@@ -329,35 +333,19 @@
                 idempotentFlagValue = 0
             }
         });
-        var operateTypeValue = ''
         //监控操作列表选择事件
-        form.on('checkbox(operateType)', function (data) {
-            operateTypeValue = ''
-            // 遍历name=operateType的多选框
-            $('input:checkbox[name="operateType"]:checked').each(function () {
-                operateTypeValue += ',' + $(this).val()
-            })
-            operateTypeValue= operateTypeValue.substr(1)
+        form.on('checkbox(operateType)', function () {
+            operateTypeValue = getCheckboxValue('operateType')
         })
-        var consumerGroupValue = ''
+
         //监控操作列表选择事件
-        form.on('checkbox(consumerGroup)', function (data) {
-            consumerGroupValue = ''
-            // 遍历name=consumerGroup的多选框
-            $('input:checkbox[name="consumerGroup"]:checked').each(function () {
-                consumerGroupValue += ',' + $(this).val()
-            })
-            consumerGroupValue= consumerGroupValue.substr(1)
+        form.on('checkbox(consumerGroup)', function () {
+            consumerGroupValue = getCheckboxValue('consumerGroup')
         })
-        var relyGroupValue = ''
+
         //监控操作列表选择事件
-        form.on('checkbox(relyGroup)', function (data) {
-            relyGroupValue = ''
-            // 遍历name=relyGroup的多选框
-            $('input:checkbox[name="relyGroup"]:checked').each(function () {
-                relyGroupValue += ',' + $(this).val()
-            })
-            relyGroupValue= relyGroupValue.substr(1)
+        form.on('checkbox(relyGroup)', function () {
+            relyGroupValue = getCheckboxValue('relyGroup')
         })
         //监听提交
         form.on('submit(add)', function (data) {
@@ -374,14 +362,14 @@
                     layer.msg('添加契约成功', {
                         icon: 1,
                         time: 2000
+                    },function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name)
+                        //关闭当前frame
+                        parent.layer.close(index)
+                        var table = parent.window.layui.table
+                        table.reload('contractList')
                     })
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name)
-                    //关闭当前frame
-                    parent.layer.close(index)
-                    var table = parent.window.layui.table
-                    table.reload('contractList')
-
                 } else {
                     layer.msg(res.responseMsg)
                 }

@@ -172,10 +172,10 @@
                 })
             } else if (obj.event === 'edit') {
                 $('#editContract').val(JSON.stringify(data))
-                x_admin_show('修改契约', './contract-edit.html', 600, 450)
+                x_admin_show('修改契约', './contract-edit.html', 600, 550, true)
             } else if (obj.event === 'detail') {
                 // $('#editContract').val(JSON.stringify(data))
-                x_admin_show('契约详情', './contract-edit.html', 600, 450, true)
+                x_admin_show('契约详情', './contract-edit.html', 600, 550, true)
             }
         })
         // 获取分组列表
