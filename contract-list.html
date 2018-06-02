@@ -20,6 +20,16 @@
     <script type="text/javascript" src="./js/cookies.js"></script>
     <script src="./lib/vue/vue.min.js"></script>
     <script src="./lib/vue/axios.min.js"></script>
+    <script src="./css/icon/iconfont.js"></script>
+    <style type="text/css">
+        .icon {
+            width: 1.5em;
+            height: 1.5em;
+            vertical-align: -0.3em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+    </style>
     <style type="text/css">
         .nohover tbody tr:hover {
             background-color: #ffffff
@@ -42,11 +52,15 @@
         .backup:hover {
             background-color: #E2F2E4;
         }
+
+        .layui-table-cell{
+            padding: 0 2px;
+        }
     </style>
 </head>
 
 <body class="layui-anim layui-anim-up" onload="checkLogin ()">
-<div id="project">
+<div id="contract">
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a>首页</a>
@@ -64,6 +78,11 @@
                     onclick="x_admin_show('添加契约','./contract-add.html',600,550,true)">
                 <i
                         class="layui-icon"></i>新增契约
+            </button>
+            <button class="layui-btn"
+                    onclick="batchDelete()">
+                <i
+                        class="layui-icon"></i>批量删除
             </button>
         </xblock>
         <div class="layui-row">
@@ -110,13 +129,35 @@
     <input hidden id="groupArray" value=""/>
 </div>
 <script type="text/html" id="contractBar">
-    <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
+    {{#  if(d.removeFlag == 0){ }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-warm layui-btn-xs" ay-even lay-event="recover">恢复</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">彻底删除</a>
+    {{#  } }}
+    <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
+</script>
+<script type="text/html" id="showStar">
+
+    {{#  if(d.starFlag == 1){ }}
+    <span title="点击取消星标">
+    <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-jingdiananli_wujiaoxing_shoucanghou"></use>
+    </svg>
+        </span>
+        {{#  } else { }}
+    <span title="点击添加星标">
+        <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucang"></use>
+    </svg>
+      </span>
+    {{#  } }}
+
 </script>
 <script>
     layui.use(['table', 'tree'], function () {
-        var groupArray;
+        var groupArray
         var table = layui.table
         //第一个实例
         var contractTable = table.render({
@@ -132,10 +173,16 @@
             }
             , page: true //开启分页
             , cols: [[ //表头
-                {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
-                , {field: 'serviceCode', title: '契约编号', width: 240, align: 'center'}
-                , {field: 'serviceName', title: '契约名称', width: 240, align: 'center'}
-                , {field: 'versionNo', title: '版本号', width: 100, sort: true, align: 'center'}
+                {field: 'checkbox', title: 'checkbox', width: 38, checkbox: true, align: 'center'},
+                {
+                    field: 'starFlag', title: '', width: 44, align: 'center',
+                    event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
+                }
+                , {field: 'serviceCode', title: '契约编号', width: 240, align: 'center',
+                    event: 'detail'}
+                , {field: 'serviceName', title: '契约名称', width: 235, align: 'center',
+                    event: 'detail'}
+                , {field: 'versionNo', title: '版本号', width: 90, sort: true, align: 'center'}
                 , {
                     field: 'lastUpdateTime', title: '最后修改时间', width: 160, align: 'center'
                     , templet: function (d) {
@@ -156,11 +203,63 @@
         //监听工具条
         table.on('tool(contractList)', function (obj) {
             var data = obj.data
-            if (obj.event === 'delete') {
-                layer.confirm('确定删除[<span style="color: red">' + data.serviceName + '</span>]契约?', function (index) {
-                    $.deleteJSON(_hostUrl + '/contract/' + data.id, null, function (res) {
+            if (obj.event === 'remove') {
+                layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被移到回收站!', {
+                    icon: 3,
+                    title: '删除契约'
+                }, function (index) {
+                    var params = {
+                        id: data.id + '',
+                        projectId: data.projectId,
+                        groupId: data.groupId
+                    }
+                    $.putForm(_hostUrl + '/contract/remove', params, function (res) {
+                        if (res.responseCode == 201) {
+                            layer.msg('移除到回收站成功!', {
+                                icon: 1,
+                                time: 2000
+                            })
+                            table.reload('contractList')
+                        } else {
+                            layer.error(res.responseMsg)
+                        }
+                    })
+                })
+            } else if (obj.event === 'delete') {
+                layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被彻底删除，无法恢复!', {
+                    icon: 3,
+                    title: '彻底删除契约'
+                }, function (index) {
+                    var params = {
+                        id: data.id + '',
+                        projectId: data.projectId,
+                        groupId: data.groupId
+                    }
+                    $.deleteForm(_hostUrl + '/contract/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
                         if (res.responseCode == 204) {
-                            layer.msg('删除成功', {
+                            layer.msg('彻底删除成功!', {
+                                icon: 1,
+                                time: 2000
+                            })
+                            table.reload('contractList')
+                        } else {
+                            layer.error(res.responseMsg)
+                        }
+                    })
+                })
+            } else if (obj.event === 'recover') {
+                layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被恢复!', {
+                    icon: 3,
+                    title: '恢复契约'
+                }, function () {
+                    var params = {
+                        id: data.id + '',
+                        projectId: data.projectId,
+                        groupId: data.groupId
+                    }
+                    $.putForm(_hostUrl + '/contract/recover', params, function (res) {
+                        if (res.responseCode == 201) {
+                            layer.msg('恢复成功!', {
                                 icon: 1,
                                 time: 2000
                             })
@@ -176,6 +275,25 @@
             } else if (obj.event === 'detail') {
                 // $('#editContract').val(JSON.stringify(data))
                 x_admin_show('契约详情', './contract-edit.html', 600, 550, true)
+            } else if (obj.event === 'changeStar') {
+                var params = {
+                    id: data.id,
+                    projectId: data.projectId,
+                    groupId: data.groupId
+                }
+                $.putForm(_hostUrl + '/contract/star', params, function (res) {
+                    if (res.responseCode == 201) {
+                        table.reload('contractList')
+                        // if(data.starFlag == 1){
+                        //     data.starFlag = 0
+                        //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucang"></use>')
+                        // }else{
+                        //     data.starFlag = 1
+                        //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucanghou"></use>')
+                        // }
+                        // table.render()
+                    }
+                })
             }
         })
         // 获取分组列表
@@ -216,13 +334,23 @@
             })
         })
     })
+
+    function batchDelete () {
+        var data = tableCheck.getData()
+        layer.confirm('确认要删除吗？' + data, function (index) {
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1})
+            $('.layui-form-checked').not('.header').parents('tr').remove()
+        })
+    }
 </script>
 <script>
     let vm = new Vue({
-        el: '#project',
+        el: '#contract',
         data () {
             return {
                 superFlag: 0,
+                backupBtn: 0
             }
         },
         beforeCreate () {

@@ -83,7 +83,10 @@
         table.on('tool(groupList)', function (obj) {
             var data = obj.data
             if (obj.event === 'delete') {
-                layer.confirm('确定删除[<span style="color: red">' + data.groupName + '</span>]项目?', function (index) {
+                layer.confirm('确定删除[<span style="color: red">' + data.groupName + '</span>]分组?', {
+                    icon: 3,
+                    title: '删除分组'
+                }, function (index) {
                     $.deleteJSON(_hostUrl + "/group/" + data.id,null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('删除成功', {

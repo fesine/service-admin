@@ -115,7 +115,10 @@
         table.on('tool(projectList)', function (obj) {
             var data = obj.data
             if (obj.event === 'delete') {
-                layer.confirm('确定删除[<span style="color: red">' + data.projectName + '</span>]项目?', function (index) {
+                layer.confirm('确定删除[<span style="color: red">' + data.projectName + '</span>]项目?', {
+                    icon: 3,
+                    title: '删除项目'
+                }, function (index) {
                     $.deleteJSON(_hostUrl + "/project/" + data.id,null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('删除成功', {
