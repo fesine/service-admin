@@ -56,6 +56,9 @@
         .layui-table-cell{
             padding: 0 2px;
         }
+        .margin-0{
+            margin: 0!important;
+        }
     </style>
 </head>
 
@@ -97,7 +100,7 @@
                     <tr>
                         <td style="padding: 0px;">
                             <ul>
-                                <li v-if="superFlag == 1" id="allContract">
+                                <li id="allContract">
                                     <a class="backup" href="javascript:;">
                                         <i class="iconfont">&#xe699;</i>
                                         <cite>所有契约</cite></a>
@@ -134,12 +137,11 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
     {{#  } else { }}
     <a class="layui-btn layui-btn-warm layui-btn-xs" ay-even lay-event="recover">恢复</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">彻底删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs margin-0" lay-even lay-event="delete">彻底删除</a>
     {{#  } }}
     <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
 </script>
 <script type="text/html" id="showStar">
-
     {{#  if(d.starFlag == 1){ }}
     <span title="点击取消星标">
     <svg class="icon" aria-hidden="true">
@@ -153,7 +155,21 @@
     </svg>
       </span>
     {{#  } }}
-
+</script>
+<script type="text/html" id="showCode">
+    {{#  if(d.checkStatus == 0){ }}
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    {{# } else if(d.checkStatus == 1){ }}
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-green" style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    {{# } else if(d.checkStatus == 2){ }}
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-orange" style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    {{# } else { }}
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-black"
+                                                      style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    {{#  } }}
+</script>
+<script type="text/html" id="showName">
+    <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
 </script>
 <script>
     layui.use(['table', 'tree'], function () {
@@ -178,10 +194,10 @@
                     field: 'starFlag', title: '', width: 44, align: 'center',
                     event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
                 }
-                , {field: 'serviceCode', title: '契约编号', width: 240, align: 'center',
-                    event: 'detail'}
+                , {field: 'serviceCode', title: '契约编号', width: 240, align: 'left',
+                    event: 'detail',templet: '#showCode'}
                 , {field: 'serviceName', title: '契约名称', width: 235, align: 'center',
-                    event: 'detail'}
+                    event: 'detail', templet: '#showName'}
                 , {field: 'versionNo', title: '版本号', width: 90, sort: true, align: 'center'}
                 , {
                     field: 'lastUpdateTime', title: '最后修改时间', width: 160, align: 'center'
@@ -273,7 +289,7 @@
                 $('#editContract').val(JSON.stringify(data))
                 x_admin_show('修改契约', './contract-edit.html', 600, 550, true)
             } else if (obj.event === 'detail') {
-                // $('#editContract').val(JSON.stringify(data))
+                $('#editContract').val(JSON.stringify(data))
                 x_admin_show('契约详情', './contract-edit.html', 600, 550, true)
             } else if (obj.event === 'changeStar') {
                 var params = {

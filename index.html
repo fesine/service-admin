@@ -38,7 +38,8 @@
           <!--</li>-->
         <!--</ul>-->
         <ul class="layui-nav right" lay-filter="">
-            <li class="layui-nav-item to-index"><a><i class="iconfont">&#xe713;</i>&nbsp; 1</a></li>
+            <li class="layui-nav-item "><a>消息
+                <span class="layui-badge" style="margin: -10px 0px 0;">9</span>&nbsp;&nbsp;</a></li>
           <li class="layui-nav-item">
             <a href="javascript:;">{{ nickName }}</a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
@@ -58,7 +59,7 @@
         <ul id="nav">
             <li v-if="superFlag==1">
                 <a _href="project-list.html">
-                    <i class="iconfont">&#xe70c;</i>
+                    <i class="iconfont">&#xe839;</i>
                     <cite>项目管理</cite>
                 </a>
             </li>
@@ -66,6 +67,12 @@
                 <a _href="group-list.html">
                     <i class="iconfont">&#xe70c;</i>
                     <cite>分组管理</cite>
+                </a>
+            </li>
+            <li v-if="superFlag==1">
+                <a _href="member-list.html">
+                    <i class="iconfont">&#xe726;</i>
+                    <cite>成员管理</cite>
                 </a>
             </li>
             <li>

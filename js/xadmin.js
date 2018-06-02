@@ -325,7 +325,7 @@ function checkLogin () {
         parent.location.href = 'login.html'
     }
     $.ajax({
-        url: _hostUrl + '/user/' + getCookie('username'),
+        url: _hostUrl + '/project/' + getCookie('projectId'),
         type: 'get',
         timeout: 2000,
         success: function (res) {
