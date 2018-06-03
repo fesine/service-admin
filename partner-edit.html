@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript"
+            src="./lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <script type="text/javascript" src="./js/global.js"></script>
+    <script type="text/javascript" src="./js/store.js"></script>
+    <script type="text/javascript" src="./js/cookies.js"></script>
+    <script src="./lib/vue/vue.min.js"></script>
+    <script src="./lib/vue/axios.min.js"></script>
+</head>
+
+<body>
+<div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
+    <form class="layui-form">
+        <div class="layui-tab layui-tab-brief">
+                <div class="layui-tab-item layui-show">
+                    <!--id-->
+                    <div class="layui-form-item" hidden>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_id" name="id" required=""
+                                   lay-verify=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" hidden>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="projectId">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" hidden>
+                        <div class="layui-input-inline">
+                            <input type="text" name="groupId">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <!--用户类型 0:创建者 1:管理员 2:开发者(读写) 3:开发者(只读)-->
+                        <label for="L_userType" class="layui-form-label" style="margin-top:40px;">
+                            <span class="x-red">*</span>角色
+                        </label>
+                        <div class="layui-input-inline" style="width: 400px;margin-top:40px;">
+                            <div id="L_userType"></div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                        </label>
+                        <button class="layui-btn layui-btn-lg" lay-filter="edit" lay-submit="">
+                            保存
+                        </button>
+                    </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery
+        var form = layui.form
+            , layer = layui.layer
+        var editData = parent.$("#editPartner").val();
+        var editArray = JSON.parse(editData)
+        loadJsonDataToForm(editArray)
+        //渲染角色
+        for(var i=1;i<userTypeArray.length;i++){
+            if(i=== editArray.userType){
+                $('#L_userType').append("<input type='radio' name='userType' value='" + i + "' title='" + userTypeArray[i] + "' lay-skin='primary' checked> ")
+            }else {
+                $('#L_userType').append("<input type='radio' name='userType' value='" + i + "' title='" + userTypeArray[i] + "' lay-skin='primary'> ")
+            }
+        }
+        form.render()
+        //监听提交
+        form.on('submit(edit)', function (data) {
+            $.putForm(_hostUrl + '/partner/role', data.field, function (res) {
+                if (res.responseCode == 201) {
+                    layer.msg('角色修改成功', {
+                        icon: 1,
+                        time: 2000
+                    },function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name)
+                        //关闭当前frame
+                        parent.layer.close(index)
+                        var table = parent.window.layui.table
+                        table.reload('partnerList', {
+                            url: _hostUrl + '/partner/' + data.field.groupId
+                        })
+                    })
+                } else {
+                    layer.msg(res.responseMsg)
+                }
+            })
+            return false
+        })
+
+    })
+</script>
+</body>
+
+</html>

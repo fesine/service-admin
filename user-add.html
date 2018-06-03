@@ -51,7 +51,7 @@
           <div class="layui-form-item">
               <label class="layui-form-label"></label>
               <button  class="layui-btn" lay-filter="add" lay-submit="">
-                  添加成员
+                  添加用户
               </button>
           </div>
       </form>
@@ -79,7 +79,7 @@
             form.on('submit(add)', function (data) {
                 $.post(_hostUrl + "/register", data.field, function (res) {
                     if (res.responseCode == 201) {
-                        layer.msg('添加成员成功，默认密码123456', {
+                        layer.msg('添加用户成功，默认密码123456', {
                             icon: 1,
                             time: 2000
                         }, function () {

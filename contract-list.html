@@ -76,16 +76,14 @@
             <i class="layui-icon" style="line-height:30px">ဂ</i></a>
     </div>
     <div class="x-body">
-        <xblock>
+        <xblock v-if="projectStatus == 1">
             <button class="layui-btn"
                     onclick="x_admin_show('添加契约','./contract-add.html',600,550,true)">
-                <i
-                        class="layui-icon"></i>新增契约
+                <i class="layui-icon"></i>新增契约
             </button>
             <button class="layui-btn"
                     onclick="batchDelete()">
-                <i
-                        class="layui-icon"></i>批量删除
+                <i class="layui-icon"></i>批量删除
             </button>
         </xblock>
         <div class="layui-row">
@@ -218,6 +216,13 @@
         })
         //监听工具条
         table.on('tool(contractList)', function (obj) {
+            if (getCookie('projectStatus') === '2') {
+                layer.msg('项目已归档，无法操作', {
+                    icon: 2,
+                    time: 2000
+                })
+                return
+            }
             var data = obj.data
             if (obj.event === 'remove') {
                 layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被移到回收站!', {
@@ -299,7 +304,12 @@
                 }
                 $.putForm(_hostUrl + '/contract/star', params, function (res) {
                     if (res.responseCode == 201) {
-                        table.reload('contractList')
+                        table.reload('contractList', {
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: data.groupId
+                            }
+                        })
                         // if(data.starFlag == 1){
                         //     data.starFlag = 0
                         //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucang"></use>')
@@ -314,21 +324,26 @@
         })
         // 获取分组列表
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
+            //如果不存在分组怎么办？
             groupArray = res.data
-            $('#groupArray').val(JSON.stringify(groupArray))
-            layui.tree({
-                elem: '#groupTree' //传入元素选择器
-                , nodes: groupArray
-                , click: function (item) { //点击节点回调
-                    // 查询点击分组的契约数据
-                    contractTable.reload({
-                        where: {
-                            projectId: parseInt(getCookie('projectId'))
-                            , groupId: item.id
-                        }
-                    })
-                }
-            })
+            if(groupArray.length == 0){
+                layer.msg("分组不存在，请先创建分组!")
+            }else{
+                $('#groupArray').val(JSON.stringify(groupArray))
+                layui.tree({
+                    elem: '#groupTree' //传入元素选择器
+                    , nodes: groupArray
+                    , click: function (item) { //点击节点回调
+                        // 查询点击分组的契约数据
+                        contractTable.reload({
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: item.id
+                            }
+                        })
+                    }
+                })
+            }
         })
 
         //监听回收站
@@ -366,7 +381,7 @@
         data () {
             return {
                 superFlag: 0,
-                backupBtn: 0
+                projectStatus: 1
             }
         },
         beforeCreate () {
@@ -374,6 +389,7 @@
         //渲染之前加载cookie数据
         beforeMount () {
             this.superFlag = getCookie('superFlag')
+            this.projectStatus = getCookie('projectStatus')
         },
         methods: {}
     })

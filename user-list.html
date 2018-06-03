@@ -27,9 +27,9 @@
   <div class="x-nav">
       <span class="layui-breadcrumb">
         <a>首页</a>
-        <a>成员管理</a>
+        <a>用户管理</a>
         <a>
-          <cite>成员列表</cite></a>
+          <cite>用户列表</cite></a>
       </span>
     <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
        href="javascript:location.replace(location.href);" title="刷新">
@@ -37,8 +37,8 @@
   </div>
   <div class="x-body">
     <xblock>
-      <button class="layui-btn" onclick="x_admin_show('添加成员','./member-add.html',600,400)"><i
-              class="layui-icon"></i>新增成员
+      <button class="layui-btn" onclick="x_admin_show('添加用户','./member-add.html',600,400)"><i
+              class="layui-icon"></i>新增用户
       </button>
     </xblock>
     <table id="userList" lay-filter="userList"></table>
@@ -54,7 +54,7 @@
   {{#  if(d.superFlag == 1){ }}
     <a style="color: red">超级管理员</a>
   {{#  } else { }}
-  <a>普通成员</a>
+  <a>普通用户</a>
   {{#  } }}
 </script>
 <script>
@@ -76,7 +76,7 @@
                         return dateFormat(d.lastUpdateTime)
                     }
                 }
-                , {title: '操作', fixed: 'right', align: 'center', toolbar: '#userBar'}
+                , {title: '操作',  align: 'center', toolbar: '#userBar'}
             ]]
             ,request:{
                 pageName: 'pageIndex' //页码的参数名称，默认：page
@@ -95,9 +95,9 @@
         table.on('tool(userList)', function (obj) {
             var data = obj.data
             if (obj.event === 'delete') {
-                layer.confirm('确定删除[<span style="color: red">' + data.nickName + '</span>]成员吗?', {
+                layer.confirm('确定删除[<span style="color: red">' + data.nickName + '</span>]用户吗?', {
                     icon: 3,
-                    title: '删除成员'
+                    title: '删除用户'
                 }, function (index) {
                     $.deleteJSON(_hostUrl + "/user/" + data.id, null, function (res) {
                         if (res.responseCode == 204) {
@@ -111,13 +111,6 @@
                         }
                     })
                 })
-            } else if (obj.event === 'addGroup') {
-                if(obj.data.superFlag == 1){
-                    layer.msg('您已经是超级管理员，无需分配分组!')
-                    return
-                }
-                $("#editUser").val(JSON.stringify(data))
-                x_admin_show('分配分组', './user-group.html', 600, 450)
             } else if (obj.event === 'edit') {
                 $("#editUser").val(JSON.stringify(data))
                 x_admin_show('修改用户', './user-edit.html', 600, 450)

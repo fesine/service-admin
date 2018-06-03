@@ -60,6 +60,16 @@ checkStatusArray[2] = '维护'
 checkStatusArray[3] = '弃用'
 
 /**
+ * 用户类型 0:创建者 1:管理员 2:开发者(读写) 3:开发者(只读)
+ * @type {any[]}
+ */
+userTypeArray = new Array()
+userTypeArray[0] = '超级管理员'
+userTypeArray[1] = '管理员'
+userTypeArray[2] = '开发者(读写)'
+userTypeArray[3] = '开发者(只读)'
+
+/**
  * 日期格式转换
  * @param value
  * @returns {string}

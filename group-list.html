@@ -23,7 +23,7 @@
 </head>
 
 <body class="layui-anim layui-anim-up" onload="checkLogin ()">
-<div id="project">
+<div id="group">
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a>首页</a>
@@ -36,7 +36,7 @@
             <i class="layui-icon" style="line-height:30px">ဂ</i></a>
     </div>
     <div class="x-body">
-        <xblock>
+        <xblock v-if="projectStatus == 1">
             <button class="layui-btn" onclick="x_admin_show('添加分组','./group-add.html',600,400)"><i
                     class="layui-icon"></i>新增分组
             </button>
@@ -47,7 +47,7 @@
 </div>
 <script type="text/html" id="groupBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete" >删除</a>
 </script>
 <script>
     layui.use('table', function () {
@@ -68,7 +68,7 @@
                         return dateFormat(d.lastUpdateTime)
                     }
                 }
-                , {title:'操作',fixed: 'right',  align: 'center', toolbar: '#groupBar'}
+                , {title:'操作', align: 'center', toolbar: '#groupBar'}
             ]]
             , response: {
                 statusName: 'responseCode' //数据状态的字段名称，默认：code
@@ -81,6 +81,13 @@
         })
         //监听工具条
         table.on('tool(groupList)', function (obj) {
+            if(getCookie('projectStatus') === '2'){
+                layer.msg('项目已归档，无法操作', {
+                    icon: 2,
+                    time: 2000
+                })
+                return
+            }
             var data = obj.data
             if (obj.event === 'delete') {
                 layer.confirm('确定删除[<span style="color: red">' + data.groupName + '</span>]分组?', {
@@ -104,6 +111,25 @@
                 x_admin_show('修改分组', './group-edit.html', 600, 450)
             }
         })
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#group',
+        data () {
+            return {
+                superFlag: 0,
+                projectStatus: 1
+            }
+        },
+        beforeCreate () {
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = getCookie('superFlag')
+            this.projectStatus = getCookie('projectStatus')
+        },
+        methods: {}
     })
 </script>
 </body>

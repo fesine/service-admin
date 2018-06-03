@@ -9,14 +9,15 @@ $(function () {
 
     //触发事件
     var tab = {
-        tabAdd: function (title, url, id) {
+        tabAdd: function (title, url, id,icon) {
             //新增一个Tab项
             element.tabAdd('xbs_tab', {
                 title: title
                 ,
                 content: '<iframe tab-id="' + id + '" frameborder="0" src="' + url + '" scrolling="yes" class="x-iframe"></iframe>'
                 ,
-                id: id
+                id: id,
+                icon: icon
             })
         }
         , tabDelete: function (othis) {
@@ -137,21 +138,16 @@ $(function () {
                     return
                 }
             }
-
-
             tab.tabAdd(title, url, index + 1)
             tab.tabChange(index + 1)
         }
-
         event.stopPropagation()
-
     })
 
 })
 var cateIds = []
 
 function getCateId (cateId) {
-
     $('tbody tr[fid=' + cateId + ']').each(function (index, el) {
         id = $(el).attr('cate-id')
         cateIds.push(id)
@@ -326,7 +322,7 @@ function checkLogin () {
         parent.location.href = 'login.html'
     }
     var url
-    if(getCookie('superFlag')=='1' && firstFlag){
+    if((getCookie('projectId') === 'undefined' || getCookie('projectId')==null)  && getCookie('superFlag')=='1' && firstFlag){
         url = _hostUrl + '/user/' + getCookie('userId')
         firstFlag = false
     }else{
@@ -340,6 +336,11 @@ function checkLogin () {
             if (!res || res.responseCode != 200) {
                 clearCookies()
                 parent.location.href = 'login.html'
+            }else{
+                //更新项目状态值
+                if(res.data && res.data.projectStatus){
+                    setCookie('projectStatus',res.data.projectStatus)
+                }
             }
         },
         error: function () {
@@ -373,6 +374,7 @@ function clearCookies () {
         setCookie('username', '')
     }
     setCookie('projectId', '')
+    setCookie('projectStatus', '')
     setCookie('nickName', '')
     setCookie('superFlag', '')
 }

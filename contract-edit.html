@@ -371,7 +371,12 @@
                         //关闭当前frame
                         parent.layer.close(index)
                         var table = parent.window.layui.table
-                        table.reload('contractList')
+                        table.reload('contractList', {
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: data.field.groupId
+                            }
+                        })
                     })
                 } else {
                     layer.msg(res.responseMsg)
