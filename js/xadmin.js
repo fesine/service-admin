@@ -319,13 +319,21 @@ $.deleteJSON = function (url, data, callback) {
     })
 }
 
+var firstFlag = true
 // iframe判断登录
 function checkLogin () {
     if (!getCookie('login') || getCookie('login') == 'false') {
         parent.location.href = 'login.html'
     }
+    var url
+    if(getCookie('superFlag')=='1' && firstFlag){
+        url = _hostUrl + '/user/' + getCookie('userId')
+        firstFlag = false
+    }else{
+       url =  _hostUrl + '/project/' + getCookie('projectId')
+    }
     $.ajax({
-        url: _hostUrl + '/project/' + getCookie('projectId'),
+        url: url,
         type: 'get',
         timeout: 2000,
         success: function (res) {
