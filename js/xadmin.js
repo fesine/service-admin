@@ -457,3 +457,22 @@ function getCheckboxValue (checkboxName) {
     value = value.substr(1)
     return value
 }
+
+/**
+ * 点击分组改变背景
+ * @param item
+ */
+function changeBackground (item) {
+    var d = $('ul').find('li')
+    for (var p = d.length; p--;) {
+        if (d[p].innerText.substring(1) != item) {
+            $(d[p]).css('backgroundColor', '#FFFFFF')
+            $(d[p]).find('a').css('color', '#76756F')
+        }
+        else {
+
+            $(d[p]).find('a').css('color', '#0AAF53')
+            $(d[p]).css('backgroundColor', '#E2F2E4')
+        }
+    }
+}

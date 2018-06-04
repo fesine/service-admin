@@ -227,7 +227,7 @@
                             form.render()
                         })
                     } else if (response.data.responseCode == 401) {
-                        layer.msg('登录已失效', {
+                        layui.layer.msg('登录已失效', {
                             icon: 2,
                             timeout: 2000
                         }, function () {
@@ -245,7 +245,7 @@
                         setCookie('projectId', this.projectId)
                         setCookie('projectStatus', this.projectInfo.projectStatus)
                     }else if (response.data.responseCode == 401){
-                        layer.msg('登录已失效',{
+                        layui.layer.msg('登录已失效',{
                             icon:2,
                             timeout:2000
                         },function () {

@@ -91,17 +91,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td style="padding: 0px;">
-                            <ul>
-                                <li id="allPartner">
-                                    <a class="backup" href="javascript:;">
-                                        <i class="iconfont">&#xe699;</i>
-                                        <cite>所有成员</cite></a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td style="padding: 0px;">-->
+                            <!--<ul>-->
+                                <!--<li id="allPartner">-->
+                                    <!--<a class="backup" href="javascript:;">-->
+                                        <!--<i class="iconfont">&#xe699;</i>-->
+                                        <!--<cite>所有成员</cite></a>-->
+                                <!--</li>-->
+                            <!--</ul>-->
+                        <!--</td>-->
+                    <!--</tr>-->
                     <tr>
                     </tr>
                     <tr>
@@ -143,6 +143,7 @@
                     elem: '#groupTree' //传入元素选择器
                     , nodes: groupArray
                     , click: function (item) { //点击节点回调
+                        changeBackground(item.name)
                         //查询自己所在分组身份
                         if(vm.superFlag !=1){
                             $.get(_hostUrl+'/partner/'+item.id+'/'+parseInt(getCookie('userId')),function (res) {
