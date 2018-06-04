@@ -115,7 +115,7 @@
                     </tr>
                     <tr>
                         <td style="padding: 0px;">
-                            <ul id="groupTree" style="overflow: auto;overflow-x: hidden; "></ul>
+                            <ul id="groupTree"  style="overflow: auto;overflow-x: hidden; "></ul>
                         </td>
                     </tr>
                 </table>
@@ -334,6 +334,10 @@
                     elem: '#groupTree' //传入元素选择器
                     , nodes: groupArray
                     , click: function (item) { //点击节点回调
+                        // $('.left-nav #nav li').css('background', '#efefec')
+                        // $('.left-nav #nav li').children('a').css('color', '#333');
+                        $(this).children('li').css('background', '#009688');
+                        $(this).children('a').css('color', '#ffffff');
                         // 查询点击分组的契约数据
                         contractTable.reload({
                             where: {

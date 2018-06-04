@@ -76,7 +76,7 @@
             <i class="layui-icon" style="line-height:30px">ဂ</i></a>
     </div>
     <div class="x-body">
-        <xblock v-if="projectStatus == 1">
+        <xblock v-if="projectStatus == 1 && superFlag == 1">
             <button class="layui-btn"
                     onclick="x_admin_show('添加成员','./partner-add.html',650,450)">
                 <i class="layui-icon"></i>新增成员
@@ -121,13 +121,14 @@
     <input hidden id="groupArray" value=""/>
 </div>
 <script type="text/html" id="partnerBar">
-    {{#  if(d.userType != 0){ }}
+    {{#  if(d.userType != 0 && myFlag < 2){ }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">修改角色</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">移出分组</a>
     {{#  } }}
 
 </script>
 <script>
+    var myFlag = 0;
     layui.use(['table', 'tree'], function () {
         var groupArray
         var table = layui.table
@@ -142,6 +143,14 @@
                     elem: '#groupTree' //传入元素选择器
                     , nodes: groupArray
                     , click: function (item) { //点击节点回调
+                        //查询自己所在分组身份
+                        if(vm.superFlag !=1){
+                            $.get(_hostUrl+'/partner/'+item.id+'/'+parseInt(getCookie('userId')),function (res) {
+                                if(res.responseCode == 200){
+                                    myFlag = res.data
+                                }
+                            })
+                        }
                         // 查询点击分组的成员数据
                         partnerTable.reload({
                             url: _hostUrl + '/partner/'+item.id
@@ -215,15 +224,15 @@
                 return
             }
             var data = obj.data
+            if (data.userType == 0) {
+                layer.msg('超级管理员被无法移除!', {icon: 5, shift: 6});
+                return
+            }
+            if (data.userId == parseInt(getCookie('userId'))) {
+                layer.msg('当前登录用户无法移除!', {icon: 5, shift: 6});
+                return
+            }
             if (obj.event === 'delete') {
-                if (data.userType == 0) {
-                    layer.msg('超级管理员无法移除!', {icon: 5, shift: 6});
-                    return
-                }
-                if (data.userId == parseInt(getCookie('userId'))) {
-                    layer.msg('当前登录用户无法移除!', {icon: 5, shift: 6});
-                    return
-                }
                 layer.confirm('确定移除成员[<span style="color: red">' + data.partnerNickName + '</span>]?', {
                     icon: 3,
                     title: '移除成员'

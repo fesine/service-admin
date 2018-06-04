@@ -303,10 +303,11 @@ xblock{
     border-bottom: 1px solid #e5e5e5;
 }
 .left-nav #nav li:hover > a{
-    /*color: blue;*/
+    color: #009688;
 }
 .left-nav #nav .current{
     background-color: rgba(0, 0, 0, 0.3);
+    /*background-color: rgba(9, 181, 27, 0.3);*/
 }
 .left-nav #nav li a{
     font-size: 14px;

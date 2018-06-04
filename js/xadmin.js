@@ -9,16 +9,23 @@ $(function () {
 
     //触发事件
     var tab = {
-        tabAdd: function (title, url, id,icon) {
+        tabAdd: function (title, url, id) {
             //新增一个Tab项
             element.tabAdd('xbs_tab', {
                 title: title
                 ,
                 content: '<iframe tab-id="' + id + '" frameborder="0" src="' + url + '" scrolling="yes" class="x-iframe"></iframe>'
                 ,
-                id: id,
-                icon: icon
+                id: id
             })
+            //增加点击关闭事件
+            // var r = $(".layui-tab-title").find("li");
+            // //每次新打开tab都是最后一个，所以只对最后一个tab添加点击关闭事件
+            // r.eq(r.length - 1).children("i").on("click", function () {
+            //     alert($(this).parent("li").attr('lay-id'));
+            //     element.tabDelete("xbs_tab", $(this).parent("li").attr('lay-id'));
+            // }), element.tabChange("xbs_tab", r.length - 1);
+            // element.init();
         }
         , tabDelete: function (othis) {
             //删除指定Tab项
@@ -110,6 +117,10 @@ $(function () {
     //左侧菜单效果
     // $('#content').bind("click",function(event){
     $('.left-nav #nav li').click(function (event) {
+        $('.left-nav #nav li').css('background','#efefec')
+        $('.left-nav #nav li').children('a').css('color', '#333');
+        $(this).css('background', '#009688');
+        $(this).children('a').css('color', '#ffffff');
 
         if ($(this).children('.sub-menu').length) {
             if ($(this).hasClass('open')) {
@@ -322,16 +333,19 @@ function checkLogin () {
         parent.location.href = 'login.html'
     }
     var url
-    if((getCookie('projectId') === 'undefined' || getCookie('projectId')==null)  && getCookie('superFlag')=='1' && firstFlag){
-        url = _hostUrl + '/user/' + getCookie('userId')
+    if(firstFlag){
         firstFlag = false
+        return
+    }
+    if((getCookie('projectId') === 'undefined' || getCookie('projectId')==null)){
+        url = _hostUrl + '/user/' + getCookie('userId')
     }else{
        url =  _hostUrl + '/project/' + getCookie('projectId')
     }
     $.ajax({
         url: url,
         type: 'get',
-        timeout: 2000,
+        timeout: 3000,
         success: function (res) {
             if (!res || res.responseCode != 200) {
                 clearCookies()
