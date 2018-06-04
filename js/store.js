@@ -54,7 +54,7 @@ dataTypeArray[3] = '读出写入'
  * @type {any[]}
  */
 checkStatusArray = new Array()
-checkStatusArray[0] = '新增'
+checkStatusArray[0] = '开发'
 checkStatusArray[1] = '启用'
 checkStatusArray[2] = '维护'
 checkStatusArray[3] = '弃用'

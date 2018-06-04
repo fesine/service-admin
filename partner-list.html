@@ -119,6 +119,7 @@
     </div>
     <input hidden id="editPartner" value=""/>
     <input hidden id="groupArray" value=""/>
+    <input hidden id="groupCode" value=""/>
 </div>
 <script type="text/html" id="partnerBar">
     {{#  if(d.userType != 0 && myFlag < 2){ }}
@@ -144,6 +145,7 @@
                     , nodes: groupArray
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
+                        $("#groupCode").val(item.groupCode)
                         //查询自己所在分组身份
                         if(vm.superFlag !=1){
                             $.get(_hostUrl+'/partner/'+item.id+'/'+parseInt(getCookie('userId')),function (res) {
@@ -151,6 +153,8 @@
                                     myFlag = res.data
                                 }
                             })
+                        }else {
+                            myFlag = 0
                         }
                         // 查询点击分组的成员数据
                         partnerTable.reload({

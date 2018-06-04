@@ -19,18 +19,17 @@ $(function () {
                 id: id
             })
             //增加点击关闭事件
-            // var r = $(".layui-tab-title").find("li");
-            // //每次新打开tab都是最后一个，所以只对最后一个tab添加点击关闭事件
-            // r.eq(r.length - 1).children("i").on("click", function () {
-            //     alert($(this).parent("li").attr('lay-id'));
-            //     element.tabDelete("xbs_tab", $(this).parent("li").attr('lay-id'));
-            // }), element.tabChange("xbs_tab", r.length - 1);
-            // element.init();
+            var r = $(".layui-tab-title").find("li");
+            //每次新打开tab都是最后一个，所以只对最后一个tab添加点击关闭事件
+            r.eq(r.length - 1).children("i").on("click", function () {
+                // alert($(this).parent("li").attr('lay-id'));
+                element.tabDelete("xbs_tab", $(this).parent("li").attr('lay-id'));
+            }), element.tabChange("xbs_tab", r.length - 1);
+            element.init();
         }
         , tabDelete: function (othis) {
             //删除指定Tab项
-            element.tabDelete('xbs_tab', '44') //删除：“商品管理”
-
+            // element.tabDelete('xbs_tab', '44') //删除：“商品管理”
             othis.addClass('layui-btn-disabled')
         }
         , tabChange: function (id) {
@@ -470,7 +469,6 @@ function changeBackground (item) {
             $(d[p]).find('a').css('color', '#76756F')
         }
         else {
-
             $(d[p]).find('a').css('color', '#0AAF53')
             $(d[p]).css('backgroundColor', '#E2F2E4')
         }

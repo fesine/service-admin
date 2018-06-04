@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<head xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript"
+            src="./lib/vue/jquery.min.js"></script>
+    <script src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <script src="./lib/vue/vue.min.js"></script>
+    <script src="./lib/vue/axios.min.js"></script>
+    <script type="text/javascript" src="./js/global.js"></script>
+    <script type="text/javascript" src="./js/cookies.js"></script>
+    <script type="text/javascript" src="./js/store.js"></script>
+    <style>
+        body {
+            background-color: #f2f3f0;
+        }
+
+        .contract_title {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .contract_info {
+            color: #666;
+            text-align: center;
+            border-bottom: 1px dotted #666;
+            margin: 10px 10px;
+        }
+
+        .contract_content {
+            font-size: 14px;
+            padding: 20px;
+            line-height: 25px;
+            text-indent: 2em;
+        }
+
+        .contract_rely {
+            font-size: 14px;
+            padding: 20px 20px 20px 0px;
+            line-height: 25px;
+            text-indent: 2em;
+        }
+
+        .contract_content_title {
+            float: left;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .contract_content_item {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .contract_content_rely_title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .contract_content_rely_item {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div id="contract_detail">
+    <div class="layui-row">
+        <div class="layui-col-md9">
+            <div class="contract_content">
+                <blockquote class="layui-elem-quote">
+                    <h1 class="contract_title">{{projectInfo.serviceName}}
+                        <span v-if="projectInfo.checkStatus == 0" class="layui-badge-dot"
+                              style="margin-left: 5px;margin-bottom: 12px;"></span>
+                        <span v-if="projectInfo.checkStatus == 1"
+                              class="layui-badge-dot layui-bg-green"
+                              style="margin-left: 5px;margin-bottom: 12px;"></span>
+                        <span v-if="projectInfo.checkStatus == 2"
+                              class="layui-badge-dot layui-bg-orange"
+                              style="margin-left: 5px;margin-bottom: 12px;"></span>
+                        <span v-if="projectInfo.checkStatus == 3"
+                              class="layui-badge-dot layui-bg-black"
+                              style="margin-left: 5px;margin-bottom: 12px;"></span>
+                    </h1>
+                    <p class="contract_info">创建者：{{projectInfo.creator}}
+                        发布时间：{{projectInfo.createTime|convertDate}}</p>
+                    <a class="contract_content_title">服务编号：</a>
+                    <a class="contract_content_item"
+                       style="margin-left: 0px">{{projectInfo.serviceCode}}</a>
+                    <br>
+                    <a class="contract_content_title">服务名称：</a>
+                    <a class="contract_content_item">{{projectInfo.serviceName}}</a>
+                    <br>
+                    <a class="contract_content_title">版&nbsp;本&nbsp;号：</a>
+                    <a class="contract_content_item">V{{projectInfo.versionNo}}</a>
+                    <br>
+                    <a class="contract_content_title">所属服务组：</a>
+                    <a class="contract_content_item">{{projectInfo.groupCode}}</a>
+                    <br>
+                    <a class="contract_content_title">共享范围：</a>
+                    <a class="contract_content_item">{{projectInfo.shareSpace}}</a>
+                    <br>
+                    <a class="contract_content_title">服务消费方：</a>
+                    <a class="contract_content_item">{{projectInfo.consumerGroup}}</a>
+                    <br>
+                    <a class="contract_content_title">操作列表：</a>
+                    <a class="contract_content_item">{{projectInfo.operateType}}</a>
+                    <br>
+                    <a class="contract_content_title">数据存储类型：</a>
+                    <a class="contract_content_item">{{projectInfo.dataType}}</a>
+                    <br>
+                    <a class="contract_content_title">超时时间(秒)：</a>
+                    <a class="contract_content_item">{{projectInfo.timeout}}</a>
+                    <br>
+                    <a class="contract_content_title">是否等幂：</a>
+                    <a class="contract_content_item">{{projectInfo.idempotentFlag}}</a>
+                    <br>
+                    <a class="contract_content_title">依赖分组：</a>
+                    <a class="contract_content_item">{{projectInfo.relyGroup}}</a>
+                    <br>
+                    <a class="contract_content_title">依赖分组编号：</a>
+                    <a class="contract_content_item">{{projectInfo.relyServiceCode}}</a>
+                    <br>
+                    <a class="contract_content_title">业务负责人：</a>
+                    <a class="contract_content_item">{{projectInfo.businessOwner}}</a>
+                    <br>
+                    <a class="contract_content_title">开发负责人：</a>
+                    <a class="contract_content_item">{{projectInfo.developer}}</a>
+                    <br>
+                    <a class="contract_content_title">维护负责人：</a>
+                    <a class="contract_content_item">{{projectInfo.maintainer}}</a>
+                    <br>
+                    <a class="contract_content_title">服务描述：</a>
+                    <a class="contract_content_item">{{projectInfo.memo}}
+                    </a>
+                    <br>
+                    <a class="contract_content_title">服务质量：</a>
+                    <a class="contract_content_item">{{projectInfo.quality}}
+                    </a>
+                    <br>
+                    <a class="contract_content_title">安全要求：</a>
+                    <a class="contract_content_item">{{projectInfo.secure}}
+                    </a>
+                    <br>
+                    <a class="contract_content_title">最后更新时间：</a>
+                    <a class="contract_content_item">{{projectInfo.lastUpdateTime|convertDate}}</a>
+                    <br>
+                    <a class="contract_content_title">修改者：</a>
+                    <a class="contract_content_item">{{projectInfo.lastModifier}} </a>
+                </blockquote>
+            </div>
+        </div>
+        <div class="layui-col-md3 contract_rely">
+            <blockquote class="layui-elem-quote">
+                <div id="show-form" class="layui-hide">
+                    <fieldset class="layui-elem-field">
+                        <legend>管理操作</legend>
+                        <div class="layui-field-box">
+                            <form class="layui-form">
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <select id="L_checkStatus" name="checkStatus"
+                                            lay-verify="checkStatus">
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+
+                    </fieldset>
+                </div>
+                <div>
+                    <a class="contract_content_rely_title">服务提供者：</a>
+                </div>
+                <div>
+                    <a class="contract_content_item">服务提供者：</a>
+                </div>
+                <div>
+                    <a class="contract_content_rely_title">服务消费者：</a>
+                </div>
+                <div>
+                    <a class="contract_content_item">服务：</a>
+                </div>
+            </blockquote>
+        </div>
+    </div>
+</div>
+<script>
+ function updateClass () {
+     $.get(_hostUrl + '/partner/' + vm.groupId + '/' + parseInt(getCookie('userId')), function (res) {
+         if (res.data && res.data < 2) {
+             $('#show-form').removeClass('layui-hide')
+         } else {
+             $('#show-form').addClass('layui-hide')
+         }
+     })
+ }
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery
+        var form = layui.form,
+            layer = layui.layer
+        form.on('select', function (data) {
+            $.putForm(_hostUrl + '/contract/check', {
+                id: vm.contractId,
+                serviceName: vm.projectInfo.serviceName,
+                projectId: vm.projectInfo.projectId,
+                groupId: vm.projectInfo.groupId,
+                checkStatus: data.value
+            }, function (res) {
+                if (res.responseCode == 201) {
+                    layer.msg('修改状态成功', {
+                        icon: 1,
+                        time: 2000
+                    })
+                }
+            })
+        })
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#contract_detail',
+        data () {
+            return {
+                contractId: '',
+                projectInfo: {},
+                groupId:'',
+                superFlag: -1
+            }
+        },//过滤器
+        filters: {
+            convertType (value) {
+                return projectTypeArray[value]
+            },
+            convertDate (value) {
+                return dateFormat(value)
+            }
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = parseInt(getCookie('superFlag'))
+            var _this = this
+            this.contractId = _this.getUrlKey('id')
+            this.groupId = _this.getUrlKey('groupId')
+        },
+        mounted () {
+            $('.contract_rely .layui-elem-quote').css('height', $('.contract_content .layui-elem-quote').height())
+        },
+        watch: {
+            contractId () {
+                axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.projectInfo = response.data.data
+                        layui.use(['form'], function () {
+                            $ = layui.jquery
+                            var form = layui.form
+                            for (var i = 0; i < checkStatusArray.length; i++) {
+                                $('#L_checkStatus').append(new Option(checkStatusArray[i], i))// 下拉菜单里添加元素
+                            }
+                            $('#L_checkStatus').val(vm.projectInfo.checkStatus)
+                            form.render()//下拉菜单渲染 把内容加载进去
+                        })
+                        if (this.superFlag != 1) {
+                            updateClass()
+                        }else{
+                            $('#show-form').removeClass('layui-hide')
+                        }
+                    }
+                })
+            }
+        }, methods: {
+            getUrlKey: function (name) {
+                return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ''])[1].replace(/\+/g, '%20')) || null
+            }
+        }
+    })
+</script>
+<script>
+    //获取传过来的contractId
+</script>
+</body>
+</html>

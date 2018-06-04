@@ -130,13 +130,14 @@
     <input hidden id="groupArray" value=""/>
 </div>
 <script type="text/html" id="contractBar">
-    {{#  if(d.removeFlag == 0){ }}
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
-    {{#  } else { }}
-    <a class="layui-btn layui-btn-warm layui-btn-xs" ay-even lay-event="recover">恢复</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs margin-0" lay-even lay-event="delete">彻底删除</a>
-    {{#  } }}
+        {{#  if(d.removeFlag == 0){ }}
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
+        {{#  } else  { }}
+        <a class="layui-btn layui-btn-warm layui-btn-xs" ay-even lay-event="recover">恢复</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs margin-0" lay-even lay-event="delete">彻底删除</a>
+        {{#  } }}
+
     <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
 </script>
 <script type="text/html" id="showStar">
@@ -156,11 +157,11 @@
 </script>
 <script type="text/html" id="showCode">
     {{#  if(d.checkStatus == 0){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
     {{# } else if(d.checkStatus == 1){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-green" style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-green" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
     {{# } else if(d.checkStatus == 2){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-orange" style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-orange" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
     {{# } else { }}
     <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-black"
                                                       style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
@@ -170,6 +171,7 @@
     <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
 </script>
 <script>
+    var myFlag = 0;
     layui.use(['table', 'tree'], function () {
         var groupArray
         var table = layui.table
@@ -192,17 +194,17 @@
                     field: 'starFlag', title: '', width: 44, align: 'center',
                     event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
                 }
-                , {field: 'serviceCode', title: '契约编号', width: 240, align: 'left',
+                , {field: 'serviceCode', title: '契约编号', width: 250, align: 'left',
                     event: 'detail',templet: '#showCode'}
-                , {field: 'serviceName', title: '契约名称', width: 235, align: 'center',
+                , {field: 'serviceName', title: '契约名称', width: 250, align: 'center',
                     event: 'detail', templet: '#showName'}
-                , {field: 'versionNo', title: '版本号', width: 90, sort: true, align: 'center'}
-                , {
-                    field: 'lastUpdateTime', title: '最后修改时间', width: 160, align: 'center'
-                    , templet: function (d) {
-                        return dateFormat(d.lastUpdateTime)
-                    }
-                }
+                , {field: 'versionNo', title: '版本号', width: 100, sort: true, align: 'center'}
+                // , {
+                //     field: 'lastUpdateTime', title: '最后修改时间', width: 160, align: 'center'
+                //     , templet: function (d) {
+                //         return dateFormat(d.lastUpdateTime)
+                //     }
+                // }
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#contractBar'}
             ]]
             , response: {
@@ -251,11 +253,6 @@
                     icon: 3,
                     title: '彻底删除契约'
                 }, function (index) {
-                    var params = {
-                        id: data.id + '',
-                        projectId: data.projectId,
-                        groupId: data.groupId
-                    }
                     $.deleteForm(_hostUrl + '/contract/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('彻底删除成功!', {
@@ -292,10 +289,10 @@
                 })
             } else if (obj.event === 'edit') {
                 $('#editContract').val(JSON.stringify(data))
-                x_admin_show('修改契约', './contract-edit.html', 600, 550, true)
+                x_admin_show('修改契约', './contract-edit.html?id='+data.id, 600, 550, true)
             } else if (obj.event === 'detail') {
                 $('#editContract').val(JSON.stringify(data))
-                x_admin_show('契约详情', './contract-edit.html', 600, 550, true)
+                x_admin_show('契约详情', './contract-detail.html?id='+data.id+'&groupId='+data.groupId, 600, 550, true)
             } else if (obj.event === 'changeStar') {
                 var params = {
                     id: data.id,
@@ -318,6 +315,8 @@
                         //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucanghou"></use>')
                         // }
                         // table.render()
+                    }else{
+                        layer.msg(res.responseMsg,{icon:2,timeout:1000})
                     }
                 })
             }
@@ -335,6 +334,14 @@
                     , nodes: groupArray
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
+                        //查询自己所在分组身份
+                        if (vm.superFlag != 1) {
+                            $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
+                                if (res.responseCode == 200) {
+                                    myFlag = res.data
+                                }
+                            })
+                        }
                         // 查询点击分组的契约数据
                         contractTable.reload({
                             where: {

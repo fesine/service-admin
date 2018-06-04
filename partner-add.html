@@ -124,8 +124,9 @@
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
         }
+
         //默认加载第一个
-        $('#L_groupCode').val(groupArray[0].groupCode)
+        $('#L_groupCode').val(parent.$('#groupCode').val())
         $('#L_groupId').val(groupArray[0].id)
         $('#L_projectId').val(parseInt(getCookie('projectId')))
         $('#L_inviteUserId').val(parseInt(getCookie('userId')))
