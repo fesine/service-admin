@@ -74,6 +74,14 @@
 </head>
 <body>
 <div id="contract_detail">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>历史记录</li>
+            <li>依赖拓扑图</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
     <div class="layui-row">
         <div class="layui-col-md9">
             <div class="contract_content">
@@ -191,7 +199,20 @@
             </blockquote>
         </div>
     </div>
+            </div>
+            <div class="layui-tab-item">
+                <table id="historyList" lay-filter="historyList"></table>
+            </div>
+            <div class="layui-tab-item">
+            </div>
+        </div>
+    </div>
 </div>
+<script type="text/html" id="historyBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">切换</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
+    <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
+</script>
 <script>
  function updateClass () {
      $.get(_hostUrl + '/partner/' + vm.groupId + '/' + parseInt(getCookie('userId')), function (res) {
@@ -202,10 +223,11 @@
          }
      })
  }
-    layui.use(['form', 'layer'], function () {
+    layui.use(['form', 'layer', 'table'], function () {
         $ = layui.jquery
         var form = layui.form,
-            layer = layui.layer
+            layer = layui.layer,
+            table = layui.table
         form.on('select', function (data) {
             $.putForm(_hostUrl + '/contract/check', {
                 id: vm.contractId,
@@ -215,6 +237,7 @@
                 checkStatus: data.value
             }, function (res) {
                 if (res.responseCode == 201) {
+                    vm.projectInfo.checkStatus= data.value
                     layer.msg('修改状态成功', {
                         icon: 1,
                         time: 2000
@@ -222,6 +245,59 @@
                 }
             })
         })
+        var historyTable = table.render({
+            elem: '#historyList'
+            , url: _hostUrl + '/contract/historys'  //数据接口
+            , request: {
+                pageName: 'pageIndex' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+                id: vm.contractId //查询当前用户所在所有组的数据
+            }
+            , page: true //开启分页
+            , cols: [[ //表头
+                {field: 'currentFlag', title: '当前', width: 60, align: 'center',templet:function (d) {
+                        if (d.currentFlag === 1) {
+                            return '<i class="iconfont" style="color:red;font-size: 30px;font-weight: bold;">&#xe6ad;</i>'
+                        }else{
+                            return ''
+                        }
+                    }}
+                ,{field: 'updateUserId', title: '操作用户', width: 150, align: 'center'}
+                , {field: 'updateDesc', title: '更新描述', width: 400,  align: 'center'}
+                , {
+                    field: 'updateTime', title: '修改时间', width: 180, align: 'center'
+                    , templet: function (d) {
+                        if(d.currentFlag === 1){
+                            return '<span class="layui-badge-dot" style="margin-right: 8px;"></span>'+dateFormat(d.updateTime)+'</a></span>'
+                        }else{
+                            return dateFormat(d.updateTime)
+                        }
+
+                    }
+                }
+                , {title: '操作', fixed: 'right', align: 'center', toolbar: '#historyBar'}
+            ]]
+            , response: {
+                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                , statusCode: 200 //成功的状态码，默认：0
+                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , rootName: 'data'
+                , countName: 'totalRecord'
+                , dataName: 'resultList'
+            }
+        })
+        $("ul li:eq(0)").click(function () {
+            layer.msg('基本信息')
+        })
+        $("ul li:eq(1)").click(function () {
+            layer.msg('历史记录')
+        })
+        $("ul li:eq(2)").click(function () {
+            layer.msg('依赖拓扑图')
+        })
+
     })
 </script>
 <script>

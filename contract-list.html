@@ -128,6 +128,7 @@
     </div>
     <input hidden id="editContract" value=""/>
     <input hidden id="groupArray" value=""/>
+    <input hidden id="groupId" value=""/>
 </div>
 <script type="text/html" id="contractBar">
         {{#  if(d.removeFlag == 0){ }}
@@ -172,9 +173,10 @@
 </script>
 <script>
     var myFlag = 0;
-    layui.use(['table', 'tree'], function () {
+    layui.use(['table', 'tree', 'element'], function () {
         var groupArray
         var table = layui.table
+        var element = layui.element
         //第一个实例
         var contractTable = table.render({
             elem: '#contractList'
@@ -304,7 +306,7 @@
                         table.reload('contractList', {
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
-                                , groupId: data.groupId
+                                , groupId: $('#groupId').val()
                             }
                         })
                         // if(data.starFlag == 1){
@@ -334,6 +336,7 @@
                     , nodes: groupArray
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
+                        $('#groupId').val(item.id)
                         //查询自己所在分组身份
                         if (vm.superFlag != 1) {
                             $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
@@ -356,6 +359,7 @@
 
         //监听回收站
         $('#backupContent').click(function (d) {
+            $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
             contractTable.reload({
@@ -366,6 +370,7 @@
             })
         })
         $('#allContract').click(function (d) {
+            $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
             contractTable.reload({
