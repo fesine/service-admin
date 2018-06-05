@@ -342,7 +342,7 @@
                             icon: 1,
                             time: 2000
                         })
-                        table.reload('historyList')
+                        // table.reload('historyList')
                         vm.historyId = historyId
                     } else {
                         layer.msg(res.responseMsg)
@@ -419,7 +419,7 @@
                     if (response.data.responseCode == 200) {
                         this.projectInfo = response.data.data
                         this.consumerList = response.data.data.consumerList
-                        if(this.projectInfo.length === 0){
+                        if(this.projectInfo.consumerList.length === 0){
                             this.projectInfo.consumerList = null
                         }
                         layui.use(['form'], function () {
@@ -455,6 +455,11 @@
                             this.projectInfo.consumerList = null
                         }
                     }
+                    historyTable.reload({
+                        where: {
+                            id: this.contractId //查询当前用户所在所有组的数据
+                        }
+                    })
                 })
             }
         }, methods: {
