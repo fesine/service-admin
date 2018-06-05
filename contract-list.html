@@ -326,8 +326,11 @@
         // 获取分组列表
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
             //如果不存在分组怎么办？
+            if(res.responseCode != 200){
+                layer.msg(res.responseMsg)
+            }
             groupArray = res.data
-            if(groupArray.length == 0){
+            if(!groupArray ||groupArray.length == 0){
                 layer.msg("分组不存在，请先创建分组!")
             }else{
                 $('#groupArray').val(JSON.stringify(groupArray))

@@ -66,9 +66,8 @@
             font-weight: bold;
         }
 
-        .contract_content_rely_item {
-            margin-left: 10px;
-            font-size: 16px;
+        a.change-rely-service:hover{
+            color: #009688;
         }
     </style>
 </head>
@@ -192,7 +191,7 @@
                             <div>
                                 <ul id="relyList" v-if="projectInfo.relyList">
                                     <li v-for="item in projectInfo.relyList" @click="handleClick(item)">
-                                        <a class="contract_content_item" v-if="item.serviceName" href="javascript:;">
+                                        <a class="contract_content_item  change-rely-service" v-if="item.serviceName" href="javascript:;">
                                             {{ item.serviceName }}</a>
                                         <a class="contract_content_item" v-else>{{ item.serviceCode }}</a>
                                     </li>
@@ -206,10 +205,10 @@
                             <div>
                                 <ul id="consumerList" v-if="projectInfo.consumerList">
                                     <li v-for="item in projectInfo.consumerList" @click="handleClick(item)">
-                                        <a class="contract_content_item" v-if="item.serviceName"
+                                        <a class="contract_content_item  change-rely-service" v-if="item.serviceName"
                                            href="javascript:;">{{
                                             item.serviceName }}</a>
-                                        <a class="contract_content_item" v-else>{{ item.serviceCode
+                                        <a class="contract_content_item change-rely-service" v-else>{{ item.serviceCode
                                             }}</a>
                                     </li>
                                 </ul>
@@ -356,7 +355,7 @@
                 icon: 3,
                 title: '删除历史记录'
             }, function (index) {
-                $.deleteForm(_hostUrl + '/contract/' + data, null, function (res) {
+                $.deleteForm(_hostUrl + '/contract/history/' + data, null, function (res) {
                     if (res.responseCode == 204) {
                         layer.msg('删除成功!', {
                             icon: 1,
