@@ -55,7 +55,7 @@
 </head>
 
 <body class="layui-anim layui-anim-up" onload="checkLogin ()">
-<div id="contract">
+<div id="api">
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a>首页</a>
@@ -72,8 +72,8 @@
         <div class="layui-row">
             <div class="layui-col-xs3">
                 <button class="layui-btn"
-                        onclick="x_admin_show('添加契约','./contract-add.html',600,550,true)">
-                    <i class="layui-icon"></i>新增契约
+                        onclick="x_admin_show('添加接口','./api-add.html',600,550,true)">
+                    <i class="layui-icon"></i>新增接口
                 </button>
                 <button class="layui-btn layui-btn-danger" onclick="delAll()"><i
                         class="layui-icon"></i>批量删除
@@ -81,7 +81,7 @@
             </div>
             <div class="layui-col-xs9">
                     <div class="layui-inline" style="width: 240px;">
-                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入服务名或编号模糊查询" autocomplete="off" class="layui-input">
+                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入接口名或编号模糊查询" autocomplete="off" class="layui-input">
                     </div>
                     <button class="layui-btn" data-type="reload"><i
                             class="layui-icon">&#xe615;</i></button>
@@ -101,10 +101,10 @@
                     <tr>
                         <td style="padding: 0px;">
                             <ul>
-                                <li id="allContract">
+                                <li id="allApi">
                                     <a class="backup" href="javascript:;">
                                         <i class="iconfont">&#xe699;</i>
-                                        <cite>所有契约</cite></a>
+                                        <cite>所有接口</cite></a>
                                 </li>
                                 <li id="backupContent">
                                     <a class="backup" href="javascript:;" lay-filter="backup">
@@ -124,16 +124,16 @@
                 </table>
             </div>
             <div class="layui-col-md10">
-                <table id="contractList" lay-filter="contractList"></table>
+                <table id="apiList" lay-filter="apiList"></table>
             </div>
         </div>
 
     </div>
-    <input hidden id="editContract" value=""/>
+    <input hidden id="editApi" value=""/>
     <input hidden id="groupArray" value=""/>
     <input hidden id="groupId" value=""/>
 </div>
-<script type="text/html" id="contractBar">
+<script type="text/html" id="apiBar">
         {{#  if(d.removeFlag == 0){ }}
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
@@ -180,9 +180,9 @@
         var groupArray
         var table = layui.table
         //第一个实例
-        var contractTable = table.render({
-            elem: '#contractList'
-            , url: _hostUrl + '/contracts/'  //数据接口
+        var apiTable = table.render({
+            elem: '#apiList'
+            , url: _hostUrl + '/apis/'  //数据接口
             , request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
@@ -198,18 +198,12 @@
                     field: 'starFlag', title: '', width: 44, align: 'center',
                     event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
                 }
-                , {field: 'serviceCode', title: '契约编号', width: 250, align: 'left',
+                , {field: 'serviceCode', title: '接口编号', width: 250, align: 'left',
                     event: 'detail',templet: '#showCode'}
-                , {field: 'serviceName', title: '契约名称', width: 250, align: 'center',
+                , {field: 'serviceName', title: '接口名称', width: 250, align: 'center',
                     event: 'detail', templet: '#showName'}
                 , {field: 'versionNo', title: '版本号', width: 100, sort: true, align: 'center'}
-                // , {
-                //     field: 'lastUpdateTime', title: '最后修改时间', width: 160, align: 'center'
-                //     , templet: function (d) {
-                //         return dateFormat(d.lastUpdateTime)
-                //     }
-                // }
-                , {title: '操作',  align: 'center', toolbar: '#contractBar'}
+                , {title: '操作',  align: 'center', toolbar: '#apiBar'}
             ]]
             , response: {
                 statusName: 'responseCode' //数据状态的字段名称，默认：code
@@ -223,7 +217,7 @@
         //加入搜索功能
         var $ = layui.$, active = {
             reload: function () {
-                contractTable.reload({
+                apiTable.reload({
                     where: {
                         projectId: parseInt(getCookie('projectId')),
                         userId: parseInt(getCookie('userId')), //查询当前用户所在所有组的数据
@@ -237,7 +231,7 @@
             active[type] ? active[type].call(this) : '';
         });
         //监听工具条
-        table.on('tool(contractList)', function (obj) {
+        table.on('tool(apiList)', function (obj) {
             if (getCookie('projectStatus') === '2') {
                 layer.msg('项目已归档，无法操作', {
                     icon: 2,
@@ -249,20 +243,20 @@
             if (obj.event === 'remove') {
                 layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被移到回收站!', {
                     icon: 3,
-                    title: '删除契约'
+                    title: '删除接口'
                 }, function (index) {
                     var params = {
                         id: data.id + '',
                         projectId: data.projectId,
                         groupId: data.groupId
                     }
-                    $.putForm(_hostUrl + '/contract/remove', params, function (res) {
+                    $.putForm(_hostUrl + '/api/remove', params, function (res) {
                         if (res.responseCode == 201) {
                             layer.msg('移除到回收站成功!', {
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('contractList')
+                            table.reload('apiList')
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -271,15 +265,15 @@
             } else if (obj.event === 'delete') {
                 layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被彻底删除，无法恢复!', {
                     icon: 3,
-                    title: '彻底删除契约'
+                    title: '彻底删除接口'
                 }, function (index) {
-                    $.deleteForm(_hostUrl + '/contract/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
+                    $.deleteForm(_hostUrl + '/api/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('彻底删除成功!', {
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('contractList')
+                            table.reload('apiList')
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -288,53 +282,45 @@
             } else if (obj.event === 'recover') {
                 layer.confirm('[<span style="color: red">' + data.serviceName + '</span>]将被恢复!', {
                     icon: 3,
-                    title: '恢复契约'
+                    title: '恢复接口'
                 }, function () {
                     var params = {
                         id: data.id + '',
                         projectId: data.projectId,
                         groupId: data.groupId
                     }
-                    $.putForm(_hostUrl + '/contract/recover', params, function (res) {
+                    $.putForm(_hostUrl + '/api/recover', params, function (res) {
                         if (res.responseCode == 201) {
                             layer.msg('恢复成功!', {
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('contractList')
+                            table.reload('apiList')
                         } else {
                             layer.msg(res.responseMsg)
                         }
                     })
                 })
             } else if (obj.event === 'edit') {
-                $('#editContract').val(JSON.stringify(data))
-                x_admin_show('修改契约', './contract-edit.html?id='+data.id, 600, 550, true)
+                $('#editApi').val(JSON.stringify(data))
+                x_admin_show('修改接口', './api-edit.html?id='+data.id, 600, 550, true)
             } else if (obj.event === 'detail') {
-                $('#editContract').val(JSON.stringify(data))
-                x_admin_show('契约详情', './contract-detail.html?id='+data.id+'&groupId='+data.groupId, 600, 550, true)
+                $('#editApi').val(JSON.stringify(data))
+                x_admin_show('接口详情', './api-detail.html?id='+data.id+'&groupId='+data.groupId, 600, 550, true)
             } else if (obj.event === 'changeStar') {
                 var params = {
                     id: data.id,
                     projectId: data.projectId,
                     groupId: data.groupId
                 }
-                $.putForm(_hostUrl + '/contract/star', params, function (res) {
+                $.putForm(_hostUrl + '/api/star', params, function (res) {
                     if (res.responseCode == 201) {
-                        table.reload('contractList', {
+                        table.reload('apiList', {
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
                                 , groupId: $('#groupId').val()
                             }
                         })
-                        // if(data.starFlag == 1){
-                        //     data.starFlag = 0
-                        //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucang"></use>')
-                        // }else{
-                        //     data.starFlag = 1
-                        //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucanghou"></use>')
-                        // }
-                        // table.render()
                     }else{
                         layer.msg(res.responseMsg,{icon:2,timeout:1000})
                     }
@@ -366,8 +352,8 @@
                                 }
                             })
                         }
-                        // 查询点击分组的契约数据
-                        contractTable.reload({
+                        // 查询点击分组的接口数据
+                        apiTable.reload({
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
                                 , groupId: item.id
@@ -382,19 +368,19 @@
         $('#backupContent').click(function (d) {
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
-            // 查询点击分组的契约数据
-            contractTable.reload({
+            // 查询点击分组的接口数据
+            apiTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                     , removeFlag: 1
                 }
             })
         })
-        $('#allContract').click(function (d) {
+        $('#allApi').click(function (d) {
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
-            // 查询点击分组的契约数据
-            contractTable.reload({
+            // 查询点击分组的接口数据
+            apiTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                 }
@@ -413,7 +399,7 @@
 </script>
 <script>
     let vm = new Vue({
-        el: '#contract',
+        el: '#api',
         data () {
             return {
                 superFlag: 0,
