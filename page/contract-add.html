@@ -271,11 +271,37 @@
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
         }
-        //默认加载第一个
-        $('#L_groupCode').val(groupArray[0].groupCode)
-        $('#L_groupId').val(groupArray[0].id)
-        $('#L_projectId').val(parseInt(getCookie('projectId')))
-        form.render()//下拉菜单渲染 把内容加载进去
+        //获取所有可能的消费者分组信息
+        $.get(_hostUrl + '/groups/' + parseInt(getCookie('projectId')), function (res) {
+            if (res.responseCode == 200) {
+                $.each(res.data.resultList, function (index, item) {
+                    $('#L_relyGroup').append("<input type='checkbox' name='relyGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='relyGroup'>")
+                    $('#L_consumerGroup').append("<input type='checkbox' name='consumerGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='consumerGroup'>")
+
+                })
+                //如果是复制的则需要初始化数据
+                var editData = parent.$("#editContract").val();
+                if (editData != '') {
+                    var editArray = JSON.parse(editData)
+                    loadJsonDataToForm(editArray)
+                    if (editArray.idempotentFlag == 1) {
+                        $('#L_idempotentFlag').attr("checked", "")
+                        $('#L_id').val('')
+                        operateTypeValue = getCheckboxValue('operateType')
+                        consumerGroupValue = getCheckboxValue('consumerGroup')
+                        relyGroupValue = getCheckboxValue('relyGroup')
+                    }
+                } else {
+                    $('#L_groupCode').val(groupArray[0].groupCode)
+                    $('#L_groupId').val(groupArray[0].id)
+                    $('#L_projectId').val(parseInt(getCookie('projectId')))
+                }
+                form.render()
+            }
+
+        })
+
+
         //自定义验证规则
         form.verify({
             versionNo: function (value) {
@@ -313,18 +339,6 @@
         // $("ul li:eq(1)").click(function () {
         //
         // })
-        //获取所有的分组信息
-        $.get(_hostUrl + '/groups/' + parseInt(getCookie('projectId')), function (res) {
-            if (res.responseCode == 200) {
-                $.each(res.data.resultList, function (index, item) {
-                    $('#L_relyGroup').append("<input type='checkbox' name='relyGroup' value='"+ item.groupCode+"' title='"+ item.groupName+"' lay-skin='primary' lay-filter='relyGroup'>")
-                    $('#L_consumerGroup').append("<input type='checkbox' name='consumerGroup' value='"+ item.groupCode+"' title='"+ item.groupName+"' lay-skin='primary' lay-filter='consumerGroup'>")
-
-                })
-                form.render()
-            }
-
-        })
         form.on('switch(idempotentFlag)', function (data) {
             //记住用户名
             if (data.elem.checked) {
@@ -357,6 +371,7 @@
             data.field.relyGroup= relyGroupValue
             data.field.operateType= operateTypeValue
             data.field.idempotentFlag= idempotentFlagValue
+            data.field.id=null
             $.post(_hostUrl + '/contract', data.field, function (res) {
                 if (res.responseCode == 201) {
                     layer.msg('添加契约成功', {

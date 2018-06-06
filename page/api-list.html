@@ -20,7 +20,6 @@
     <script type="text/javascript" src="../js/cookies.js"></script>
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
-    <script src="../css/icon/iconfont.js"></script>
     <style type="text/css">
         .icon {
             width: 1.5em;
@@ -60,9 +59,9 @@
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a>首页</a>
-        <a>契约管理</a>
+        <a>接口管理</a>
         <a>
-          <cite>契约列表</cite></a>
+          <cite>接口列表</cite></a>
       </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
            href="javascript:location.replace(location.href);" title="刷新">
@@ -73,7 +72,7 @@
         <div class="layui-row">
             <div class="layui-col-xs3">
                 <button class="layui-btn"
-                        onclick="addContract()">
+                        onclick="x_admin_show('添加契约','./contract-add.html',600,550,true)">
                     <i class="layui-icon"></i>新增契约
                 </button>
                 <button class="layui-btn layui-btn-danger" onclick="delAll()"><i
@@ -176,10 +175,6 @@
     <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
 </script>
 <script>
-    function addContract () {
-        $('#editContract').val('')
-        x_admin_show('添加契约', './contract-add.html', 600, 550, true)
-    }
     var myFlag = 0;
     layui.use(['table', 'tree', 'form'], function () {
         var groupArray

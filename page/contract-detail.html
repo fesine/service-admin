@@ -169,10 +169,10 @@
                     </div>
                     <div class="layui-col-md3 contract_rely">
                         <blockquote class="layui-elem-quote">
-                            <div id="show-form" class="layui-hide">
-                                <!--<div id="show-form" v-if="userType < 2">-->
+                            <div >
                                 <fieldset class="layui-elem-field">
                                     <legend>管理操作</legend>
+                                    <div id="show-form" class="layui-hide">
                                     <div class="layui-field-box">
                                         <form class="layui-form">
                                             <div class="layui-input-inline" style="width: 150px;">
@@ -182,9 +182,17 @@
                                             </div>
                                         </form>
                                     </div>
-
+                                    </div>
+                                    <div v-if="userType < 3">
+                                        <button class="layui-btn layui-btn-normal"
+                                                lay-filter="copy" lay-submit=""
+                                                style="width: 180px;">
+                                            复制(另存契约)
+                                        </button>
+                                    </div>
                                 </fieldset>
                             </div>
+
                             <div>
                                 <a class="contract_content_rely_title">服务提供者：</a>
                             </div>
@@ -252,6 +260,13 @@
         var form = layui.form,
             layer = layui.layer,
             table = layui.table
+        form.on('submit(copy)',function (data) {
+            // 获得frame索引
+            var index = parent.layer.getFrameIndex(window.name)
+            //关闭当前frame
+            parent.layer.close(index)
+            parent.x_admin_show('复制新增','contract-add.html', 500, 500,true)
+        })
         form.on('select', function (data) {
             $.putForm(_hostUrl + '/contract/check', {
                 id: vm.contractId,

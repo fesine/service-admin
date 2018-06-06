@@ -96,12 +96,6 @@
                     <cite>分组管理</cite>
                 </a>
             </li>
-            <li v-if="superFlag==1">
-                <a _href="./page/user-list.html">
-                    <i class="iconfont">&#xe726;</i>
-                    <cite>用户管理</cite>
-                </a>
-            </li>
             <li>
                 <a _href="./page/contract-list.html">
                     <i class="iconfont">&#xe705;</i>
@@ -109,7 +103,7 @@
                 </a>
             </li>
             <li>
-                <a _href="./page/user-list.html">
+                <a _href="./page/api-list.html">
                     <i class="iconfont">&#xe6f7;</i>
                     <cite>服务接口</cite>
                 </a>
@@ -136,6 +130,12 @@
                 <a _href="./page/user-list.html">
                     <i class="iconfont">&#xe6f3;</i>
                     <cite>项目动态</cite>
+                </a>
+            </li>
+            <li v-if="superFlag==1">
+                <a _href="./page/user-list.html">
+                    <i class="iconfont">&#xe726;</i>
+                    <cite>用户管理</cite>
                 </a>
             </li>
             <!--<li>-->
@@ -395,7 +395,7 @@
                         if(response.data.responseCode == 200){
                             clearCookies()
                             layer.msg('退出成功', {icon: 1,time: 1000}, function () {
-                                location.href = 'login.html'
+                                location.href = '../login.html'
                             });
                         }
                     })

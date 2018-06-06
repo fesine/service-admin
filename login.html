@@ -64,24 +64,27 @@
                 //监听提交
               form.on('submit(login)', function(data){
                   $.post(_hostUrl+'/login', data.field, function (res) {
-                      if (res.responseCode == 200) {
-                          //判断没有被添加分组的用户，无法登录
-                          if(res.data.projectSize == 0){
-                              layer.msg('您没有加入任何项目或分组，请联系系统管理员!', {icon: 2,time: 2000})
-                              return
-                          }
-                          setCookie('login','true')
-                          setCookie('userId',res.data.user.id)
-                          setCookie('username',res.data.user.username)
-                          setCookie('nickName',res.data.user.nickName)
-                          setCookie('superFlag',res.data.user.superFlag)
-                          // setCookie('projectId',res.data.projectId)
-                          layer.msg('登录成功', {icon:1,time: 1000}, function () {
-                              location.href = 'index.html'
-                          });
-                      } else {
+                      if (res.responseCode != 200) {
                           layer.msg(res.responseMsg, {time: 2000});
+                          return
                       }
+                      if(res.data.user.enableFlag != 1) {
+                          layer.msg("该用户已被冻结，请联系系统管理员!", {time: 2000});
+                          return
+                      }
+                      //判断没有被添加分组的用户，无法登录
+                      if(res.data.projectSize == 0){
+                          layer.msg('您没有加入任何项目或分组，请联系系统管理员!', {icon: 2,time: 2000})
+                          return
+                      }
+                      setCookie('login','true')
+                      setCookie('userId',res.data.user.id)
+                      setCookie('username',res.data.user.username)
+                      setCookie('nickName',res.data.user.nickName)
+                      setCookie('superFlag',res.data.user.superFlag)
+                      layer.msg('登录成功', {icon:1,time: 1000}, function () {
+                          location.href = 'index.html'
+                      });
                   }, 'json');
                 return false;
               });
