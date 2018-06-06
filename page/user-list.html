@@ -8,18 +8,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport"
         content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-  <link rel="stylesheet" href="./css/font.css">
-  <link rel="stylesheet" href="./css/xadmin.css">
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" href="../css/font.css">
+  <link rel="stylesheet" href="../css/xadmin.css">
   <script type="text/javascript"
-          src="./lib/vue/jquery.min.js"></script>
-  <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/xadmin.js"></script>
-  <script type="text/javascript" src="./js/global.js"></script>
-  <script type="text/javascript" src="./js/store.js"></script>
-  <script type="text/javascript" src="./js/cookies.js"></script>
-  <script src="./lib/vue/vue.min.js"></script>
-  <script src="./lib/vue/axios.min.js"></script>
+          src="../lib/vue/jquery.min.js"></script>
+  <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/global.js"></script>
+  <script type="text/javascript" src="../js/store.js"></script>
+  <script type="text/javascript" src="../js/cookies.js"></script>
+  <script src="../lib/vue/vue.min.js"></script>
+  <script src="../lib/vue/axios.min.js"></script>
 </head>
 
 <body class="layui-anim layui-anim-up" onload="checkLogin ()">
@@ -37,7 +37,7 @@
   </div>
   <div class="x-body">
     <xblock>
-      <button class="layui-btn" onclick="x_admin_show('添加用户','./member-add.html',600,400)"><i
+      <button class="layui-btn" onclick="x_admin_show('添加用户','./user-add.html',600,400)"><i
               class="layui-icon"></i>新增用户
       </button>
     </xblock>
@@ -58,8 +58,13 @@
   {{#  } }}
 </script>
 <script>
-    layui.use('table', function () {
+    layui.use(['table','form','layer'], function () {
         var table = layui.table
+            ,form = layui.form
+            , layer = layui.layer
+        form.on('switch(enableFlag)',function (data) {
+            updateEnableFlag(data.elem)
+        })
         //第一个实例
         table.render({
             elem: '#userList'
@@ -70,6 +75,18 @@
                 , {field: 'username', title: '用户名', width: 150, align: 'center'}
                 , {field: 'nickName', title: '姓名', width: 150, align: 'center'}
                 , {field: 'superFlag', title: '角色', width: 120, align: 'center',templet:'#superFlag'}
+                , {field: 'enableFlag', title: '状态', width: 100, align: 'center'
+                    , templet: function (d) {
+                    if(d.superFlag == 1){
+                        return '<input id="'+d.id+'"  checked disabled type="checkbox" name="switch" lay-text="启用|停用" lay-skin="switch" lay-filter="enableFlag">'
+                    }
+                        if (d.enableFlag == 1) {
+                            return '<input id="'+d.id+'" checked type="checkbox" name="switch" lay-text="启用|停用" lay-skin="switch" lay-filter="enableFlag">'
+                        } else {
+                            return '<input id="'+d.id+'"  type="checkbox" name="switch" lay-text="启用|停用" lay-skin="switch" lay-filter="enableFlag">'
+                        }
+                    }
+                    }
                 , {
                     field: 'lastUpdateTime', title: '最后修改时间', width: 200, align: 'center'
                     , templet: function (d) {
@@ -116,6 +133,26 @@
                 x_admin_show('修改用户', './user-edit.html', 600, 450)
             }
         })
+
+        //更新启用冻结状态
+        function updateEnableFlag (data) {
+            $.putForm(_hostUrl + "/user", {
+                id:data.id,
+                enableFlag: data.checked ? 1 : 0
+            }, function (res) {
+                if (res.responseCode == 201) {
+                    layer.msg('修改状态成功', {
+                        icon: 1,
+                        time: 2000
+                    }, function () {
+                        table.reload('userList')
+                    });
+                } else {
+                    layer.msg(res.responseMsg)
+                }
+            }, 'json')
+            return false
+        }
     })
 </script>
 </body>
