@@ -332,10 +332,13 @@
             //如果不存在分组怎么办？
             if(res.responseCode != 200){
                 layer.msg(res.responseMsg)
+                checkLogin()
+                return
             }
             groupArray = res.data
             if(!groupArray ||groupArray.length == 0){
                 layer.msg("分组不存在，请先创建分组!")
+                return
             }else{
                 $('#groupArray').val(JSON.stringify(groupArray))
                 layui.tree({

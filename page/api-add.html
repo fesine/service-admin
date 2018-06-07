@@ -11,10 +11,9 @@
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
-    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
-    <script type="text/javascript"
-            src="../lib/vue/jquery.min.js"></script>
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">-->
+    <!--<link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">-->
+    <script type="text/javascript" src="../lib/vue/jquery.min.js"></script>
     <script src="../lib/vue/jquery-ui.js"></script>
     <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/xadmin.js"></script>
@@ -27,8 +26,66 @@
         tr {
             cursor: pointer;
         }
+
+        .layui-table-cell {
+            padding: 0 2px;
+        }
+
+        .req-checkbox {
+            width: 45px;
+            height: 36px;
+            text-align: center;
+            border: solid 1px #e6e6e6;
+        }
+
+        .req-manager {
+            width: 120px;
+            height: 36px;
+            text-align: center;
+            border: solid 1px #e6e6e6;
+        }
+
+        .req-checkbox-sub {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .req-ul li {
+            margin-top: 1px;
+        }
     </style>
     <script>
+        updateRequestIndex = function (e, ui) {
+            let requestArray = vm.requestParamList
+            let tempArray = new Array()
+            let temp
+            //更新后的列表
+            //$('#requestParamTable').find('li')[0].firstElementChild.firstElementChild.innerText
+            let eachArray
+            if(!ui){
+                eachArray = $('#requestParamTable').find('li')
+            }else{
+                eachArray = $('li.index', ui.item.parent())
+            }
+            eachArray.each(function (i, item) {
+                var id = item.firstElementChild.firstElementChild.innerText
+                temp = requestArray[i]
+                if (temp.myId === parseInt(id)) {
+                    tempArray[i] = requestArray[i]
+                } else {
+                    for (var j = 0; j < requestArray.length; j++) {
+                        if (requestArray[j].myId === parseInt(id)) {
+                            tempArray[i] = requestArray[j]
+                        }
+                    }
+                }
+            });
+            vm.requestListUpdate = tempArray
+            // console.log(JSON.stringify(vm.requestListUpdate))
+        };
         $(document).ready(function () {
             var fixHelperModified = function (e, tr) {
                     var $originals = tr.children();
@@ -37,151 +94,225 @@
                         $(this).width($originals.eq(index).width())
                     });
                     return $helper;
-                },
-                updateIndex = function (e, ui) {
-                    $('td.index', ui.item.parent()).each(function (i) {
-                        $(this).html(i + 1);
-                    });
-                };
-            $("#sort tbody").sortable({
+                }
+
+            $("#requestParamTable").sortable({
                 helper: fixHelperModified,
-                stop: updateIndex
+                stop: updateRequestIndex
             }).disableSelection();
         });
     </script>
 </head>
 
 <body>
-<div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
-    <form class="layui-form">
-        <div class="layui-tab layui-tab-brief">
-            <ul class="layui-tab-title">
-                <li class="layui-this">基本信息</li>
-                <li>请求参数</li>
-                <li>响应参数</li>
-            </ul>
-            <div class="layui-tab-content">
-                <!--接口id-->
+<div id="api-add">
+    <div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
+        <form class="layui-form">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">基本信息</li>
+                    <li>请求参数</li>
+                    <li>响应参数</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <!--接口id-->
                     <div class="layui-form-item" hidden>
-                        <input type="text" id="L_id" name="id"  class="layui-input">
+                        <input type="text" id="L_id" name="id" class="layui-input">
                         <input type="text" id="L_projectId" name="projectId" class="layui-input">
                         <input type="text" id="L_contractId" name="contractId" class="layui-input">
-                        <input type="text" id="L_groupId" name="groupId"  class="layui-input">
+                        <input type="text" id="L_groupId" name="groupId" class="layui-input">
                     </div>
-                <div class="layui-tab-item layui-show">
-                    <div class="layui-form-item">
-                        <label for="L_groupCode" class="layui-form-label" style="width: 100px">
-                            <span class="x-red">*</span>所属分组
-                        </label>
-                        <div class="layui-input-inline" style="width: 300px;">
-                            <select id="L_groupCode" name="groupCode" lay-filter="groupCode">
-                            </select>
+                    <div class="layui-tab-item layui-show">
+                        <div class="layui-form-item">
+                            <label for="L_groupCode" class="layui-form-label" style="width: 100px">
+                                <span class="x-red">*</span>所属分组
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <select id="L_groupCode" name="groupCode" lay-filter="groupCode">
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label for="L_serviceCode" class="layui-form-label" style="width: 100px">
-                            <span class="x-red">*</span>服务编号
-                        </label>
-                        <div class="layui-input-inline" style="width: 300px;">
-                            <select id="L_serviceCode" name="serviceCode" lay-filter="serviceCode">
-                            </select>
+                        <div class="layui-form-item">
+                            <label for="L_serviceCode" class="layui-form-label"
+                                   style="width: 100px">
+                                <span class="x-red">*</span>服务编号
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <select id="L_serviceCode" name="serviceCode"
+                                        lay-filter="serviceCode">
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label for="L_versionNo" class="layui-form-label" style="width: 100px">
-                            <span class="x-red">*</span>版本号
-                        </label>
-                        <div class="layui-input-inline" style="width: 300px;">
-                            <input type="text" id="L_versionNo" name="versionNo" required=""
-                                   lay-verify="versionNo" class="layui-input">
+                        <div class="layui-form-item">
+                            <label for="L_versionNo" class="layui-form-label" style="width: 100px">
+                                <span class="x-red">*</span>版本号
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <input type="text" id="L_versionNo" name="versionNo" required=""
+                                       lay-verify="versionNo" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">
+                                <span class="x-red">*</span>直接填写版本号不需要"V"
+                            </div>
                         </div>
-                        <div class="layui-form-mid layui-word-aux">
-                            <span class="x-red">*</span>直接填写版本号不需要"V"
+                        <div class="layui-form-item">
+                            <label for="L_serviceName" class="layui-form-label"
+                                   style="width: 100px">
+                                <span class="x-red">*</span>服务名称
+                            </label>
+                            <div class="layui-input-inline" style="width: 300px;">
+                                <input type="text" id="L_serviceName" name="serviceName" required=""
+                                       lay-verify="serviceName" class="layui-input">
+                            </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label for="L_serviceName" class="layui-form-label"
-                               style="width: 100px">
-                            <span class="x-red">*</span>服务名称
-                        </label>
-                        <div class="layui-input-inline" style="width: 300px;">
-                            <input type="text" id="L_serviceName" name="serviceName" required=""
-                                   lay-verify="serviceName" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
+                        <div class="layui-form-item">
                             <label class="layui-form-label" style="width: 100px">
                                 业务规则
                             </label>
-                        <div class="layui-input-inline" style="width: 500px;">
+                            <div class="layui-input-inline" style="width: 500px;">
                             <textarea name="businessRole"
                                       class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">
+                            </label>
+                            <button class="layui-btn layui-btn-lg" lay-filter="add" lay-submit="">
+                                保存
+                            </button>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">
-                        </label>
-                        <button class="layui-btn layui-btn-lg" lay-filter="add" lay-submit="">
-                            保存
-                        </button>
+                    <div class="layui-tab-item">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="200">
+                                <col width="200">
+                                <col width="105">
+                                <col width="40">
+                                <col width="62">
+                                <col width="140">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr class="layui-table-cell">
+                                <th><span class="x-red">*</span>字段名</th>
+                                <th><span class="x-red">*</span>参数说明</th>
+                                <th><span class="x-red">*</span>参数类型</th>
+                                <th style="padding-left: 10px;padding-right: 10px;">必输</th>
+                                <th>长度</th>
+                                <th>示例</th>
+                                <th>描述</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <ul id="requestParamTable" class="req-ul">
+                            <li class="index" v-for='(list,index) in requestParamList'
+                                :key='list.id'>
+                                <form>
+                                    <div class="layui-inline">
+                                        <div hidden :id="getId(list.myId)">{{list.myId}}</div>
+                                        <div class="layui-input-inline"
+                                             style="width: 198px;margin: 0;!important;">
+                                            <input type="text" name="paramKey" placeholder=""
+                                                   v-model="list.paramKey"
+                                                   autocomplete="off" class="layui-input">
+                                            <!--绑定list id-->
+                                        </div>
+                                        <div class="layui-input-inline"
+                                             style="width: 198px;margin: 0;!important;">
+                                            <input type="text" name="paramName" placeholder=""
+                                                   v-model="list.paramName"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="layui-input-inline"
+                                             style="width: 100px;">
+                                            <select name="paramType" lay-filter="paramType"
+                                                    lay-verify="paramType">
+                                                <option value="1">string</option>
+                                                <option value="2">int</option>
+                                                <option value="3">float</option>
+                                                <option value="4">double</option>
+                                                <option value="5">byte</option>
+                                                <option value="6">short</option>
+                                                <option value="7">long</option>
+                                                <option value="8">boolean</option>
+                                                <option value="9">decimal</option>
+                                                <option value="10">date</option>
+                                                <option value="11">datetime</option>
+                                                <option value="12">json</option>
+                                                <option value="13">object</option>
+                                                <option value="14">array</option>
+                                                <option value="15">file</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-inline req-checkbox">
+                                            <div style="margin-top: 8px;">
+                                                <input type="checkbox" checked name="paramNullFlag"
+                                                       lay-filter="paramNullFlag" lay-skin="primary"
+                                                       class="req-checkbox-sub">
+                                            </div>
+                                        </div>
+                                        <div class="layui-input-inline" style="width: 57px;">
+                                            <input type="text" name="paramLength" placeholder=""
+                                                   v-model="list.paramLength"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="layui-input-inline" style="width: 137px;">
+                                            <input type="text" name="paramValue" placeholder=""
+                                                   v-model="list.paramValue"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="layui-input-inline" style="width: 197px;">
+                                            <input type="text" name="paramDesc" placeholder=""
+                                                   v-model="list.paramDesc"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="layui-input-inline req-manager">
+                                            <div style="margin-top: 8px;">
+                                                <button @click='addNewRequestParam'
+                                                        v-if="index===requestParamList.length-1">添加</button>
+                                                <button @click='removeRequestParam(index,$event)'>
+                                                    删除
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="layui-tab-item">
                     </div>
                 </div>
-                <div class="layui-tab-item">
-                    <table class="layui-table" id="sort">
-                        <colgroup>
-                            <col width="150">
-                            <col width="200">
-                            <col>
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th>昵称</th>
-                            <th>加入时间</th>
-                            <th>签名</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>贤心</td>
-                            <td>2016-11-29</td>
-                            <td>人生就像是一场修行</td>
-                        </tr>
-                        <tr>
-                            <td>许闲心</td>
-                            <td>2016-11-28</td>
-                            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                        </tr>
-                        <tr>
-                            <td>许闲心1</td>
-                            <td>2016-11-28</td>
-                            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                        </tr>
-                        <tr>
-                            <td>许闲心2</td>
-                            <td>2016-11-28</td>
-                            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                        </tr>
-                        <tr>
-                            <td>许闲心3</td>
-                            <td>2016-11-28</td>
-                            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                        </tr>
-                        <tr>
-                            <td>许闲心4</td>
-                            <td>2016-11-28</td>
-                            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="layui-tab-item">
-                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
+<script type="text/html" id="paramType">
+    <select id="L_projectType" name="projectType" lay-verify="projectType">
+        <option value="1">string</option>
+        <option value="2">int</option>
+        <option value="3">float</option>
+        <option value="4">double</option>
+        <option value="5">byte</option>
+        <option value="6">short</option>
+        <option value="7">long</option>
+        <option value="8">boolean</option>
+        <option value="9">decimal</option>
+        <option value="10">date</option>
+        <option value="11">datetime</option>
+        <option value="12">json</option>
+        <option value="13">object</option>
+        <option value="14">array</option>
+        <option value="15">file</option>
+    </select>
+</script>
 <script>
     var serviceArray;
+
     function getServiceCode (form) {
         $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
             if (res.responseCode == 200) {
@@ -199,10 +330,12 @@
             }
         })
     }
-    layui.use(['form', 'layer'], function () {
+
+    layui.use(['form', 'layer', 'table'], function () {
         $ = layui.jquery
         var form = layui.form
             , layer = layui.layer
+            , table = layui.table
         //获取选中的数据 进行格式转换，并加载到form表单中
         var groupString = parent.$('#groupArray').val()
         var groupArray = JSON.parse(groupString)
@@ -251,6 +384,34 @@
                 }
             })
         })
+        //测试选择字段类型监听
+        form.on('select(paramType)', function (d) {
+            var id = d.elem.parentElement.previousElementSibling.previousElementSibling
+                .previousElementSibling.innerText
+            $.each(vm.requestParamList, function (index, item) {
+                if (item.id == parseInt(id)) {
+                    item.paramType = d.value
+
+                }
+                return false
+            })
+        })
+
+        form.on('checkbox(paramNullFlag)', function (d) {
+            var id = d.elem.parentElement.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerText
+            $.each(vm.requestParamList, function (index, item) {
+                if (item.id == parseInt(id)) {
+                    if (d.elem.checked) {
+                        item.paramNullFlag = 1
+
+                    } else {
+                        item.paramNullFlag = 0
+                    }
+                    return false
+                }
+            })
+        })
+
         //监控分组选择事件
         form.on('select(serviceCode)', function (data) {
             $.each(serviceArray, function (i, item) {
@@ -267,6 +428,8 @@
         //监听提交
         form.on('submit(add)', function (data) {
             data.field.id = null
+            updateRequestIndex('stop',null)
+            data.field.requestParam= vm.requestListUpdate
             $.post(_hostUrl + '/api', data.field, function (res) {
                 if (res.responseCode == 201) {
                     layer.msg('添加接口成功', {
@@ -291,7 +454,90 @@
             })
             return false
         })
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#api-add',
+        data () {
+            return {
+                superFlag: 0,
+                projectStatus: 1,
+                requestListUpdate: [],
+                requestParamList: [
+                    {
+                        myId: 0,
+                        paramKey: '',
+                        paramName: '',
+                        paramType: 1,
+                        paramNullFlag: 0,
+                        paramLength: '',
+                        paramValue: '',
+                        paramDesc: '',
+                    },
+                    {
+                        myId: 1,
+                        paramKey: '',
+                        paramName: '',
+                        paramType: 1,
+                        paramNullFlag: 0,
+                        paramLength: '',
+                        paramValue: '',
+                        paramDesc: '',
+                    }
+                ],
+                nextId: 2
+            }
+        },
+        beforeCreate () {
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = getCookie('superFlag')
+            this.projectStatus = getCookie('projectStatus')
+        },
+        watch: {
+            nextId () {
+                var form
+                layui.use('form', function () {
+                    form = layui.form
+                    form.render()
+                })
+            }
+        },
+        methods: {
+            addNewRequestParam (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                this.requestParamList.push({
+                    myId: this.nextId++,
+                    paramKey: '',
+                    paramName: '',
+                    paramType: 1,
+                    paramNullFlag: 0,
+                    paramLength: '',
+                    paramValue: '',
+                    paramDesc: '',
+                })
+            },
+            removeRequestParam (index, e) {
+                e.stopPropagation()
+                e.preventDefault()
+                if (index === 0) {
+                    return
+                }
+                this.requestParamList.splice(index, 1)
+                this.nextId--
+                //重新排序
+                for(var i = 0; i<this.requestParamList.length;i++){
+                    this.requestParamList[i].myId=i
+                }
 
+            },
+            getId (index) {
+                return 'id_' + index
+            }
+        }
     })
 </script>
 </body>

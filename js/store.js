@@ -70,6 +70,30 @@ userTypeArray[2] = '开发者(读写)'
 userTypeArray[3] = '开发者(只读)'
 
 /**
+ * 数据类型 1:string 2:int 3:float 4:double 5:byte 6:short
+ * 7:long 8:boolean 9:decimal 10:date 11:datetime
+ * 12:json 13:object 14:array 15:file
+ * @type {any[]}
+ */
+paramTypeArray = new Array()
+paramTypeArray[0] = 'string'
+paramTypeArray[1] = 'string'
+paramTypeArray[2] = 'int'
+paramTypeArray[4] = 'float'
+paramTypeArray[4] = 'double'
+paramTypeArray[5] = 'byte'
+paramTypeArray[6] = 'short'
+paramTypeArray[7] = 'long'
+paramTypeArray[8] = 'boolean'
+paramTypeArray[9] = 'decimal'
+paramTypeArray[10] = 'date'
+paramTypeArray[11] = 'datetime'
+paramTypeArray[12] = 'json'
+paramTypeArray[13] = 'object'
+paramTypeArray[14] = 'array'
+paramTypeArray[15] = 'file'
+
+/**
  * 日期格式转换
  * @param value
  * @returns {string}
