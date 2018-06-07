@@ -11,8 +11,6 @@
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
-    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">-->
-    <!--<link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">-->
     <script type="text/javascript" src="../lib/vue/jquery.min.js"></script>
     <script src="../lib/vue/jquery-ui.js"></script>
     <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
@@ -318,6 +316,12 @@
             if (res.responseCode == 200) {
                 $("#L_serviceCode").find("option").remove();
                 serviceArray = res.data
+                if(!serviceArray || serviceArray.length === 0){
+                    layui.use(['layer'], function () {
+                        layui.layer.msg('当前分组无可添加的服务接口!')
+                        return
+                    })
+                }
                 for (var i = 0; i < serviceArray.length; i++) {
                     $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
                 }
@@ -389,24 +393,24 @@
             var id = d.elem.parentElement.previousElementSibling.previousElementSibling
                 .previousElementSibling.innerText
             $.each(vm.requestParamList, function (index, item) {
-                if (item.id == parseInt(id)) {
+                if (item.myId === parseInt(id)) {
                     item.paramType = d.value
-
+                    console.log(item.paramKey+'：改变了数据类型'+','+ item.paramType)
+                    return false
                 }
-                return false
             })
         })
 
         form.on('checkbox(paramNullFlag)', function (d) {
             var id = d.elem.parentElement.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerText
             $.each(vm.requestParamList, function (index, item) {
-                if (item.id == parseInt(id)) {
+                if (item.myId === parseInt(id)) {
                     if (d.elem.checked) {
                         item.paramNullFlag = 1
-
                     } else {
                         item.paramNullFlag = 0
                     }
+                    console.log(item.paramKey + '：改变了必输项' + ',' + item.paramNullFlag)
                     return false
                 }
             })
@@ -429,7 +433,14 @@
         form.on('submit(add)', function (data) {
             data.field.id = null
             updateRequestIndex('stop',null)
-            data.field.requestParam= vm.requestListUpdate
+            //过滤未添加paramKey的数据
+            $.each(vm.requestListUpdate, function (i, item) {
+                if (!item.paramKey || item.paramKey == '') {
+                    vm.requestListUpdate.splice(index, 1)
+                }
+            })
+            console.log(JSON.stringify(vm.requestListUpdate))
+            data.field.requestParamArray= JSON.stringify(vm.requestListUpdate)
             $.post(_hostUrl + '/api', data.field, function (res) {
                 if (res.responseCode == 201) {
                     layer.msg('添加接口成功', {
