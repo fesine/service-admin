@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-
 <head>
     <meta charset="UTF-8">
-    <title>状态码管理</title>
+    <title>环境管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -22,14 +19,14 @@
     <script src="../lib/vue/axios.min.js"></script>
 </head>
 
-<body class="layui-anim layui-anim-up">
-<div id="project">
+<body class="layui-anim layui-anim-up" onload="checkLogin ()">
+<div id="group">
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a href='javascript:parent.location.href="../index.html"'>首页</a>
-        <a>状态码</a>
+        <a>环境管理</a>
         <a>
-          <cite>状态码列表</cite></a>
+          <cite>环境列表</cite></a>
       </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
            href="javascript:location.replace(location.href);" title="刷新">
@@ -39,28 +36,28 @@
         <xblock>
             <div class="layui-row">
                 <div class="layui-col-xs4">
-                    <button class="layui-btn" onclick="x_admin_show('添加状态码','./status-code-add.html',600,400)"><i
-                            class="layui-icon"></i>添加状态码
+                    <button class="layui-btn" onclick="x_admin_show('添加环境','./environment-add.html',600,400)"><i
+                            class="layui-icon"></i>添加环境
                     </button>
                     <button class="layui-btn layui-btn-warm" id="importFile">
-                        <i class="layui-icon">&#xe67c;</i>导入状态码表
+                        <i class="layui-icon">&#xe67c;</i>导入环境表
                     </button>
                 </div>
                 <div class="layui-col-xs8">
                     <div class="layui-inline" style="width: 200px;">
-                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入状态码关键字查询" autocomplete="off"
-                               class="layui-input">
+                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入环境关键字查询"
+                               autocomplete="off" class="layui-input">
                     </div>
                     <button class="layui-btn" data-type="reload"><i
                             class="layui-icon">&#xe615;</i></button>
                 </div>
             </div>
         </xblock>
-        <table id="statusCodeList" lay-filter="statusCodeList"></table>
+        <table id="environmentList" lay-filter="environmentList"></table>
     </div>
-    <input hidden id="editCode" value=""/>
+    <input hidden id="editEnv" value=""/>
 </div>
-<script type="text/html" id="statusCodeBar">
+<script type="text/html" id="environmentBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
 </script>
@@ -69,9 +66,9 @@
         var table = layui.table
         var upload = layui.upload;
         //第一个实例
-        var statusCodeTable = table.render({
-            elem: '#statusCodeList'
-            , url: _hostUrl + '/codes' //数据接口
+        var environmentTable = table.render({
+            elem: '#environmentList'
+            , url: _hostUrl + '/envs/page' //数据接口
             , where: {
                 projectId: parseInt(getCookie('projectId'))
             }
@@ -79,9 +76,31 @@
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
                 , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
-                , {field: 'code', title: '状态码', width: 240, align: 'center'}
-                , {field: 'codeDesc', title: '描述', width: 600, align: 'center'}
-                , {title: '操作', fixed: 'right', align: 'center', toolbar: '#statusCodeBar'}
+                , {field: 'envName', title: '环境名称', width: 200, align: 'center'}
+                , {field: 'url', title: '连接地址', width: 380, align: 'center'}
+                , {
+                    field: 'protocol', title: '请求协议', width: 200, align: 'center', templet: function (d) {
+                        var protocol = d.protocol;
+                        switch (protocol) {
+                            case 1:
+                                protocol = "HTTP";
+                            case 2:
+                                protocol = "HTTPS";
+                                break;
+                            case 3:
+                                protocol = "DAP";
+                                break;
+                            case 4:
+                                protocol = "ZOOKPER";
+                                break;
+                            default:
+                                protocol = "未定义";
+                                break;
+                        }
+                        return protocol;
+                    }
+                }
+                , {title: '操作', fixed: 'right', align: 'center', toolbar: '#environmentBar'}
             ]], request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
@@ -93,15 +112,15 @@
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
-            }
+            },
         })
         //加入搜索功能
         var $ = layui.$, active = {
             reload: function () {
-                statusCodeTable.reload({
+                environmentTable.reload({
                     where: {
                         projectId: parseInt(getCookie('projectId')),
-                        codeDesc: $("#searchKey").val()
+                        envName: $("#searchKey").val()
                     }
                 })
 
@@ -112,26 +131,26 @@
             active[type] ? active[type].call(this) : '';
         });
         //监听工具条
-        table.on('tool(statusCodeList)', function (obj) {
+        table.on('tool(environmentList)', function (obj) {
             var data = obj.data
             if (obj.event === 'delete') {
-                layer.confirm('确定删除状态码[<span style="color: red">' + data.code + '</span>]?', function (index) {
-                    $.deleteJSON(_hostUrl + "/code?id=" + data.id + "&projectId=" + parseInt(getCookie('projectId'))
+                layer.confirm('确定删除环境[<span style="color: red">' + data.envName + '</span>]?', function (index) {
+                    $.deleteJSON(_hostUrl + "/env/" + data.id
                         , null, function (res) {
                             if (res.responseCode == 204) {
                                 layer.msg('删除成功', {
                                     icon: 1,
                                     time: 2000
                                 })
-                                table.reload('statusCodeList')
+                                table.reload('environmentList')
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
                             }
                         })
                 })
             } else if (obj.event === 'edit') {
-                $("#editCode").val(JSON.stringify(data))
-                x_admin_show('修改状态码', './status-code-edit.html', 600, 450)
+                $("#editEnv").val(JSON.stringify(data))
+                x_admin_show('修改环境', './environment-edit.html', 600, 450)
             }
         })
         //执行文件上传实例
@@ -150,7 +169,7 @@
                         icon: 1,
                         time: 2000
                     }, function () {
-                        table.reload('statusCodeList');
+                        table.reload('environmentList');
                     })
                 } else {
                     layer.msg(res.responseMsg, {icon: 2, timeout: 1000})
@@ -161,4 +180,3 @@
 </script>
 </body>
 
-</html>

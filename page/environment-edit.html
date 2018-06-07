@@ -27,7 +27,7 @@
     <form class="layui-form">
         <div class="layui-form-item" hidden>
             <div class="layui-input-inline">
-                <input type="text" id="L_groupId" name="id" required=""
+                <input type="text" id="L_statusCodeId" name="id" required=""
                        lay-verify=""
                        autocomplete="off" class="layui-input">
             </div>
@@ -45,11 +45,11 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="L_statusCodeName" name="code" required=""
-                       lay-verify="code"
+                       lay-verify="statusCodeName"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>状态码不可为空且唯一
+                <span class="x-red">*</span>状态码名称不可为空且唯一
             </div>
         </div>
         <div class="layui-form-item">
@@ -62,14 +62,14 @@
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>状态码描述不可为空且唯一
+                <span class="x-red">*</span>状态码描述不可为空
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">
             </label>
-            <button class="layui-btn" lay-filter="add" lay-submit="">
-                新增
+            <button class="layui-btn" lay-filter="edit" lay-submit="">
+                保存
             </button>
         </div>
     </form>
@@ -79,6 +79,14 @@
         $ = layui.jquery
         var form = layui.form
             , layer = layui.layer
+        //获取选中的数据 进行格式转换，并加载到form表单中
+        var editData = parent.$("#editCode").val();
+        var editArray = JSON.parse(editData)
+        $('#L_statusCodeId').val(editArray.id)
+        $('#L_projectId').val(editArray.projectId)
+        $('#L_statusCodeName').val(editArray.code)
+        $('#L_codeDesc').val(editArray.codeDesc)
+        form.render();//下拉菜单渲染 把内容加载进去
         //自定义验证规则
         form.verify({
             code: function (value) {
@@ -88,30 +96,27 @@
             },
             codeDesc: function (value) {
                 if (value.length < 1) {
-                    return '状态码描述不可为空'
+                    return '状态码不可为空'
                 }
             }
         })
-        //监听提交
-        form.on('submit(add)', function (data) {
-            data.field.projectId = parseInt(getCookie('projectId'))
-            $.post(_hostUrl + "/code", data.field, function (res) {
-                if (res.responseCode == 201) {
-                    layer.msg('添加状态码成功', {
-                        icon: 1,
-                        time: 2000
-                    });
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name)
-                    //关闭当前frame
-                    parent.layer.close(index)
-                    var table = parent.window.layui.table;
-                    table.reload('statusCodeList')
-                } else {
-                    layer.msg(res.responseMsg, {icon: 2, time: 1500})
-                }
-            }, 'json')
 
+        //监听提交
+        form.on('submit(edit)', function (data) {
+            $.putForm(_hostUrl + "/code", data.field, function (res) {
+                if (res.responseCode === 201) {
+                    layer.msg('修改状态码成功', {
+                        icon: 1,
+                        time: 500
+                    }, function () {
+                        x_admin_close();
+                        var table = parent.window.layui.table;
+                        table.reload('statusCodeList')
+                    });
+                } else {
+                    layer.msg(res.responseMsg)
+                }
+            })
             return false
         })
 
