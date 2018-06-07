@@ -39,7 +39,7 @@
         <xblock>
             <div class="layui-row">
                 <div class="layui-col-xs4">
-                    <button class="layui-btn" onclick="x_admin_show('添加状态码','./statusCode-add.html',600,400)"><i
+                    <button class="layui-btn" onclick="x_admin_show('添加状态码','./status-code-add.html',600,400)"><i
                             class="layui-icon"></i>添加状态码
                     </button>
                     <button class="layui-btn layui-btn-warm" id="importFile">
@@ -131,7 +131,7 @@
                 })
             } else if (obj.event === 'edit') {
                 $("#editCode").val(JSON.stringify(data))
-                x_admin_show('修改状态码', './statusCode-edit.html', 600, 450)
+                x_admin_show('修改状态码', './status-code-edit.html', 600, 450)
             }
         })
         //执行文件上传实例
