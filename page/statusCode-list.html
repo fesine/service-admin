@@ -40,6 +40,10 @@
             <button class="layui-btn" onclick="x_admin_show('添加状态码','./statusCode-add.html',600,400)"><i
                     class="layui-icon"></i>添加状态码
             </button>
+
+            <button class="layui-btn layui-btn-warm" id="importFile">
+                <i class="layui-icon">&#xe67c;</i>导入状态码表
+            </button>
         </xblock>
         <table id="statusCodeList" lay-filter="statusCodeList"></table>
     </div>
@@ -50,8 +54,9 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
 </script>
 <script>
-    layui.use('table', function () {
+    layui.use(['table', 'upload'], function () {
         var table = layui.table
+        var upload = layui.upload;
         //第一个实例
         table.render({
             elem: '#statusCodeList'
@@ -61,7 +66,7 @@
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
                 , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
                 , {field: 'code', title: '状态码', width: 240, align: 'center'}
-                , {field: 'codeDesc', title: '描述', width: 150, align: 'center'}
+                , {field: 'codeDesc', title: '描述', width: 600, align: 'center'}
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#statusCodeBar'}
             ]], request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
@@ -81,24 +86,47 @@
             var data = obj.data
             if (obj.event === 'delete') {
                 layer.confirm('确定删除状态码[<span style="color: red">' + data.code + '</span>]?', function (index) {
-                    $.deleteJSON(_hostUrl + "/code?id="+data.id+"&projectId="+parseInt(getCookie('projectId'))
-                        ,null,function (res) {
-                        if (res.responseCode == 204) {
-                            layer.msg('删除成功', {
-                                icon: 1,
-                                time: 2000
-                            })
-                            table.reload('statusCodeList')
-                        } else {
-                            layer.error(res.responseMsg)
-                        }
-                    })
+                    $.deleteJSON(_hostUrl + "/code?id=" + data.id + "&projectId=" + parseInt(getCookie('projectId'))
+                        , null, function (res) {
+                            if (res.responseCode == 204) {
+                                layer.msg('删除成功', {
+                                    icon: 1,
+                                    time: 2000
+                                })
+                                table.reload('statusCodeList')
+                            } else {
+                                layer.error(res.responseMsg)
+                            }
+                        })
                 })
             } else if (obj.event === 'edit') {
                 $("#editCode").val(JSON.stringify(data))
-                x_admin_show('修改状态码','./statusCode-edit.html', 600, 450)
+                x_admin_show('修改状态码', './statusCode-edit.html', 600, 450)
             }
         })
+        //执行实例
+        upload.render({
+            elem: '#importFile' //绑定元素
+            , accept: 'file'
+            , exts: 'xls|xlsx'
+            //在选择的时候过滤文件格式
+            , acceptMime: '.xls,.xlsx'
+            , title: '请选择Excel文件'
+            , url: _hostUrl + '/code/import' //上传接口
+            , data: {projectId: parseInt(getCookie('projectId'))}
+            , done: function (res) {
+                if (res.responseCode == 201) {
+                    layer.msg('上传成功', {
+                        icon: 1,
+                        time: 2000
+                    }, function () {
+                        table.reload('statusCodeList');
+                    })
+                } else {
+                    layer.msg(res.responseMsg,{icon:2,timeout:1000})
+                }
+            }
+        });
     })
 </script>
 </body>
