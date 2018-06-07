@@ -37,13 +37,24 @@
     </div>
     <div class="x-body">
         <xblock>
-            <button class="layui-btn" onclick="x_admin_show('添加状态码','./statusCode-add.html',600,400)"><i
-                    class="layui-icon"></i>添加状态码
-            </button>
-
-            <button class="layui-btn layui-btn-warm" id="importFile">
-                <i class="layui-icon">&#xe67c;</i>导入状态码表
-            </button>
+            <div class="layui-row">
+                <div class="layui-col-xs4">
+                    <button class="layui-btn" onclick="x_admin_show('添加状态码','./statusCode-add.html',600,400)"><i
+                            class="layui-icon"></i>添加状态码
+                    </button>
+                    <button class="layui-btn layui-btn-warm" id="importFile">
+                        <i class="layui-icon">&#xe67c;</i>导入状态码表
+                    </button>
+                </div>
+                <div class="layui-col-xs8">
+                    <div class="layui-inline" style="width: 200px;">
+                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入状态码关键字查询" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                    <button class="layui-btn" data-type="reload"><i
+                            class="layui-icon">&#xe615;</i></button>
+                </div>
+            </div>
         </xblock>
         <table id="statusCodeList" lay-filter="statusCodeList"></table>
     </div>
@@ -58,9 +69,12 @@
         var table = layui.table
         var upload = layui.upload;
         //第一个实例
-        table.render({
+        var statusCodeTable = table.render({
             elem: '#statusCodeList'
-            , url: _hostUrl + '/codes/' + parseInt(getCookie('projectId')) //数据接口
+            , url: _hostUrl + '/codes' //数据接口
+            , where: {
+                projectId: parseInt(getCookie('projectId'))
+            }
             , page: true //开启分页
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
@@ -81,6 +95,22 @@
                 , dataName: 'resultList'
             }
         })
+        //加入搜索功能
+        var $ = layui.$, active = {
+            reload: function () {
+                statusCodeTable.reload({
+                    where: {
+                        projectId: parseInt(getCookie('projectId')),
+                        codeDesc: $("#searchKey").val()
+                    }
+                })
+
+            }
+        };
+        $('.layui-col-xs8 .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
         //监听工具条
         table.on('tool(statusCodeList)', function (obj) {
             var data = obj.data
@@ -104,7 +134,7 @@
                 x_admin_show('修改状态码', './statusCode-edit.html', 600, 450)
             }
         })
-        //执行实例
+        //执行文件上传实例
         upload.render({
             elem: '#importFile' //绑定元素
             , accept: 'file'
@@ -123,7 +153,7 @@
                         table.reload('statusCodeList');
                     })
                 } else {
-                    layer.msg(res.responseMsg,{icon:2,timeout:1000})
+                    layer.msg(res.responseMsg, {icon: 2, timeout: 1000})
                 }
             }
         });
