@@ -329,7 +329,7 @@ var firstFlag = true
 // iframe判断登录
 function checkLogin () {
     if (!getCookie('login') || getCookie('login') == 'false') {
-        parent.location.href = 'login.html'
+        parent.location.href = '../login.html'
     }
     var url
     if(firstFlag){
@@ -348,7 +348,7 @@ function checkLogin () {
         success: function (res) {
             if (!res || res.responseCode != 200) {
                 clearCookies()
-                parent.location.href = 'login.html'
+                parent.location.href = '../login.html'
             }else{
                 //更新项目状态值
                 if(res.data && res.data.projectStatus){
@@ -358,26 +358,26 @@ function checkLogin () {
         },
         error: function () {
             clearCookies()
-            parent.location.href = 'login.html'
+            parent.location.href = '../login.html'
         }
     })
 }
 
-function logout () {
-    $.ajax({
-        url: _hostUrl + '/logout',
-        type: 'get',
-        timeout: 3000,
-        success: function (res) {
-            clearCookies()
-            parent.location.href = 'login.html'
-        },
-        error: function () {
-            clearCookies()
-            parent.location.href = 'login.html'
-        }
-    })
-}
+// function logout () {
+//     $.ajax({
+//         url: _hostUrl + '/logout',
+//         type: 'get',
+//         timeout: 3000,
+//         success: function (res) {
+//             clearCookies()
+//             parent.location.href = 'login.html'
+//         },
+//         error: function () {
+//             clearCookies()
+//             parent.location.href = 'login.html'
+//         }
+//     })
+// }
 
 function clearCookies () {
     setCookie('login', 'false')
@@ -473,4 +473,9 @@ function changeBackground (item) {
             $(d[p]).css('backgroundColor', '#E2F2E4')
         }
     }
+}
+
+function getUrlKey (name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ''])[1].replace(/\+/g, '%20')) || null
+
 }

@@ -20,6 +20,7 @@
     <script type="text/javascript" src="../js/cookies.js"></script>
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
+    <script src="../css/icon/iconfont.js"></script>
     <style type="text/css">
         .icon {
             width: 1.5em;
@@ -195,7 +196,7 @@
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 38, checkbox: true, align: 'center'},
                 {
-                    field: 'starFlag', title: '', width: 44, align: 'center',
+                    field: 'starFlag', title: '', width: 46, align: 'center',
                     event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
                 }
                 , {field: 'serviceCode', title: '接口编号', width: 250, align: 'left',
@@ -306,7 +307,7 @@
                 x_admin_show('修改接口', './api-edit.html?id='+data.id, 600, 550, true)
             } else if (obj.event === 'detail') {
                 $('#editApi').val(JSON.stringify(data))
-                x_admin_show('接口详情', './api-detail.html?id='+data.id+'&groupId='+data.groupId, 600, 550, true)
+                x_admin_show('接口详情', './api-detail.html?id='+data.id, 600, 550, true)
             } else if (obj.event === 'changeStar') {
                 var params = {
                     id: data.id,

@@ -420,8 +420,9 @@
         //渲染之前加载cookie数据
         beforeMount () {
             this.superFlag = parseInt(getCookie('superFlag'))
-            this.contractId = getUrlKey('id')
-            this.groupId = getUrlKey('groupId')
+            var _this = this
+            this.contractId = _this.getUrlKey('id')
+            this.groupId = _this.getUrlKey('groupId')
         },
         mounted () {
             $('.contract_rely .layui-elem-quote').css('height', $('.contract_content .layui-elem-quote').height())
@@ -476,6 +477,9 @@
                 })
             }
         }, methods: {
+            getUrlKey: function (name) {
+                return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ''])[1].replace(/\+/g, '%20')) || null
+            },
             handleClick:function(item){
                 if(item.id){
                    this.contractId = item.id

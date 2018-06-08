@@ -149,7 +149,7 @@
 </head>
 
 <body>
-<div id="api-add">
+<div id="api-edit">
     <div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
         <form class="layui-form">
             <div class="layui-tab layui-tab-brief">
@@ -161,18 +161,23 @@
                 <div class="layui-tab-content" style="padding: 2px;">
                     <!--接口id-->
                     <div class="layui-form-item" hidden>
-                        <input type="text" id="L_id" name="id" class="layui-input">
-                        <input type="text" id="L_projectId" name="projectId" class="layui-input">
-                        <input type="text" id="L_contractId" name="contractId" class="layui-input">
-                        <input type="text" id="L_groupId" name="groupId" class="layui-input">
+                        <input type="text" id="L_id" name="id" class="layui-input" v-model="apiInfo.id">
+                        <input type="text" id="L_projectId" name="projectId" class="layui-input"
+                               v-model="apiInfo.projectId">
+                        <input type="text" id="L_contractId" name="contractId" class="layui-input"
+                               v-model="apiInfo.contractId">
+                        <input type="text" id="L_groupId" name="groupId" class="layui-input"
+                               v-model="apiInfo.groupId">
                     </div>
                     <div class="layui-tab-item layui-show">
                         <div class="layui-form-item">
-                            <label for="L_groupCode" class="layui-form-label" style="width: 100px">
+                            <label for="L_groupCode" class="layui-form-label" style="width: 100px"
+                                   >
                                 <span class="x-red">*</span>所属分组
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
-                                <select id="L_groupCode" name="groupCode" lay-filter="groupCode">
+                                <select id="L_groupCode" name="groupCode" lay-filter="groupCode"
+                                        v-model="apiInfo.groupCode">
                                 </select>
                             </div>
                         </div>
@@ -183,6 +188,7 @@
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
                                 <select id="L_serviceCode" name="serviceCode"
+                                        v-model="apiInfo.serviceCode"
                                         lay-filter="serviceCode">
                                 </select>
                             </div>
@@ -193,6 +199,7 @@
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
                                 <input type="text" id="L_versionNo" name="versionNo" required=""
+                                       v-model="apiInfo.versionNo"
                                        lay-verify="versionNo" class="layui-input">
                             </div>
                             <div class="layui-form-mid layui-word-aux">
@@ -206,6 +213,7 @@
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
                                 <input type="text" id="L_serviceName" name="serviceName" required=""
+                                       v-model="apiInfo.serviceName"
                                        lay-verify="serviceName" class="layui-input">
                             </div>
                         </div>
@@ -215,6 +223,7 @@
                             </label>
                             <div class="layui-input-inline" style="width: 500px;">
                             <textarea name="detailMemo" id="L_detailMemo"
+                                      v-model="apiInfo.detailMemo"
                                       class="layui-textarea"></textarea>
                             </div>
                         </div>
@@ -224,6 +233,7 @@
                             </label>
                             <div class="layui-input-inline" style="width: 500px;">
                             <textarea name="businessRule"
+                                      v-model="apiInfo.businessRule"
                                       class="layui-textarea"></textarea>
                             </div>
                         </div>
@@ -275,7 +285,6 @@
                                         <div class="layui-input-inline"
                                              style="width: 198px;margin: 0;!important;">
                                             <input type="text" name="paramName" placeholder="参数说明"
-                                                   onchange="onInput(event,1)"
                                                    v-model="list.paramName" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
@@ -309,13 +318,11 @@
                                         </div>
                                         <div class="layui-input-inline" style="width: 57px;">
                                             <input type="text" name="paramLength" placeholder="长度"
-                                                   onchange="onInput(event,1)"
                                                    v-model="list.paramLength" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
                                         <div class="layui-input-inline" style="width: 237px;">
                                             <input type="text" name="paramValue" placeholder="示例"
-                                                   onchange="onInput(event,1)"
                                                    v-model="list.paramValue" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
@@ -323,7 +330,7 @@
                                             <!--<input type="text" name="paramDesc" placeholder="描述"-->
                                                    <!--v-model="list.paramDesc" lay-filter="lastRow"-->
                                                    <!--autocomplete="off" class="layui-input lastRow">-->
-                                            <a></a>
+                                            <a>{{list.paramDesc}}</a>
                                         </div>
                                         <div class="layui-input-inline req-manager">
                                             <div class="req-manager-button">
@@ -390,7 +397,6 @@
                                         <div class="layui-input-inline"
                                              style="width: 198px;">
                                             <input type="text" name="paramName" placeholder="参数说明"
-                                                   onchange="onInput(event,2)"
                                                    v-model="list.paramName" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
@@ -424,13 +430,11 @@
                                         </div>
                                         <div class="layui-input-inline" style="width: 57px;">
                                             <input type="text" name="paramLength" placeholder="长度"
-                                                   onchange="onInput(event,2)"
                                                    v-model="list.paramLength" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
                                         <div class="layui-input-inline" style="width: 237px;">
                                             <input type="text" name="paramValue" placeholder="示例"
-                                                   onchange="onInput(event,2)"
                                                    v-model="list.paramValue" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
@@ -485,28 +489,28 @@
         layui.use(['layer'], function () {
             layer = layui.layer
         })
-        $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
-            if (res.responseCode != 200) {
-           layer.msg(res.responseMg)
-                return
-            }
-            $("#L_serviceCode").find("option").remove();
-            serviceArray = res.data
-            if(!serviceArray || serviceArray.length === 0){
-                layer.msg('当前分组无可添加的服务接口!')
-                    return
-            }
-            for (var i = 0; i < serviceArray.length; i++) {
-                $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
-            }
-            //默认添加第一组数据
-            $('#L_serviceCode').val(serviceArray[0].serviceCode)
-            $('#L_contractId').val(serviceArray[0].id)
-            $('#L_serviceName').val(serviceArray[0].serviceName)
-            $('#L_versionNo').val(serviceArray[0].versionNo)
-            $('#L_detailMemo').val(serviceArray[0].memo)
-            form.render()
-        })
+        // $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
+        //     if (res.responseCode != 200) {
+        //    layer.msg(res.responseMg)
+        //         return
+        //     }
+        //     $("#L_serviceCode").find("option").remove();
+        //     serviceArray = res.data
+        //     if(!serviceArray || serviceArray.length === 0){
+        //         layer.msg('当前分组无可添加的服务接口!')
+        //             return
+        //     }
+        //     for (var i = 0; i < serviceArray.length; i++) {
+        //         $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+        //     }
+        //     //默认添加第一组数据
+        //     $('#L_serviceCode').val(serviceArray[0].serviceCode)
+        //     $('#L_contractId').val(serviceArray[0].id)
+        //     $('#L_serviceName').val(serviceArray[0].serviceName)
+        //     $('#L_versionNo').val(serviceArray[0].versionNo)
+        //     $('#L_detailMemo').val(serviceArray[0].memo)
+        //     form.render()
+        // })
     }
 
     layui.use(['form', 'layer', 'table'], function () {
@@ -515,33 +519,33 @@
             , layer = layui.layer
             , table = layui.table
         //获取选中的数据 进行格式转换，并加载到form表单中
-        var groupString = parent.$('#groupArray').val()
-        var groupId = parent.$('#groupId').val()
-        var groupArray = JSON.parse(groupString)
-        for (var i = 0; i < groupArray.length; i++) {
-            $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
-        }
-        //如果是复制的则需要初始化数据
-        var editData = parent.$("#editApi").val();
-        if (editData != '') {
-            var editArray = JSON.parse(editData)
-            loadJsonDataToForm(editArray)
-        } else {
+        // var groupString = parent.$('#groupArray').val()
+        // var groupId = parent.$('#groupId').val()
+        // var groupArray = JSON.parse(groupString)
+        // for (var i = 0; i < groupArray.length; i++) {
+        //     $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
+        // }
+        // //如果是复制的则需要初始化数据
+        // var editData = parent.$("#editApi").val();
+        // if (editData != '') {
+        //     var editArray = JSON.parse(editData)
+        //     loadJsonDataToForm(editArray)
+        // } else {
 
-            if(!groupId || groupId===''){
-                $('#L_groupCode').val(groupArray[0].groupCode)
-                $('#L_groupId').val(groupArray[0].id)
-            }else{
-                $('#L_groupId').val(groupId)
-                $.each(groupArray,function (index, item) {
-                    if(parseInt(groupId) === parseInt(item.id)){
-                        $('#L_groupCode').val(item.groupCode)
-                        return false
-                    }
-                })
-            }
-            $('#L_projectId').val(parseInt(getCookie('projectId')))
-        }
+            // if(!groupId || groupId===''){
+            //     $('#L_groupCode').val(groupArray[0].groupCode)
+            //     $('#L_groupId').val(groupArray[0].id)
+            // }else{
+            //     $('#L_groupId').val(groupId)
+            //     $.each(groupArray,function (index, item) {
+            //         if(parseInt(groupId) === parseInt(item.id)){
+            //             $('#L_groupCode').val(item.groupCode)
+            //             return false
+            //         }
+            //     })
+            // }
+            // $('#L_projectId').val(parseInt(getCookie('projectId')))
+        // }
         //根据groupId查询该组下的所有合约信息
         getServiceCode(form)
         form.render()
@@ -603,17 +607,17 @@
         })
 
         //监控分组选择事件
-        form.on('select(serviceCode)', function (data) {
-            $.each(serviceArray, function (i, item) {
-                if (item.serviceCode == data.value) {
-                    $('#L_serviceCode').val(item.serviceCode)
-                    $('#L_contractId').val(item.id)
-                    $('#L_serviceName').val(item.serviceName)
-                    $('#L_versionNo').val(item.versionNo)
-                    return
-                }
-            })
-        })
+        // form.on('select(serviceCode)', function (data) {
+        //     $.each(serviceArray, function (i, item) {
+        //         if (item.serviceCode == data.value) {
+        //             $('#L_serviceCode').val(item.serviceCode)
+        //             $('#L_contractId').val(item.id)
+        //             $('#L_serviceName').val(item.serviceName)
+        //             $('#L_versionNo').val(item.versionNo)
+        //             return
+        //         }
+        //     })
+        // })
 
         //监听提交
         form.on('submit(add)', function (data) {
@@ -662,11 +666,12 @@
 </script>
 <script>
     let vm = new Vue({
-        el: '#api-add',
+        el: '#api-edit',
         data () {
             return {
                 superFlag: 0,
                 projectStatus: 1,
+                apiInfo:{},
                 requestListUpdate: [],
                 requestParamList: [
                     {
@@ -703,6 +708,20 @@
         beforeMount () {
             this.superFlag = getCookie('superFlag')
             this.projectStatus = getCookie('projectStatus')
+            $.get(_hostUrl+'/api/'+getUrlKey('id'),function (res) {
+                if(res.responseCode != 200){
+                    layui.use('layer',function () {
+                        layui.layer.msg(res.responseMsg,{icon:2,timeout:2000},function () {
+                            checkLogin()
+                        })
+                    })
+                }else{
+                    vm.apiInfo = res.data
+                    vm.requestParamList=res.data.requestParam
+                    vm.responseParamList=res.data.responseParam
+                }
+
+            })
         },
         watch: {
             nextId () {
