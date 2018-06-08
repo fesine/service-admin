@@ -45,7 +45,7 @@
                 </div>
                 <div class="layui-col-xs8">
                     <div class="layui-inline" style="width: 200px;">
-                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入环境关键字查询"
+                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入名称或地址关键字查询"
                                autocomplete="off" class="layui-input">
                     </div>
                     <button class="layui-btn" data-type="reload"><i
@@ -76,14 +76,15 @@
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
                 , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
-                , {field: 'envName', title: '环境名称', width: 200, align: 'center'}
-                , {field: 'url', title: '连接地址', width: 380, align: 'center'}
+                , {field: 'envName', title: '环境名称', width: 180, align: 'center'}
+                , {field: 'url', title: '连接地址', width: 420, align: 'center'}
                 , {
-                    field: 'protocol', title: '请求协议', width: 200, align: 'center', templet: function (d) {
+                    field: 'protocol', title: '请求协议', width: 180, align: 'center', templet: function (d) {
                         var protocol = d.protocol;
                         switch (protocol) {
                             case 1:
                                 protocol = "HTTP";
+                                break;
                             case 2:
                                 protocol = "HTTPS";
                                 break;
