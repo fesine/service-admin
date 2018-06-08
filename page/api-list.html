@@ -267,7 +267,7 @@
                     icon: 3,
                     title: '彻底删除接口'
                 }, function (index) {
-                    $.deleteForm(_hostUrl + '/api/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
+                    $.deleteForm(_hostUrl + '/api/delete/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('彻底删除成功!', {
                                 icon: 1,
