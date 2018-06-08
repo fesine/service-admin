@@ -108,7 +108,7 @@
                     var table = parent.window.layui.table;
                     table.reload('statusCodeList')
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.responseMsg, {icon: 2, time: 1500})
                 }
             }, 'json')
 
