@@ -240,7 +240,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">
                             </label>
-                            <button class="layui-btn layui-btn-lg" lay-filter="add" lay-submit="">
+                            <button class="layui-btn layui-btn-lg" lay-filter="edit" lay-submit="">
                                 保存
                             </button>
                         </div>
@@ -489,28 +489,31 @@
         layui.use(['layer'], function () {
             layer = layui.layer
         })
-        // $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
-        //     if (res.responseCode != 200) {
-        //    layer.msg(res.responseMg)
-        //         return
-        //     }
-        //     $("#L_serviceCode").find("option").remove();
-        //     serviceArray = res.data
-        //     if(!serviceArray || serviceArray.length === 0){
-        //         layer.msg('当前分组无可添加的服务接口!')
-        //             return
-        //     }
-        //     for (var i = 0; i < serviceArray.length; i++) {
-        //         $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
-        //     }
-        //     //默认添加第一组数据
-        //     $('#L_serviceCode').val(serviceArray[0].serviceCode)
-        //     $('#L_contractId').val(serviceArray[0].id)
-        //     $('#L_serviceName').val(serviceArray[0].serviceName)
-        //     $('#L_versionNo').val(serviceArray[0].versionNo)
-        //     $('#L_detailMemo').val(serviceArray[0].memo)
-        //     form.render()
-        // })
+        $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
+            if (res.responseCode != 200) {
+           layer.msg(res.responseMg)
+                return
+            }
+            $("#L_serviceCode").find("option").remove();
+            serviceArray = res.data
+            if(!serviceArray || serviceArray.length === 0){
+                layer.msg('当前分组无可添加的服务接口!')
+                    return
+            }
+            $('#L_serviceCode').append(new Option(vm.apiInfo.serviceCode, vm.apiInfo.serviceCode))// 下拉菜单里添加元素
+            for (var i = 0; i < serviceArray.length; i++) {
+                $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+            }
+            //默认添加第一组数据
+            // $('#L_id').val(vm.apiInfo.id)
+            // $('#L_projectId').val(vm.apiInfo.projectId)
+            // $('#L_contractId').val(vm.apiInfo.contractId)
+            // $('#L_serviceCode').val(vm.apiInfo.serviceCode)
+            // $('#L_serviceName').val(vm.apiInfo.serviceName)
+            // $('#L_versionNo').val(vm.apiInfo.versionNo)
+            // $('#L_detailMemo').val(vm.apiInfo.detailMemo)
+            form.render()
+        })
     }
 
     layui.use(['form', 'layer', 'table'], function () {
@@ -519,33 +522,22 @@
             , layer = layui.layer
             , table = layui.table
         //获取选中的数据 进行格式转换，并加载到form表单中
-        // var groupString = parent.$('#groupArray').val()
+        var groupString = parent.$('#groupArray').val()
         // var groupId = parent.$('#groupId').val()
-        // var groupArray = JSON.parse(groupString)
-        // for (var i = 0; i < groupArray.length; i++) {
-        //     $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
-        // }
+        var groupArray = JSON.parse(groupString)
+        for (var i = 0; i < groupArray.length; i++) {
+            $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
+        }
         // //如果是复制的则需要初始化数据
-        // var editData = parent.$("#editApi").val();
-        // if (editData != '') {
-        //     var editArray = JSON.parse(editData)
-        //     loadJsonDataToForm(editArray)
-        // } else {
-
-            // if(!groupId || groupId===''){
-            //     $('#L_groupCode').val(groupArray[0].groupCode)
-            //     $('#L_groupId').val(groupArray[0].id)
-            // }else{
-            //     $('#L_groupId').val(groupId)
-            //     $.each(groupArray,function (index, item) {
-            //         if(parseInt(groupId) === parseInt(item.id)){
-            //             $('#L_groupCode').val(item.groupCode)
-            //             return false
-            //         }
-            //     })
-            // }
-            // $('#L_projectId').val(parseInt(getCookie('projectId')))
-        // }
+        var editData = parent.$("#editApi").val();
+            var editArray = JSON.parse(editData)
+            loadJsonDataToForm(editArray)
+            $.each(groupArray, function (index, item) {
+                if (parseInt(editArray.groupId) === parseInt(item.id)) {
+                    $('#L_groupCode').val(item.groupCode)
+                    return false
+                }
+            })
         //根据groupId查询该组下的所有合约信息
         getServiceCode(form)
         form.render()
@@ -607,21 +599,20 @@
         })
 
         //监控分组选择事件
-        // form.on('select(serviceCode)', function (data) {
-        //     $.each(serviceArray, function (i, item) {
-        //         if (item.serviceCode == data.value) {
-        //             $('#L_serviceCode').val(item.serviceCode)
-        //             $('#L_contractId').val(item.id)
-        //             $('#L_serviceName').val(item.serviceName)
-        //             $('#L_versionNo').val(item.versionNo)
-        //             return
-        //         }
-        //     })
-        // })
+        form.on('select(serviceCode)', function (data) {
+            $.each(serviceArray, function (i, item) {
+                if (item.serviceCode == data.value) {
+                    $('#L_serviceCode').val(item.serviceCode)
+                    $('#L_contractId').val(item.id)
+                    $('#L_serviceName').val(item.serviceName)
+                    $('#L_versionNo').val(item.versionNo)
+                    return
+                }
+            })
+        })
 
         //监听提交
-        form.on('submit(add)', function (data) {
-            data.field.id = null
+        form.on('submit(edit)', function (data) {
             updateRequestIndex('stop',null)
             updateResponseIndex('stop',null)
             //过滤未添加paramKey的数据
@@ -638,9 +629,9 @@
             // console.log(JSON.stringify(vm.requestListUpdate))
             data.field.requestParamArray= JSON.stringify(vm.requestListUpdate)
             data.field.responseParamArray= JSON.stringify(vm.responseListUpdate)
-            $.post(_hostUrl + '/api', data.field, function (res) {
+            $.putForm(_hostUrl + '/api', data.field, function (res) {
                 if (res.responseCode == 201) {
-                    layer.msg('添加接口成功', {
+                    layer.msg('修改接口成功', {
                         icon: 1,
                         time: 2000
                     }, function () {
