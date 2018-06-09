@@ -23,45 +23,49 @@
             background-color: #f2f3f0;
         }
 
-        .contract_title {
+        .layui-colla-title{
+            color: #009688;!important;
+            font-weight: bolder;
+        }
+        .api_title {
             font-size: 20px;
             text-align: center;
             margin: 15px 0;
         }
 
-        .contract_info {
+        .api_info {
             color: #666;
             text-align: center;
             border-bottom: 1px dotted #666;
             margin: 10px 10px;
         }
 
-        .contract_content {
+        .api_content {
             font-size: 14px;
             padding: 20px;
             line-height: 25px;
             text-indent: 2em;
         }
 
-        .contract_rely {
+        .api_rely {
             font-size: 14px;
             padding: 20px 20px 20px 0px;
             line-height: 25px;
             text-indent: 2em;
         }
 
-        .contract_content_title {
+        .api_content_title {
             float: left;
             font-size: 16px;
             font-weight: bold;
         }
 
-        .contract_content_item {
+        .api_content_item {
             margin-left: 10px;
             font-size: 16px;
         }
 
-        .contract_content_rely_title {
+        .api_content_rely_title {
             font-size: 16px;
             font-weight: bold;
         }
@@ -72,102 +76,78 @@
     </style>
 </head>
 <body>
-<div id="contract_detail">
+<div id="api_detail">
     <div class="layui-tab layui-tab-brief">
         <ul class="layui-tab-title">
             <li class="layui-this">基本信息</li>
             <li>历史记录</li>
-            <li>依赖拓扑图</li>
+            <li>测试</li>
         </ul>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
                 <div class="layui-row">
                     <div class="layui-col-md9">
-                        <div class="contract_content">
+                        <div class="api_content">
                             <blockquote class="layui-elem-quote">
-                                <h1 class="contract_title">{{projectInfo.serviceName}}
-                                    <span v-if="projectInfo.checkStatus == 0"
+                                <h1 class="api_title">{{apiInfo.serviceName}}
+                                    <span v-if="apiInfo.checkStatus == 0"
                                           class="layui-badge-dot"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <span v-if="projectInfo.checkStatus == 1"
+                                    <span v-if="apiInfo.checkStatus == 1"
                                           class="layui-badge-dot layui-bg-green"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <span v-if="projectInfo.checkStatus == 2"
+                                    <span v-if="apiInfo.checkStatus == 2"
                                           class="layui-badge-dot layui-bg-orange"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <span v-if="projectInfo.checkStatus == 3"
+                                    <span v-if="apiInfo.checkStatus == 3"
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
                                 </h1>
-                                <p class="contract_info">创建者：{{projectInfo.creator}}
-                                    发布时间：{{projectInfo.createTime|convertDate}}</p>
-                                <a class="contract_content_title">服务编号：</a>
-                                <a class="contract_content_item"
-                                   style="margin-left: 0px">{{projectInfo.serviceCode}}</a>
-                                <br>
-                                <a class="contract_content_title">服务名称：</a>
-                                <a class="contract_content_item">{{projectInfo.serviceName}}</a>
-                                <br>
-                                <a class="contract_content_title">版&nbsp;本&nbsp;号：</a>
-                                <a class="contract_content_item">V{{projectInfo.versionNo}}</a>
-                                <br>
-                                <a class="contract_content_title">所属服务组：</a>
-                                <a class="contract_content_item">{{projectInfo.groupCode}}</a>
-                                <br>
-                                <a class="contract_content_title">共享范围：</a>
-                                <a class="contract_content_item">{{projectInfo.shareSpace}}</a>
-                                <br>
-                                <a class="contract_content_title">服务消费方：</a>
-                                <a class="contract_content_item">{{projectInfo.consumerGroup}}</a>
-                                <br>
-                                <a class="contract_content_title">操作列表：</a>
-                                <a class="contract_content_item">{{projectInfo.operateType}}</a>
-                                <br>
-                                <a class="contract_content_title">数据存储类型：</a>
-                                <a class="contract_content_item">{{projectInfo.dataType}}</a>
-                                <br>
-                                <a class="contract_content_title">超时时间(秒)：</a>
-                                <a class="contract_content_item">{{projectInfo.timeout}}</a>
-                                <br>
-                                <a class="contract_content_title">是否等幂：</a>
-                                <a class="contract_content_item">{{projectInfo.idempotentFlag}}</a>
-                                <br>
-                                <a class="contract_content_title">依赖分组：</a>
-                                <a class="contract_content_item">{{projectInfo.relyGroup}}</a>
-                                <br>
-                                <a class="contract_content_title">依赖分组编号：</a>
-                                <a class="contract_content_item">{{projectInfo.relyServiceCode}}</a>
-                                <br>
-                                <a class="contract_content_title">业务负责人：</a>
-                                <a class="contract_content_item">{{projectInfo.businessOwner}}</a>
-                                <br>
-                                <a class="contract_content_title">开发负责人：</a>
-                                <a class="contract_content_item">{{projectInfo.developer}}</a>
-                                <br>
-                                <a class="contract_content_title">维护负责人：</a>
-                                <a class="contract_content_item">{{projectInfo.maintainer}}</a>
-                                <br>
-                                <a class="contract_content_title">服务描述：</a>
-                                <a class="contract_content_item">{{projectInfo.memo}}
-                                </a>
-                                <br>
-                                <a class="contract_content_title">服务质量：</a>
-                                <a class="contract_content_item">{{projectInfo.quality}}
-                                </a>
-                                <br>
-                                <a class="contract_content_title">安全要求：</a>
-                                <a class="contract_content_item">{{projectInfo.secure}}
-                                </a>
-                                <br>
-                                <a class="contract_content_title">最后更新时间：</a>
-                                <a class="contract_content_item">{{projectInfo.lastUpdateTime}}</a>
-                                <br>
-                                <a class="contract_content_title">修改者：</a>
-                                <a class="contract_content_item">{{projectInfo.lastModifier}} </a>
+                                <p class="api_info">创建者：{{apiInfo.creator}}
+                                    发布时间：{{apiInfo.createTime|convertDate}}</p>
+
+                                <div class="layui-collapse">
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">基本信息</h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <a class="api_content_title">服务编号：</a>
+                                            <a class="api_content_item"
+                                               style="margin-left: 0px">{{apiInfo.serviceCode}}</a>
+                                            <br>
+                                            <a class="api_content_title">服务名称：</a>
+                                            <a class="api_content_item">{{apiInfo.serviceName}}</a>
+                                            <br>
+                                            <a class="api_content_title">版&nbsp;本&nbsp;号：</a>
+                                            <a class="api_content_item">V{{apiInfo.versionNo}}</a>
+                                            <br>
+                                            <a class="api_content_title">详细描述：</a>
+                                            <a class="api_content_item">{{apiInfo.detailMemo}}
+                                            </a>
+                                            <br>
+                                            <a class="api_content_title">业务规则：</a>
+                                            <a class="api_content_item">{{apiInfo.businessRule}}
+                                            </a>
+                                            <br>
+                                            <a class="api_content_title">最后更新时间：</a>
+                                            <a class="api_content_item">{{apiInfo.lastUpdateTime|convertDate}}</a>
+                                            <br>
+                                            <a class="api_content_title">修改者：</a>
+                                            <a class="api_content_item">{{apiInfo.lastModifier}} </a>
+                                        </div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">请求参数</h2>
+                                        <div class="layui-colla-content layui-show">内容区域</div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">响应参数</h2>
+                                        <div class="layui-colla-content layui-show">内容区域</div>
+                                    </div>
+                                </div>
                             </blockquote>
                         </div>
                     </div>
-                    <div class="layui-col-md3 contract_rely">
+                    <div class="layui-col-md3 api_rely">
                         <blockquote class="layui-elem-quote">
                             <div >
                                 <fieldset class="layui-elem-field">
@@ -187,41 +167,41 @@
                                         <button class="layui-btn layui-btn-normal"
                                                 lay-filter="copy" lay-submit=""
                                                 style="width: 180px;">
-                                            复制(另存契约)
+                                            复制(另存接口)
                                         </button>
                                     </div>
                                 </fieldset>
                             </div>
 
-                            <div>
-                                <a class="contract_content_rely_title">服务提供者：</a>
-                            </div>
-                            <div>
-                                <ul id="relyList" v-if="projectInfo.relyList">
-                                    <li v-for="item in projectInfo.relyList" @click="handleClick(item)">
-                                        <a class="contract_content_item  change-rely-service" v-if="item.serviceName" href="javascript:;">
-                                            {{ item.serviceName }}</a>
-                                        <a class="contract_content_item" v-else>{{ item.serviceCode }}</a>
-                                    </li>
-                                </ul>
-                                <div v-else><a class="contract_content_item">暂无提供者</a></div>
+                            <!--<div>-->
+                                <!--<a class="api_content_rely_title">服务提供者：</a>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<ul id="relyList" v-if="apiInfo.relyList">-->
+                                    <!--<li v-for="item in apiInfo.relyList" @click="handleClick(item)">-->
+                                        <!--<a class="api_content_item  change-rely-service" v-if="item.serviceName" href="javascript:;">-->
+                                            <!--{{ item.serviceName }}</a>-->
+                                        <!--<a class="api_content_item" v-else>{{ item.serviceCode }}</a>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                                <!--<div v-else><a class="api_content_item">暂无提供者</a></div>-->
 
-                            </div>
-                            <div>
-                                <a class="contract_content_rely_title">服务消费者：</a>
-                            </div>
-                            <div>
-                                <ul id="consumerList" v-if="projectInfo.consumerList">
-                                    <li v-for="item in projectInfo.consumerList" @click="handleClick(item)">
-                                        <a class="contract_content_item  change-rely-service" v-if="item.serviceName"
-                                           href="javascript:;">{{
-                                            item.serviceName }}</a>
-                                        <a class="contract_content_item change-rely-service" v-else>{{ item.serviceCode
-                                            }}</a>
-                                    </li>
-                                </ul>
-                                <div v-else><a class="contract_content_item">暂无消费者</a></div>
-                            </div>
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<a class="api_content_rely_title">服务消费者：</a>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<ul id="consumerList" v-if="apiInfo.consumerList">-->
+                                    <!--<li v-for="item in apiInfo.consumerList" @click="handleClick(item)">-->
+                                        <!--<a class="api_content_item  change-rely-service" v-if="item.serviceName"-->
+                                           <!--href="javascript:;">{{-->
+                                            <!--item.serviceName }}</a>-->
+                                        <!--<a class="api_content_item change-rely-service" v-else>{{ item.serviceCode-->
+                                            <!--}}</a>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                                <!--<div v-else><a class="api_content_item">暂无消费者</a></div>-->
+                            <!--</div>-->
                         </blockquote>
                     </div>
                 </div>
@@ -255,29 +235,30 @@
         })
     }
 
-    layui.use(['form', 'layer', 'table'], function () {
+    layui.use(['form', 'layer', 'table','element'], function () {
         $ = layui.jquery
         var form = layui.form,
             layer = layui.layer,
-            table = layui.table
+            table = layui.table,
+            element = layui.element
         form.on('submit(copy)',function (data) {
             // 获得frame索引
             var index = parent.layer.getFrameIndex(window.name)
             //关闭当前frame
             parent.layer.close(index)
-            parent.x_admin_show('复制新增','contract-add.html', 500, 500,true)
+            parent.x_admin_show('复制新增','api-add.html', 500, 500,true)
         })
         form.on('select', function (data) {
-            $.putForm(_hostUrl + '/contract/check', {
-                id: vm.contractId,
-                serviceName: vm.projectInfo.serviceName,
-                projectId: vm.projectInfo.projectId,
-                groupId: vm.projectInfo.groupId,
+            $.putForm(_hostUrl + '/api/check', {
+                id: vm.apiId,
+                serviceName: vm.apiInfo.serviceName,
+                projectId: vm.apiInfo.projectId,
+                groupId: vm.apiInfo.groupId,
                 checkStatus: data.value
             }, function (res) {
                 if (res.responseCode == 201) {
-                    vm.projectInfo.checkStatus = data.value
-                    layer.msg('修改状态成功', {
+                    vm.apiInfo.checkStatus = data.value
+                    layer.msg('审核操作成功', {
                         icon: 1,
                         time: 2000
                     })
@@ -286,13 +267,13 @@
         })
         historyTable = table.render({
             elem: '#historyList'
-            , url: _hostUrl + '/contract/historys'  //数据接口
+            , url: _hostUrl + '/api/historys'  //数据接口
             , request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
             , where: {
-                id: vm.contractId //查询当前用户所在所有组的数据
+                id: vm.apiId //查询当前用户所在所有组的数据
             }
             , page: true //开启分页
             , cols: [[ //表头
@@ -350,7 +331,7 @@
                 var params = {
                     id: historyId
                 }
-                $.putForm(_hostUrl + '/contract/history', params, function (res) {
+                $.putForm(_hostUrl + '/api/history', params, function (res) {
                     if (res.responseCode == 201) {
                         layer.msg('切换成功!', {
                             icon: 1,
@@ -370,7 +351,7 @@
                 icon: 3,
                 title: '删除历史记录'
             }, function (index) {
-                $.deleteForm(_hostUrl + '/contract/history/' + data, null, function (res) {
+                $.deleteForm(_hostUrl + '/api/history/' + data, null, function (res) {
                     if (res.responseCode == 204) {
                         layer.msg('删除成功!', {
                             icon: 1,
@@ -398,11 +379,11 @@
 </script>
 <script>
     let vm = new Vue({
-        el: '#contract_detail',
+        el: '#api_detail',
         data () {
             return {
-                contractId: '',
-                projectInfo: {},
+                apiId: '',
+                apiInfo: {},
                 groupId: '',
                 superFlag: -1,
                 userType: 0,
@@ -420,22 +401,19 @@
         //渲染之前加载cookie数据
         beforeMount () {
             this.superFlag = parseInt(getCookie('superFlag'))
-            var _this = this
-            this.contractId = _this.getUrlKey('id')
-            this.groupId = _this.getUrlKey('groupId')
+            this.apiId = getUrlKey('id')
+            this.groupId = getUrlKey('groupId')
         },
         mounted () {
-            $('.contract_rely .layui-elem-quote').css('height', $('.contract_content .layui-elem-quote').height())
+            $('.api_rely .layui-elem-quote').css('height', $('.api_content .layui-elem-quote').height())
         },
         watch: {
-            contractId () {
-                axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
+            apiId () {
+                axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
-                        this.projectInfo = response.data.data
-                        this.consumerList = response.data.data.consumerList
-                        if(this.projectInfo.consumerList.length === 0){
-                            this.projectInfo.consumerList = null
-                        }
+                        this.apiInfo = response.data.data
+                        this.requestParamList = response.data.data.requestParamList
+                        this.responseParamList = response.data.data.responseParamList
                         layui.use(['form'], function () {
                             $ = layui.jquery
                             var form = layui.form
@@ -443,7 +421,7 @@
                             for (var i = 0; i < checkStatusArray.length; i++) {
                                 $('#L_checkStatus').append(new Option(checkStatusArray[i], i))// 下拉菜单里添加元素
                             }
-                            $('#L_checkStatus').val(vm.projectInfo.checkStatus)
+                            $('#L_checkStatus').val(vm.apiInfo.checkStatus)
                             form.render()//下拉菜单渲染 把内容加载进去
                         })
                         if (this.superFlag != 1) {
@@ -457,32 +435,29 @@
             userType () {
                 historyTable.reload({
                     where: {
-                        id: this.contractId //查询当前用户所在所有组的数据
+                        id: this.apiId //查询当前用户所在所有组的数据
                     }
                 })
             },
             historyId () {
-                axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
+                axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
-                        this.projectInfo = response.data.data
-                        if (this.projectInfo.length === 0) {
-                            this.projectInfo.consumerList = null
+                        this.apiInfo = response.data.data
+                        if (this.apiInfo.length === 0) {
+                            this.apiInfo.consumerList = null
                         }
                     }
                     historyTable.reload({
                         where: {
-                            id: this.contractId //查询当前用户所在所有组的数据
+                            id: this.apiId //查询当前用户所在所有组的数据
                         }
                     })
                 })
             }
         }, methods: {
-            getUrlKey: function (name) {
-                return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ''])[1].replace(/\+/g, '%20')) || null
-            },
             handleClick:function(item){
                 if(item.id){
-                   this.contractId = item.id
+                   this.apiId = item.id
                    this.groupId = item.groupId
                     historyTable.reload({
                         where: {
@@ -495,7 +470,7 @@
     })
 </script>
 <script>
-    //获取传过来的contractId
+    //获取传过来的apiId
 </script>
 </body>
 </html>

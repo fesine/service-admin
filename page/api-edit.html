@@ -179,6 +179,13 @@
                                 <select id="L_groupCode" name="groupCode" lay-filter="groupCode"
                                         v-model="apiInfo.groupCode">
                                 </select>
+
+                            </div>
+                            <div class="layui-input-inline" style="margin-left: 20px;width: 150px;">
+                                <button class="layui-btn  layui-btn-normal  layui-btn-fluid" lay-filter="edit"
+                                        lay-submit="">
+                                    保存
+                                </button>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -237,13 +244,6 @@
                                       class="layui-textarea"></textarea>
                             </div>
                         </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">
-                            </label>
-                            <button class="layui-btn layui-btn-lg" lay-filter="edit" lay-submit="">
-                                保存
-                            </button>
-                        </div>
                     </div>
                     <div class="layui-tab-item">
                         <table class="layui-table">
@@ -291,7 +291,7 @@
                                         <div class="layui-input-inline"
                                              style="width: 100px;">
                                             <select name="paramType" lay-filter="paramType"
-                                                    lay-verify="paramType">
+                                                    lay-verify="paramType" v-model="list.paramType" :selected="list.paramType">
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
                                                 <option value="3">float</option>
@@ -311,7 +311,7 @@
                                         </div>
                                         <div class="layui-input-inline req-checkbox">
                                             <div style="margin-top: 8px;">
-                                                <input type="checkbox" checked name="paramNullFlag"
+                                                <input type="checkbox" :checked="list.paramNullFlag==1"  name="paramNullFlag"
                                                        lay-filter="paramNullFlag" lay-skin="primary"
                                                        class="req-checkbox-sub">
                                             </div>
@@ -327,28 +327,16 @@
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
                                         <div class="layui-input-inline layui-hide" style="width: 197px;" >
-                                            <!--<input type="text" name="paramDesc" placeholder="描述"-->
-                                                   <!--v-model="list.paramDesc" lay-filter="lastRow"-->
-                                                   <!--autocomplete="off" class="layui-input lastRow">-->
                                             <a>{{list.paramDesc}}</a>
                                         </div>
                                         <div class="layui-input-inline req-manager">
                                             <div class="req-manager-button">
-                                                <!--<button @click='addNewRequestParam'-->
-                                                        <!--class="layui-btn layui-btn-primary layui-btn-xs"-->
-                                                        <!--v-if="index===requestParamList.length-1">-->
-                                                    <!--<i class="layui-icon">&#xe654;</i>-->
-                                                <!--</button>-->
                                                 <a href="javascript:;" style="font-size: 12px;margin-left: -2px;"
                                                    @click="addParamDesc($event,1)">更多设置</a>
                                                 <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
                                                 <a href="javascript:;"
                                                    @click='removeRequestParam(index,$event)'><i
                                                         class="iconfont">&#xe69d;</i></a>
-                                                <!--<button @click='removeRequestParam(index,$event)'-->
-                                                        <!--class="layui-btn layui-btn-primary layui-btn-xs" >-->
-                                                    <!--<i class="iconfont">&#xe69d;</i>-->
-                                                <!--</button>-->
                                             </div>
                                         </div>
 
@@ -403,6 +391,7 @@
                                         <div class="layui-input-inline"
                                              style="width: 100px;">
                                             <select name="paramType" lay-filter="paramType"
+                                                    :selected="list.paramType" v-model="list.paramType"
                                                     lay-verify="paramType">
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
@@ -425,6 +414,7 @@
                                             <div style="margin-top: 8px;">
                                                 <input type="checkbox" checked name="paramNullFlag"
                                                        lay-filter="paramNullFlag" lay-skin="primary"
+                                                       :checked="list.paramNullFlag==1"
                                                        class="req-checkbox-sub">
                                             </div>
                                         </div>
@@ -504,14 +494,6 @@
             for (var i = 0; i < serviceArray.length; i++) {
                 $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
             }
-            //默认添加第一组数据
-            // $('#L_id').val(vm.apiInfo.id)
-            // $('#L_projectId').val(vm.apiInfo.projectId)
-            // $('#L_contractId').val(vm.apiInfo.contractId)
-            // $('#L_serviceCode').val(vm.apiInfo.serviceCode)
-            // $('#L_serviceName').val(vm.apiInfo.serviceName)
-            // $('#L_versionNo').val(vm.apiInfo.versionNo)
-            // $('#L_detailMemo').val(vm.apiInfo.detailMemo)
             form.render()
         })
     }
@@ -665,32 +647,12 @@
                 apiInfo:{},
                 requestListUpdate: [],
                 requestParamList: [
-                    {
-                        myId: 0,
-                        paramKey: '',
-                        paramName: '',
-                        paramType: 1,
-                        paramNullFlag: 1,
-                        paramLength: '',
-                        paramValue: '',
-                        paramDesc: '',
-                    }
                 ],
-                nextId: 1,
+                nextId: 0,
                 responseListUpdate: [],
                 responseParamList: [
-                    {
-                        myId: 0,
-                        paramKey: '',
-                        paramName: '',
-                        paramType: 1,
-                        paramNullFlag: 1,
-                        paramLength: '',
-                        paramValue: '',
-                        paramDesc: '',
-                    }
                 ],
-                respNextId: 1
+                respNextId: 0
             }
         },
         beforeCreate () {
@@ -699,6 +661,7 @@
         beforeMount () {
             this.superFlag = getCookie('superFlag')
             this.projectStatus = getCookie('projectStatus')
+            let _this = this
             $.get(_hostUrl+'/api/'+getUrlKey('id'),function (res) {
                 if(res.responseCode != 200){
                     layui.use('layer',function () {
@@ -707,9 +670,20 @@
                         })
                     })
                 }else{
-                    vm.apiInfo = res.data
-                    vm.requestParamList=res.data.requestParam
-                    vm.responseParamList=res.data.responseParam
+                    _this.apiInfo = res.data
+                    _this.requestParamList=res.data.requestParam
+                    _this.responseParamList=res.data.responseParam
+                    //myId赋值
+                    for(var i = 0;i< _this.requestParamList.length;i++){
+                        _this.requestParamList[i].myId = _this.nextId
+                        _this.requestParamList[i].id = null
+                        _this.nextId++
+                    }
+                    for(var i = 0;i< _this.responseParamList.length;i++){
+                        _this.responseParamList[i].myId = _this.respNextId
+                        _this.responseParamList[i].id = null
+                        _this.respNextId++
+                    }
                 }
 
             })

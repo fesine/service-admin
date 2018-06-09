@@ -31,6 +31,13 @@
         }
     </style>
     <style type="text/css">
+        .layui-table-tips-main {
+            display: none
+        }
+
+        .layui-table-tips-c {
+            display: none
+        }
         .nohover tbody tr:hover {
             background-color: #ffffff
         }
@@ -196,7 +203,7 @@
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 38, checkbox: true, align: 'center'},
                 {
-                    field: 'starFlag', title: '', width: 46, align: 'center',
+                    field: 'starFlag', title: '', width: 44, align: 'center',
                     event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
                 }
                 , {field: 'serviceCode', title: '接口编号', width: 250, align: 'left',
