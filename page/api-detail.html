@@ -27,6 +27,10 @@
             color: #009688;!important;
             font-weight: bolder;
         }
+
+        .layui-table-cell{
+            padding: 2px;
+        }
         .api_title {
             font-size: 20px;
             text-align: center;
@@ -44,7 +48,7 @@
             font-size: 14px;
             padding: 20px;
             line-height: 25px;
-            text-indent: 2em;
+            /*text-indent: 2em;*/
         }
 
         .api_rely {
@@ -86,7 +90,30 @@
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
                 <div class="layui-row">
-                    <div class="layui-col-md9">
+                    <div>
+                        <div>
+                            <fieldset class="layui-elem-field">
+                                <legend>管理操作</legend>
+                                <div id="show-form" class="layui-hide" style="float: left;">
+                                    <div class="layui-field-box">
+                                        <form class="layui-form">
+                                            <div class="layui-input-inline" style="width: 150px;">
+                                                <select id="L_checkStatus" name="checkStatus"
+                                                        lay-verify="checkStatus">
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div v-if="userType < 3">
+                                    <button class="layui-btn layui-btn-normal"
+                                            lay-filter="copy" lay-submit=""
+                                            style="width: 180px;margin-top: 10px;">
+                                        复制(另存接口)
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </div>
                         <div class="api_content">
                             <blockquote class="layui-elem-quote">
                                 <h1 class="api_title">{{apiInfo.serviceName}}
@@ -137,72 +164,19 @@
                                     </div>
                                     <div class="layui-colla-item">
                                         <h2 class="layui-colla-title">请求参数</h2>
-                                        <div class="layui-colla-content layui-show">内容区域</div>
+                                        <div class="layui-colla-content layui-show">
+                                            <table id="requestParamTable"></table>
+                                        </div>
                                     </div>
                                     <div class="layui-colla-item">
                                         <h2 class="layui-colla-title">响应参数</h2>
-                                        <div class="layui-colla-content layui-show">内容区域</div>
+                                        <div class="layui-colla-content layui-show">
+                                            <table id="responseParamTable"></table>
+                                        </div>
                                     </div>
                                 </div>
                             </blockquote>
                         </div>
-                    </div>
-                    <div class="layui-col-md3 api_rely">
-                        <blockquote class="layui-elem-quote">
-                            <div >
-                                <fieldset class="layui-elem-field">
-                                    <legend>管理操作</legend>
-                                    <div id="show-form" class="layui-hide">
-                                    <div class="layui-field-box">
-                                        <form class="layui-form">
-                                            <div class="layui-input-inline" style="width: 150px;">
-                                                <select id="L_checkStatus" name="checkStatus"
-                                                        lay-verify="checkStatus">
-                                                </select>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    </div>
-                                    <div v-if="userType < 3">
-                                        <button class="layui-btn layui-btn-normal"
-                                                lay-filter="copy" lay-submit=""
-                                                style="width: 180px;">
-                                            复制(另存接口)
-                                        </button>
-                                    </div>
-                                </fieldset>
-                            </div>
-
-                            <!--<div>-->
-                                <!--<a class="api_content_rely_title">服务提供者：</a>-->
-                            <!--</div>-->
-                            <!--<div>-->
-                                <!--<ul id="relyList" v-if="apiInfo.relyList">-->
-                                    <!--<li v-for="item in apiInfo.relyList" @click="handleClick(item)">-->
-                                        <!--<a class="api_content_item  change-rely-service" v-if="item.serviceName" href="javascript:;">-->
-                                            <!--{{ item.serviceName }}</a>-->
-                                        <!--<a class="api_content_item" v-else>{{ item.serviceCode }}</a>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                                <!--<div v-else><a class="api_content_item">暂无提供者</a></div>-->
-
-                            <!--</div>-->
-                            <!--<div>-->
-                                <!--<a class="api_content_rely_title">服务消费者：</a>-->
-                            <!--</div>-->
-                            <!--<div>-->
-                                <!--<ul id="consumerList" v-if="apiInfo.consumerList">-->
-                                    <!--<li v-for="item in apiInfo.consumerList" @click="handleClick(item)">-->
-                                        <!--<a class="api_content_item  change-rely-service" v-if="item.serviceName"-->
-                                           <!--href="javascript:;">{{-->
-                                            <!--item.serviceName }}</a>-->
-                                        <!--<a class="api_content_item change-rely-service" v-else>{{ item.serviceCode-->
-                                            <!--}}</a>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                                <!--<div v-else><a class="api_content_item">暂无消费者</a></div>-->
-                            <!--</div>-->
-                        </blockquote>
                     </div>
                 </div>
             </div>
@@ -219,10 +193,20 @@
     <a class="layui-btn layui-btn-xs" id="changeCurrent">切换</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even id="delete">删除</a>
     {{# } }}
-    <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
+</script>
+<!--<script type="text/html" id="showParamKey">-->
+    <!--{{# if(d.paramKey.split('>>').length -1 > 0 ){ }}-->
+    <!--<a>切换</a>-->
+    <!--{{# } }}-->
+<!--</script>-->
+<script type="text/html" id="moreBar">
+    <button class="layui-btn layui-btn-xs" id="detail" lay-event="detail">查看</button>
+    <a hidden>{{d.paramDesc}}</a>
 </script>
 <script>
-    var historyTable
+    let historyTable
+    let requestParamTable
+    let responseParamTable
     function updateClass () {
         $.get(_hostUrl + '/partner/' + vm.groupId + '/' + parseInt(getCookie('userId')), function (res) {
             if (res.data && res.data < 2) {
@@ -241,6 +225,119 @@
             layer = layui.layer,
             table = layui.table,
             element = layui.element
+        requestParamTable = table.render({
+                elem: '#requestParamTable'
+                , url: _hostUrl + '/api/requestParam/'+getUrlKey('id')  //数据接口
+                , response: {
+                    statusName: 'responseCode' //数据状态的字段名称，默认：code
+                    , statusCode: 200 //成功的状态码，默认：0
+                    , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                    , dataName: 'data'
+                }
+                , cols: [[ //表头
+                    {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
+                {
+                    field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
+                        let n = d.paramKey.split('>>').length - 1
+                        let space = '<a>'
+                        for (var i = 0; i < n; i++) {
+                            space += '&nbsp;&nbsp;&nbsp;&nbsp;'
+                        }
+                        space += '</a>'
+                        if (n === 1) {
+                            space =  space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }else if (n === 2) {
+                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }else if (n === 3) {
+                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        } else {
+                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }
+                        return space + d.paramKey.split('>>')[n] + '</a>'
+                    }
+                }
+                    , {
+                        field: 'paramName', title: '参数说明', width: 250, align: 'left'
+                    }
+                    , {
+                        field: 'paramType',
+                        title: '参数类型',
+                        width: 75,
+                        templet: function (d) {
+                            return paramTypeArray[d.paramType]
+                        }, align: 'center'
+                    }
+                    , {
+                        field: 'paramNullFlag',
+                        title: '必输',
+                    width: 40, align: 'center',
+                        templet: function (d) {
+                            return d.paramNullFlag === 1 ? '是' : '否'
+                        }
+                    }
+                    , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
+                    , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
+                    , {title: '说明',  toolbar: '#moreBar',width:50,align:'center'}
+                ]]
+                ,done: function (res, curr, count) {
+                    $('th').css({'background-color': '#009688', 'color': '#fff'});
+            }
+            })
+        responseParamTable = table.render({
+                elem: '#responseParamTable'
+                , url: _hostUrl + '/api/responseParam/'+getUrlKey('id')  //数据接口
+                , response: {
+                    statusName: 'responseCode' //数据状态的字段名称，默认：code
+                    , statusCode: 200 //成功的状态码，默认：0
+                    , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                    , dataName: 'data'
+                }
+                , cols: [[ //表头
+                    {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
+                    {
+                        field: 'paramKey', title: '参数名', align:'left',templet:function (d) {
+                            let n = d.paramKey.split('>>').length - 1
+                            let space = '<a>'
+                            for(var i = 0;i < n;i++){
+                                space +='&nbsp;&nbsp;&nbsp;&nbsp;'
+                            }
+                            space +='</a>'
+                            if (n === 1) {
+                                space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            } else if (n === 2) {
+                                space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            } else if (n === 3) {
+                                space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            } else {
+                                space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            }
+                            return space + d.paramKey.split('>>')[n] + '</a>'
+                        }
+                    }
+                    , {
+                        field: 'paramName', title: '参数说明', width: 250, align: 'left'
+                    }
+                    , {
+                        field: 'paramType',
+                        title: '参数类型',
+                        width: 75,
+                        templet: function (d) {
+                            return paramTypeArray[d.paramType]
+                        }, align: 'center'
+                    }
+                    , {
+                        field: 'paramNullFlag',
+                        title: '必含',
+                    width: 40, align: 'center',
+                        templet: function (d) {
+                            return d.paramNullFlag === 1 ? '是' : '否'
+                        }
+                    }
+                    , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
+                    , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
+                    , {title: '说明',  toolbar: '#moreBar',width:50,align:'center'}
+                ]]
+            })
         form.on('submit(copy)',function (data) {
             // 获得frame索引
             var index = parent.layer.getFrameIndex(window.name)
@@ -322,6 +419,27 @@
             }
         })
         //监听工具条
+        $(document).on('click', '#detail', function (obj) {
+            let paramDesc = obj.currentTarget.parentElement.children[1].innerText
+            // layer.prompt({
+            //     formType: 2,
+            //     value: paramDesc,
+            //     title: '更多描述内容',
+            //     area: ['500px', '200px'] //自定义文本域宽高
+            // }, function (value, index, elem) {
+            //     layer.close(index);
+            // })
+            if(paramDesc === ''){
+                paramDesc = '暂无更多描述!'
+            }
+            layer.tab({
+                area: ['500px', '200px'],
+                tab: [{
+                    title: '更多描述内容',
+                    content: paramDesc
+                }]
+            });
+        })
         $(document).on('click', '#changeCurrent', function (obj) {
             var historyId = obj.currentTarget.parentElement.parentElement.parentElement.children[1].innerText
             layer.confirm('确认切换到当前历史记录？', {
@@ -372,7 +490,7 @@
             // layer.msg('历史记录')
         })
         $("ul li:eq(2)").click(function () {
-            // layer.msg('依赖拓扑图')
+            // layer.msg('测试')
         })
 
     })
@@ -412,9 +530,7 @@
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
-                        this.requestParamList = response.data.data.requestParamList
-                        this.responseParamList = response.data.data.responseParamList
-                        layui.use(['form'], function () {
+                        layui.use(['form','table'], function () {
                             $ = layui.jquery
                             var form = layui.form
                             $("#L_checkStatus").find("option").remove();
@@ -429,6 +545,7 @@
                         } else {
                             $('#show-form').removeClass('layui-hide')
                         }
+
                     }
                 })
             },
@@ -451,6 +568,12 @@
                         where: {
                             id: this.apiId //查询当前用户所在所有组的数据
                         }
+                    })
+                    requestParamTable.reload({
+                        url: _hostUrl + '/api/requestParam/' + this.apiId
+                    })
+                    requestParamTable.reload({
+                        url: _hostUrl + '/api/responseParam/' + this.apiId
                     })
                 })
             }

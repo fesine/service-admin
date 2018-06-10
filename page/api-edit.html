@@ -556,7 +556,14 @@
         form.on('select(paramType)', function (d) {
             var id = d.elem.parentElement.previousElementSibling.previousElementSibling
                 .previousElementSibling.innerText
-            $.each(vm.requestParamList, function (index, item) {
+            //d.elem.parentElement.parentElement.parentElement.parentElement.parentElement.id
+            var tempArray
+            if(d.elem.parentElement.parentElement.parentElement.parentElement.id === 'requestParamTable'){
+                tempArray = vm.requestParamList
+            }else{
+                tempArray = vm.responseParamList
+            }
+            $.each(tempArray, function (index, item) {
                 if (item.myId === parseInt(id)) {
                     item.paramType = d.value
                     // console.log(item.paramKey+'：改变了数据类型'+','+ item.paramType)
@@ -567,7 +574,13 @@
 
         form.on('checkbox(paramNullFlag)', function (d) {
             var id = d.elem.parentElement.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerText
-            $.each(vm.requestParamList, function (index, item) {
+            var tempArray
+            if (d.elem.parentElement.parentElement.parentElement.parentElement.parentElement.id === 'requestParamTable') {
+                tempArray = vm.requestParamList
+            } else {
+                tempArray = vm.responseParamList
+            }
+            $.each(tempArray, function (index, item) {
                 if (item.myId === parseInt(id)) {
                     if (d.elem.checked) {
                         item.paramNullFlag = 1
