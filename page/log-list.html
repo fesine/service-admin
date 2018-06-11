@@ -41,14 +41,13 @@
   <input hidden id="editUser" value=""/>
 </div>
 <script type="text/html" id="userBar">
-  {{#  if(d.opType === '删除'){ }}
-  <a class="layui-btn layui-btn-xs" lay-event="edit">恢复</a>
+  {{#  if(d.opType === '删除' && (d.opTarget === '契约' || d.opTarget === '接口')){ }}
+  <a class="layui-btn layui-btn-xs" lay-event="recover">恢复</a>
   {{#  } }}
 </script>
 <script>
     layui.use(['table','form','layer'], function () {
         var table = layui.table
-            ,form = layui.form
             , layer = layui.layer
         //第一个实例
         table.render({
@@ -80,8 +79,16 @@
         //监听工具条
         table.on('tool(logList)', function (obj) {
             var data = obj.data
-            if (obj.event === 'edit') {
-                layer.msg('恢复操作'+data.id)
+            if (obj.event === 'recover') {
+
+                $.post(_hostUrl+"/log/recover/"+data.id,function (res) {
+                    if(res.responseCode === 201){
+                        layer.msg('恢复成功！')
+                    }else {
+                        layer.msg(res.responseMsg)
+                    }
+                })
+                return false
             }
         })
 
