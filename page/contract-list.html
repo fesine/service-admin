@@ -210,9 +210,9 @@
                     field: 'starFlag', title: '', width: 44, align: 'center',
                     event: 'changeStar', templet: '#showStar', style: 'padding: 0px;'
                 }
-                , {field: 'serviceCode', title: '契约编号', width: 250, align: 'left',
+                , {field: 'serviceCode', title: '契约编号', width: 300, align: 'left',
                     event: 'detail',templet: '#showCode'}
-                , {field: 'serviceName', title: '契约名称', width: 250, align: 'center',
+                , {field: 'serviceName', title: '契约名称',  align: 'center',
                     event: 'detail', templet: '#showName'}
                 , {field: 'versionNo', title: '版本号', width: 100, sort: true, align: 'center'}
                 // , {
@@ -221,7 +221,7 @@
                 //         return dateFormat(d.lastUpdateTime)
                 //     }
                 // }
-                , {title: '操作',  align: 'center', toolbar: '#contractBar'}
+                , {title: '操作',  align: 'center', toolbar: '#contractBar', width: 120}
             ]]
             , response: {
                 statusName: 'responseCode' //数据状态的字段名称，默认：code

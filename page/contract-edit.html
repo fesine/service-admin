@@ -356,33 +356,41 @@
                 layer.msg('服务消费方不能为空!', {icon: 5, shift: 6});
                 return
             }
-            //TODO 弹出输入修改信息
-            data.field.consumerGroup=consumerGroupValue
-            data.field.relyGroup= relyGroupValue
-            data.field.operateType= operateTypeValue
-            data.field.idempotentFlag= idempotentFlagValue
-            $.putForm(_hostUrl + '/contract', data.field, function (res) {
-                if (res.responseCode == 201) {
-                    layer.msg('修改契约成功', {
-                        icon: 1,
-                        time: 2000
-                    },function () {
-                        // 获得frame索引
-                        var index = parent.layer.getFrameIndex(window.name)
-                        //关闭当前frame
-                        parent.layer.close(index)
-                        var table = parent.window.layui.table
-                        table.reload('contractList', {
-                            where: {
-                                projectId: parseInt(getCookie('projectId'))
-                                , groupId: data.field.groupId
-                            }
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '请输入更新描述',
+                area: ['500px', '100px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                layer.close(index);
+                data.field.consumerGroup = consumerGroupValue
+                data.field.relyGroup = relyGroupValue
+                data.field.operateType = operateTypeValue
+                data.field.idempotentFlag = idempotentFlagValue
+                $.putForm(_hostUrl + '/contract?updateDesc=' + value, data.field, function (res) {
+                    if (res.responseCode == 201) {
+                        layer.msg('修改契约成功', {
+                            icon: 1,
+                            time: 2000
+                        }, function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name)
+                            //关闭当前frame
+                            parent.layer.close(index)
+                            var table = parent.window.layui.table
+                            table.reload('contractList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , groupId: data.field.groupId
+                                }
+                            })
                         })
-                    })
-                } else {
-                    layer.msg(res.responseMsg)
-                }
+                    } else {
+                        layer.msg(res.responseMsg)
+                    }
+                })
             })
+
             return false
         })
 
