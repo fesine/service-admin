@@ -504,17 +504,17 @@
                     layer.msg('当前分组无可添加的服务接口!')
                     $('#addButton').addClass('layui-btn-disabled')
                 }else{
+                    for (var i = 0; i < serviceArray.length; i++) {
+                        $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+                    }
+                    //默认添加第一组数据
+                    $('#L_serviceCode').val(serviceArray[0].serviceCode)
+                    $('#L_contractId').val(serviceArray[0].id)
+                    $('#L_serviceName').val(serviceArray[0].serviceName)
+                    $('#L_versionNo').val(serviceArray[0].versionNo)
+                    $('#L_detailMemo').val(serviceArray[0].memo)
                     $('#addButton').removeClass('layui-btn-disabled')
                 }
-                for (var i = 0; i < serviceArray.length; i++) {
-                    $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
-                }
-                //默认添加第一组数据
-                $('#L_serviceCode').val(serviceArray[0].serviceCode)
-                $('#L_contractId').val(serviceArray[0].id)
-                $('#L_serviceName').val(serviceArray[0].serviceName)
-                $('#L_versionNo').val(serviceArray[0].versionNo)
-                $('#L_detailMemo').val(serviceArray[0].memo)
             }
             form.render()
         })
