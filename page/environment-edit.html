@@ -27,7 +27,7 @@
     <form class="layui-form">
         <div class="layui-form-item" hidden>
             <div class="layui-input-inline">
-                <input type="text" id="L_statusCodeId" name="id" required=""
+                <input type="text" id="L_envId" name="id" required=""
                        lay-verify=""
                        autocomplete="off" class="layui-input">
             </div>
@@ -40,31 +40,48 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label for="L_statusCodeName" class="layui-form-label">
-                <span class="x-red">*</span>状态码
+            <label for="L_envName" class="layui-form-label">
+                <span class="x-red">*</span>环境名称
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_statusCodeName" name="code" required=""
-                       lay-verify="statusCodeName"
+                <input type="text" id="L_envName" name="envName" required=""
+                       lay-verify="envName"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>状态码名称不可为空且唯一
+                <span class="x-red">*</span>环境名称不可为空且唯一
             </div>
         </div>
         <div class="layui-form-item">
-            <label for="L_codeDesc" class="layui-form-label">
-                <span class="x-red">*</span>状态码描述
+            <label for="L_url" class="layui-form-label">
+                <span class="x-red">*</span>连接地址
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_codeDesc" name="codeDesc" required=""
-                       lay-verify="codeDesc"
+                <input type="text" id="L_url" name="url" required=""
+                       lay-verify="url"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>状态码描述不可为空
+                <span class="x-red">*</span>连接地址不可为空
             </div>
         </div>
+
+
+        <div class="layui-form-item">
+            <label for='L_protocol' class="layui-form-label">
+                <span class="x-red">*</span>请求协议
+            </label>
+            <!--1:http 2:https 3:dap 4:zookper-->
+            <div class="layui-input-inline">
+                <select id="L_protocol" name="protocol" lay-verify="protocol">
+                    <option value='1'>HTTP</option>
+                    <option value='2'>HTTPS</option>
+                    <option value='3'>DAP</option>
+                    <option value='4'>ZOOKPER</option>
+                </select>
+            </div>
+        </div>
+
         <div class="layui-form-item">
             <label class="layui-form-label">
             </label>
@@ -76,51 +93,60 @@
 </div>
 <script>
     layui.use(['form', 'layer'], function () {
-        $ = layui.jquery
-        var form = layui.form
-            , layer = layui.layer
-        //获取选中的数据 进行格式转换，并加载到form表单中
-        var editData = parent.$("#editCode").val();
-        var editArray = JSON.parse(editData)
-        $('#L_statusCodeId').val(editArray.id)
-        $('#L_projectId').val(editArray.projectId)
-        $('#L_statusCodeName').val(editArray.code)
-        $('#L_codeDesc').val(editArray.codeDesc)
-        form.render();//下拉菜单渲染 把内容加载进去
-        //自定义验证规则
-        form.verify({
-            code: function (value) {
-                if (value.length < 1) {
-                    return '状态码不可为空'
-                }
-            },
-            codeDesc: function (value) {
-                if (value.length < 1) {
-                    return '状态码不可为空'
+            $ = layui.jquery
+            var form = layui.form
+                , layer = layui.layer
+            //获取选中的数据 进行格式转换，并加载到form表单中
+            var editData = parent.$("#editEnv").val();
+            var editArray = JSON.parse(editData)
+            $('#L_envId').val(editArray.id)
+            $('#L_projectId').val(editArray.projectId)
+            $('#L_envName').val(editArray.envName)
+            $('#L_url').val(editArray.url)
+            //获取select下拉框的所有option
+            var options = $("#L_protocol").find("option");
+            for (var i = 0; i < options.length; i++) {
+                let val = $(options[i]).val();
+                if (editArray.protocol ==val ) {
+                    $(options[i]).attr("selected", "selected");
                 }
             }
-        })
-
-        //监听提交
-        form.on('submit(edit)', function (data) {
-            $.putForm(_hostUrl + "/code", data.field, function (res) {
-                if (res.responseCode === 201) {
-                    layer.msg('修改状态码成功', {
-                        icon: 1,
-                        time: 500
-                    }, function () {
-                        x_admin_close();
-                        var table = parent.window.layui.table;
-                        table.reload('statusCodeList')
-                    });
-                } else {
-                    layer.msg(res.responseMsg)
+            form.render();//下拉菜单渲染 把内容加载进去
+            //自定义验证规则
+            form.verify({
+                envName: function (value) {
+                    if (value.length < 1) {
+                        return '环境名称不可为空'
+                    }
+                },
+                url: function (value) {
+                    if (value.length < 1) {
+                        return '连接地址不可为空'
+                    }
                 }
             })
-            return false
-        })
 
-    })
+            //监听提交
+            form.on('submit(edit)', function (data) {
+                $.putForm(_hostUrl + "/env", data.field, function (res) {
+                    if (res.responseCode === 201) {
+                        layer.msg('修改环境成功', {
+                            icon: 1,
+                            time: 500
+                        }, function () {
+                            x_admin_close();
+                            var table = parent.window.layui.table;
+                            table.reload('environmentList')
+                        });
+                    } else {
+                        layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                    }
+                })
+                return false
+            })
+
+        }
+    )
 </script>
 </body>
 

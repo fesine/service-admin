@@ -46,13 +46,18 @@
                         <i class="layui-icon">&#xe67c;</i>导入状态码表
                     </button>
                 </div>
-                <div class="layui-col-xs8">
+                <div class="layui-col-xs6">
                     <div class="layui-inline" style="width: 200px;">
                         <input id="searchKey" type="text" name="searchKey" placeholder="请输入状态码关键字查询" autocomplete="off"
                                class="layui-input">
                     </div>
-                    <button class="layui-btn" data-type="reload"><i
+                    <button class="layui-btn" data-type="search"><i
                             class="layui-icon">&#xe615;</i></button>
+                </div>
+                <div class="layui-col-xs2">
+                    <button class="layui-btn layui-btn-danger" data-type="deleteBatch"><i
+                            class="layui-icon">&#xe640;</i>删除
+                    </button>
                 </div>
             </div>
         </xblock>
@@ -97,17 +102,46 @@
         })
         //加入搜索功能
         var $ = layui.$, active = {
-            reload: function () {
+            search: function () {
                 statusCodeTable.reload({
                     where: {
                         projectId: parseInt(getCookie('projectId')),
                         codeDesc: $("#searchKey").val()
                     }
                 })
-
+            },
+            //加入批量删除功能
+            deleteBatch: function () {
+                var checkedArr = new Array();
+                var data = table.checkStatus('statusCodeList').data;
+                for (var i = 0; i < data.length; i++) {
+                    checkedArr[i] = data[i].id;
+                }
+                alert(checkedArr);
+                var ids = checkedArr.join(',');
+                layer.confirm('确定删除吗?', function (index) {
+                    $.deleteJSON(_hostUrl + "/code?id=" + ids + "&projectId=" + parseInt(getCookie('projectId'))
+                        , null, function (res) {
+                            if (res.responseCode == 204) {
+                                layer.msg('删除成功', {
+                                    icon: 1,
+                                    time: 2000
+                                })
+                                table.reload('statusCodeList')
+                            } else {
+                                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                            }
+                        })
+                })
             }
         };
-        $('.layui-col-xs8 .layui-btn').on('click', function () {
+        //搜索功能回调
+        $('.layui-col-xs6 .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //加入批量删除功能回调
+        $('.layui-col-xs2 .layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
