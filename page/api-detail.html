@@ -343,7 +343,7 @@
             var index = parent.layer.getFrameIndex(window.name)
             //关闭当前frame
             parent.layer.close(index)
-            parent.x_admin_show('复制新增','api-add.html', 500, 500,true)
+            parent.x_admin_show('复制新增','api-add.html?copy=1', 500, 500,true)
         })
         form.on('select', function (data) {
             $.putForm(_hostUrl + '/api/check', {
@@ -530,6 +530,7 @@
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
+                        parent.$('#editApi').val(JSON.stringify(response.data.data))
                         layui.use(['form','table'], function () {
                             $ = layui.jquery
                             var form = layui.form

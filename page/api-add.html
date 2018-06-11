@@ -176,7 +176,7 @@
                                 </select>
                             </div>
                             <div class="layui-input-inline" style="margin-left: 20px;width: 150px;">
-                                <button class="layui-btn  layui-btn-normal  layui-btn-fluid"
+                                <button id="addButton" class="layui-btn  layui-btn-normal  layui-btn-fluid"
                                         lay-filter="add"
                                         lay-submit="">
                                     保存
@@ -282,6 +282,8 @@
                                         <div class="layui-input-inline"
                                              style="width: 100px;">
                                             <select name="paramType" lay-filter="paramType"
+                                                    :selected="list.paramType"
+                                                    v-model="list.paramType"
                                                     lay-verify="paramType">
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
@@ -304,6 +306,7 @@
                                             <div style="margin-top: 8px;">
                                                 <input type="checkbox" checked name="paramNullFlag"
                                                        lay-filter="paramNullFlag" lay-skin="primary"
+                                                       :checked="list.paramNullFlag==1"
                                                        class="req-checkbox-sub">
                                             </div>
                                         </div>
@@ -323,7 +326,7 @@
                                             <!--<input type="text" name="paramDesc" placeholder="描述"-->
                                                    <!--v-model="list.paramDesc" lay-filter="lastRow"-->
                                                    <!--autocomplete="off" class="layui-input lastRow">-->
-                                            <a></a>
+                                            <a>{{list.paramDesc}}</a>
                                         </div>
                                         <div class="layui-input-inline req-manager">
                                             <div class="req-manager-button">
@@ -397,6 +400,8 @@
                                         <div class="layui-input-inline"
                                              style="width: 100px;">
                                             <select name="paramType" lay-filter="paramType"
+                                                    :selected="list.paramType"
+                                                    v-model="list.paramType"
                                                     lay-verify="paramType">
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
@@ -419,6 +424,7 @@
                                             <div style="margin-top: 8px;">
                                                 <input type="checkbox" checked name="paramNullFlag"
                                                        lay-filter="paramNullFlag" lay-skin="primary"
+                                                       :checked="list.paramNullFlag==1"
                                                        class="req-checkbox-sub">
                                             </div>
                                         </div>
@@ -487,24 +493,26 @@
         })
         $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
             if (res.responseCode != 200) {
-           layer.msg(res.responseMg)
-                return
+                layer.msg(res.responseMg)
+            }else{
+                $("#L_serviceCode").find("option").remove();
+                serviceArray = res.data
+                if(!serviceArray || serviceArray.length === 0){
+                    layer.msg('当前分组无可添加的服务接口!')
+                    $('#addButton').addClass('layui-btn-disabled')
+                }else{
+                    $('#addButton').removeClass('layui-btn-disabled')
+                }
+                for (var i = 0; i < serviceArray.length; i++) {
+                    $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+                }
+                //默认添加第一组数据
+                $('#L_serviceCode').val(serviceArray[0].serviceCode)
+                $('#L_contractId').val(serviceArray[0].id)
+                $('#L_serviceName').val(serviceArray[0].serviceName)
+                $('#L_versionNo').val(serviceArray[0].versionNo)
+                $('#L_detailMemo').val(serviceArray[0].memo)
             }
-            $("#L_serviceCode").find("option").remove();
-            serviceArray = res.data
-            if(!serviceArray || serviceArray.length === 0){
-                layer.msg('当前分组无可添加的服务接口!')
-                    return
-            }
-            for (var i = 0; i < serviceArray.length; i++) {
-                $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
-            }
-            //默认添加第一组数据
-            $('#L_serviceCode').val(serviceArray[0].serviceCode)
-            $('#L_contractId').val(serviceArray[0].id)
-            $('#L_serviceName').val(serviceArray[0].serviceName)
-            $('#L_versionNo').val(serviceArray[0].versionNo)
-            $('#L_detailMemo').val(serviceArray[0].memo)
             form.render()
         })
     }
@@ -525,9 +533,44 @@
         var editData = parent.$("#editApi").val();
         if (editData != '') {
             var editArray = JSON.parse(editData)
+            vm.requestParamList = editArray.requestParam
+            vm.responseParamList = editArray.responseParam
             loadJsonDataToForm(editArray)
+            if (getUrlKey('copy') === '1') {
+                //myId赋值
+                for (var i = 0; i < vm.requestParamList.length; i++) {
+                    vm.requestParamList[i].myId = vm.nextId
+                    vm.requestParamList[i].id = null
+                    vm.nextId++
+                }
+                //添加一行空表单备用
+                for (var i = 0; i < vm.responseParamList.length; i++) {
+                    vm.responseParamList[i].myId = vm.respNextId
+                    vm.responseParamList[i].id = null
+                    vm.respNextId++
+                }
+                vm.requestParamList.push({
+                    myId: vm.nextId++,
+                    paramKey: '',
+                    paramName: '',
+                    paramType: 1,
+                    paramNullFlag: 1,
+                    paramLength: '',
+                    paramValue: '',
+                    paramDesc: '',
+                })
+                vm.responseParamList.push({
+                    myId: vm.respNextId++,
+                    paramKey: '',
+                    paramName: '',
+                    paramType: 1,
+                    paramNullFlag: 1,
+                    paramLength: '',
+                    paramValue: '',
+                    paramDesc: '',
+                })
+            }
         } else {
-
             if(!groupId || groupId===''){
                 $('#L_groupCode').val(groupArray[0].groupCode)
                 $('#L_groupId').val(groupArray[0].id)
@@ -574,11 +617,18 @@
                 }
             })
         })
-        //测试选择字段类型监听
+        //选择字段类型监听
         form.on('select(paramType)', function (d) {
             var id = d.elem.parentElement.previousElementSibling.previousElementSibling
                 .previousElementSibling.innerText
-            $.each(vm.requestParamList, function (index, item) {
+            //d.elem.parentElement.parentElement.parentElement.parentElement.parentElement.id
+            var tempArray
+            if (d.elem.parentElement.parentElement.parentElement.parentElement.id === 'requestParamTable') {
+                tempArray = vm.requestParamList
+            } else {
+                tempArray = vm.responseParamList
+            }
+            $.each(tempArray, function (index, item) {
                 if (item.myId === parseInt(id)) {
                     item.paramType = d.value
                     // console.log(item.paramKey+'：改变了数据类型'+','+ item.paramType)
@@ -589,7 +639,13 @@
 
         form.on('checkbox(paramNullFlag)', function (d) {
             var id = d.elem.parentElement.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerText
-            $.each(vm.requestParamList, function (index, item) {
+            var tempArray
+            if (d.elem.parentElement.parentElement.parentElement.parentElement.parentElement.id === 'requestParamTable') {
+                tempArray = vm.requestParamList
+            } else {
+                tempArray = vm.responseParamList
+            }
+            $.each(tempArray, function (index, item) {
                 if (item.myId === parseInt(id)) {
                     if (d.elem.checked) {
                         item.paramNullFlag = 1
@@ -701,8 +757,9 @@
         },
         //渲染之前加载cookie数据
         beforeMount () {
-            this.superFlag = getCookie('superFlag')
-            this.projectStatus = getCookie('projectStatus')
+            let _this = this
+            _this.superFlag = getCookie('superFlag')
+            _this.projectStatus = getCookie('projectStatus')
         },
         watch: {
             nextId () {
@@ -787,7 +844,7 @@
                        ,layer = layui.layer
                     let myId = parseInt(e.path[3].firstElementChild.innerText)
                     let array
-                    let tempValue
+                    let tempValue = $(e.path[3]).children('.layui-hide')[0].innerText
                     let tempParam
                     if (flag === 1) {
                         array = vm.requestParamList
@@ -797,7 +854,7 @@
                     for (var i = array.length - 1; i >= 0; i--) {
                         if (myId === array[i].myId) {
                             tempParam = array[i]
-                            tempValue = array[i].paramDesc
+                            // tempValue = array[i].paramDesc
                             break
                         }
                     }

@@ -481,18 +481,18 @@
         })
         $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
             if (res.responseCode != 200) {
-           layer.msg(res.responseMg)
-                return
-            }
-            $("#L_serviceCode").find("option").remove();
-            serviceArray = res.data
-            if(!serviceArray || serviceArray.length === 0){
-                layer.msg('当前分组无可添加的服务接口!')
-                    return
-            }
-            $('#L_serviceCode').append(new Option(vm.apiInfo.serviceCode, vm.apiInfo.serviceCode))// 下拉菜单里添加元素
-            for (var i = 0; i < serviceArray.length; i++) {
-                $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+                layer.msg(res.responseMg)
+            }else{
+                $("#L_serviceCode").find("option").remove();
+                $('#L_serviceCode').append(new Option(vm.apiInfo.serviceCode, vm.apiInfo.serviceCode))// 下拉菜单里添加元素
+                serviceArray = res.data
+                if(vm.apiInfo.groupId != $('#L_groupId').val() && (!serviceArray || serviceArray.length === 0)){
+                    layer.msg('当前分组无可添加的服务接口!')
+                    $("#L_groupCode").val(vm.apiInfo.groupCode)
+                }
+                for (var i = 0; i < serviceArray.length; i++) {
+                    $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+                }
             }
             form.render()
         })
@@ -552,7 +552,7 @@
                 }
             })
         })
-        //测试选择字段类型监听
+        //选择字段类型监听
         form.on('select(paramType)', function (d) {
             var id = d.elem.parentElement.previousElementSibling.previousElementSibling
                 .previousElementSibling.innerText
@@ -692,11 +692,32 @@
                         _this.requestParamList[i].id = null
                         _this.nextId++
                     }
+                    //添加一行空表单备用
                     for(var i = 0;i< _this.responseParamList.length;i++){
                         _this.responseParamList[i].myId = _this.respNextId
                         _this.responseParamList[i].id = null
                         _this.respNextId++
                     }
+                    _this.requestParamList.push({
+                        myId: _this.nextId++,
+                        paramKey: '',
+                        paramName: '',
+                        paramType: 1,
+                        paramNullFlag: 1,
+                        paramLength: '',
+                        paramValue: '',
+                        paramDesc: '',
+                    })
+                    _this.responseParamList.push({
+                        myId: _this.respNextId++,
+                        paramKey: '',
+                        paramName: '',
+                        paramType: 1,
+                        paramNullFlag: 1,
+                        paramLength: '',
+                        paramValue: '',
+                        paramDesc: '',
+                    })
                 }
 
             })
