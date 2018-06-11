@@ -1,7 +1,8 @@
 function setCookie (c_name, value) {
     var exdate = new Date()
     exdate.setDate(exdate.getDate() + 7)
-    document.cookie = c_name + "=" + escape(value) + ";expires=" + exdate.toGMTString()
+    //指定path=/坑很大啊
+    document.cookie = c_name + "=" + escape(value) + ";expires=" + exdate.toGMTString() + ";path=/;"
 }
 
 function getCookie (c_name) {

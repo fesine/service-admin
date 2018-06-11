@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<head xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        body {
+            background-color: #f2f3f0;
+        }
+
+        .layui-colla-title{
+            color: #009688;!important;
+            font-weight: bolder;
+        }
+
+        .layui-table-cell{
+            padding: 2px;
+        }
+        .api_title {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .api_info {
+            color: #666;
+            text-align: center;
+            border-bottom: 1px dotted #666;
+            margin: 10px 10px;
+        }
+
+        .api_content {
+            font-size: 14px;
+            padding: 20px;
+            line-height: 25px;
+            /*text-indent: 2em;*/
+        }
+
+        .api_rely {
+            font-size: 14px;
+            padding: 20px 20px 20px 0px;
+            line-height: 25px;
+            text-indent: 2em;
+        }
+
+        .api_content_title {
+            float: left;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .api_content_item {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .api_content_rely_title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        a.change-rely-service:hover{
+            color: #009688;
+        }
+    </style>
+</head>
+<body>
+<div id="api_detail">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>历史记录</li>
+            <li>测试</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-row">
+                    <div>
+                        <div>
+                            <fieldset class="layui-elem-field">
+                                <legend>管理操作</legend>
+                                <div id="show-form" class="layui-hide" style="float: left;">
+                                    <div class="layui-field-box">
+                                        <form class="layui-form">
+                                            <div class="layui-input-inline" style="width: 150px;">
+                                                <select id="L_checkStatus" name="checkStatus"
+                                                        lay-verify="checkStatus">
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div v-if="userType < 3">
+                                    <button class="layui-btn layui-btn-normal"
+                                            lay-filter="copy" lay-submit=""
+                                            style="width: 180px;margin-top: 10px;">
+                                        复制(另存接口)
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="api_content">
+                            <blockquote class="layui-elem-quote">
+                                <h1 class="api_title">{{apiInfo.serviceName}}
+                                    <span v-if="apiInfo.checkStatus == 0"
+                                          class="layui-badge-dot"
+                                          style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                    <span v-if="apiInfo.checkStatus == 1"
+                                          class="layui-badge-dot layui-bg-green"
+                                          style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                    <span v-if="apiInfo.checkStatus == 2"
+                                          class="layui-badge-dot layui-bg-orange"
+                                          style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                    <span v-if="apiInfo.checkStatus == 3"
+                                          class="layui-badge-dot layui-bg-black"
+                                          style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                </h1>
+                                <p class="api_info">创建者：{{apiInfo.creator}}
+                                    发布时间：{{apiInfo.createTime|convertDate}}</p>
+
+                                <div class="layui-collapse">
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">基本信息</h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <a class="api_content_title">服务编号：</a>
+                                            <a class="api_content_item"
+                                               style="margin-left: 0px">{{apiInfo.serviceCode}}</a>
+                                            <br>
+                                            <a class="api_content_title">服务名称：</a>
+                                            <a class="api_content_item">{{apiInfo.serviceName}}</a>
+                                            <br>
+                                            <a class="api_content_title">版&nbsp;本&nbsp;号：</a>
+                                            <a class="api_content_item">V{{apiInfo.versionNo}}</a>
+                                            <br>
+                                            <a class="api_content_title">详细描述：</a>
+                                            <a class="api_content_item">{{apiInfo.detailMemo}}
+                                            </a>
+                                            <br>
+                                            <a class="api_content_title">业务规则：</a>
+                                            <a class="api_content_item">{{apiInfo.businessRule}}
+                                            </a>
+                                            <br>
+                                            <a class="api_content_title">最后更新时间：</a>
+                                            <a class="api_content_item">{{apiInfo.lastUpdateTime|convertDate}}</a>
+                                            <br>
+                                            <a class="api_content_title">修改者：</a>
+                                            <a class="api_content_item">{{apiInfo.lastModifier}} </a>
+                                        </div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">请求参数</h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <table id="requestParamTable"></table>
+                                        </div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">响应参数</h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <table id="responseParamTable"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item">
+                <table id="historyList" lay-filter="historyList"></table>
+            </div>
+            <div class="layui-tab-item">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="historyBar">
+    {{# if(d.currentFlag == 0 && vm.userType < 2){ }}
+    <a class="layui-btn layui-btn-xs" id="changeCurrent">切换</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even id="delete">删除</a>
+    {{# } }}
+</script>
+<!--<script type="text/html" id="showParamKey">-->
+    <!--{{# if(d.paramKey.split('>>').length -1 > 0 ){ }}-->
+    <!--<a>切换</a>-->
+    <!--{{# } }}-->
+<!--</script>-->
+<script type="text/html" id="moreBar">
+    <button class="layui-btn layui-btn-xs" id="detail" lay-event="detail">查看</button>
+    <a hidden>{{d.paramDesc}}</a>
+</script>
+<script>
+    let historyTable
+    let requestParamTable
+    let responseParamTable
+    function updateClass () {
+        $.get(_hostUrl + '/partner/' + vm.groupId + '/' + parseInt(getCookie('userId')), function (res) {
+            if (res.data && res.data < 2) {
+                $('#show-form').removeClass('layui-hide')
+
+            } else {
+                $('#show-form').addClass('layui-hide')
+            }
+            vm.userType = res.data
+        })
+    }
+
+    layui.use(['form', 'layer', 'table','element'], function () {
+        $ = layui.jquery
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            element = layui.element
+        requestParamTable = table.render({
+                elem: '#requestParamTable'
+                , url: _hostUrl + '/api/requestParam/'+getUrlKey('id')  //数据接口
+                , response: {
+                    statusName: 'responseCode' //数据状态的字段名称，默认：code
+                    , statusCode: 200 //成功的状态码，默认：0
+                    , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                    , dataName: 'data'
+                }
+                , cols: [[ //表头
+                    {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
+                {
+                    field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
+                        let n = d.paramKey.split('>>').length - 1
+                        let space = '<a>'
+                        for (var i = 0; i < n; i++) {
+                            space += '&nbsp;&nbsp;&nbsp;&nbsp;'
+                        }
+                        space += '</a>'
+                        if (n === 1) {
+                            space =  space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }else if (n === 2) {
+                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }else if (n === 3) {
+                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        } else {
+                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }
+                        return space + d.paramKey.split('>>')[n] + '</a>'
+                    }
+                }
+                    , {
+                        field: 'paramName', title: '参数说明', width: 250, align: 'left'
+                    }
+                    , {
+                        field: 'paramType',
+                        title: '参数类型',
+                        width: 75,
+                        templet: function (d) {
+                            return paramTypeArray[d.paramType]
+                        }, align: 'center'
+                    }
+                    , {
+                        field: 'paramNullFlag',
+                        title: '必输',
+                    width: 40, align: 'center',
+                        templet: function (d) {
+                            return d.paramNullFlag === 1 ? '是' : '否'
+                        }
+                    }
+                    , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
+                    , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
+                    , {title: '说明',  toolbar: '#moreBar',width:50,align:'center'}
+                ]]
+                ,done: function (res, curr, count) {
+                    $('th').css({'background-color': '#009688', 'color': '#fff'});
+            }
+            })
+        responseParamTable = table.render({
+                elem: '#responseParamTable'
+                , url: _hostUrl + '/api/responseParam/'+getUrlKey('id')  //数据接口
+                , response: {
+                    statusName: 'responseCode' //数据状态的字段名称，默认：code
+                    , statusCode: 200 //成功的状态码，默认：0
+                    , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                    , dataName: 'data'
+                }
+                , cols: [[ //表头
+                    {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
+                    {
+                        field: 'paramKey', title: '参数名', align:'left',templet:function (d) {
+                            let n = d.paramKey.split('>>').length - 1
+                            let space = '<a>'
+                            for(var i = 0;i < n;i++){
+                                space +='&nbsp;&nbsp;&nbsp;&nbsp;'
+                            }
+                            space +='</a>'
+                            if (n === 1) {
+                                space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            } else if (n === 2) {
+                                space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            } else if (n === 3) {
+                                space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            } else {
+                                space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            }
+                            return space + d.paramKey.split('>>')[n] + '</a>'
+                        }
+                    }
+                    , {
+                        field: 'paramName', title: '参数说明', width: 250, align: 'left'
+                    }
+                    , {
+                        field: 'paramType',
+                        title: '参数类型',
+                        width: 75,
+                        templet: function (d) {
+                            return paramTypeArray[d.paramType]
+                        }, align: 'center'
+                    }
+                    , {
+                        field: 'paramNullFlag',
+                        title: '必含',
+                    width: 40, align: 'center',
+                        templet: function (d) {
+                            return d.paramNullFlag === 1 ? '是' : '否'
+                        }
+                    }
+                    , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
+                    , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
+                    , {title: '说明',  toolbar: '#moreBar',width:50,align:'center'}
+                ]]
+            })
+        form.on('submit(copy)',function (data) {
+            // 获得frame索引
+            var index = parent.layer.getFrameIndex(window.name)
+            //关闭当前frame
+            parent.layer.close(index)
+            parent.x_admin_show('复制新增','api-add.html?copy=1', 500, 500,true)
+        })
+        form.on('select', function (data) {
+            $.putForm(_hostUrl + '/api/check', {
+                id: vm.apiId,
+                serviceName: vm.apiInfo.serviceName,
+                projectId: vm.apiInfo.projectId,
+                groupId: vm.apiInfo.groupId,
+                checkStatus: data.value
+            }, function (res) {
+                if (res.responseCode == 201) {
+                    vm.apiInfo.checkStatus = data.value
+                    layer.msg('审核操作成功', {
+                        icon: 1,
+                        time: 2000
+                    })
+                }
+            })
+        })
+        historyTable = table.render({
+            elem: '#historyList'
+            , url: _hostUrl + '/api/historys'  //数据接口
+            , request: {
+                pageName: 'pageIndex' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+                id: vm.apiId //查询当前用户所在所有组的数据
+            }
+            , page: true //开启分页
+            , cols: [[ //表头
+                {
+                    field: 'currentFlag',
+                    title: '当前',
+                    width: 60,
+                    align: 'center',
+                    templet: function (d) {
+                        if (d.currentFlag === 1) {
+                            return '<i class="iconfont" style="color:red;font-size: 30px;font-weight: bold;">&#xe6ad;</i>'
+                        } else {
+                            return ''
+                        }
+                    }
+                }
+                , {field: 'id', title: '记录ID', width: 80, align: 'center'}
+                , {field: 'nickName', title: '操作用户', width: 150, align: 'center'}
+                , {field: 'updateDesc', title: '更新描述', width: 400, align: 'center'}
+                , {
+                    field: 'updateTime', title: '修改时间', width: 180, align: 'center'
+                    , templet: function (d) {
+                        if (d.currentFlag === 1) {
+                            return '<span class="layui-badge-dot" style="margin-right: 8px;"></span>' + dateFormat(d.updateTime) + '</a></span>'
+                        } else {
+                            return dateFormat(d.updateTime)
+                        }
+
+                    }
+                }
+                , {
+                    id: 'manager',
+                    title: '操作',
+                    align: 'center',
+                    toolbar: '#historyBar',
+                    style: 'layui-hide'
+                }
+            ]]
+            , response: {
+                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                , statusCode: 200 //成功的状态码，默认：0
+                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , rootName: 'data'
+                , countName: 'totalRecord'
+                , dataName: 'resultList'
+            }
+        })
+        //监听工具条
+        $(document).on('click', '#detail', function (obj) {
+            let paramDesc = obj.currentTarget.parentElement.children[1].innerText
+            // layer.prompt({
+            //     formType: 2,
+            //     value: paramDesc,
+            //     title: '更多描述内容',
+            //     area: ['500px', '200px'] //自定义文本域宽高
+            // }, function (value, index, elem) {
+            //     layer.close(index);
+            // })
+            if(paramDesc === ''){
+                paramDesc = '暂无更多描述!'
+            }
+            layer.tab({
+                area: ['500px', '200px'],
+                tab: [{
+                    title: '更多描述内容',
+                    content: paramDesc
+                }]
+            });
+        })
+        $(document).on('click', '#changeCurrent', function (obj) {
+            var historyId = obj.currentTarget.parentElement.parentElement.parentElement.children[1].innerText
+            layer.confirm('确认切换到当前历史记录？', {
+                icon: 3,
+                title: '切换记录'
+            }, function (index) {
+                var params = {
+                    id: historyId
+                }
+                $.putForm(_hostUrl + '/api/history', params, function (res) {
+                    if (res.responseCode == 201) {
+                        layer.msg('切换成功!', {
+                            icon: 1,
+                            time: 2000
+                        })
+                        // table.reload('historyList')
+                        vm.historyId = historyId
+                    } else {
+                        layer.msg(res.responseMsg)
+                    }
+                })
+            })
+        })
+        $(document).on('click', '#delete', function (obj) {
+            var data = obj.currentTarget.parentElement.parentElement.parentElement.children[1].innerText
+            layer.confirm('当前历史记录将被彻底删除，无法恢复!', {
+                icon: 3,
+                title: '删除历史记录'
+            }, function (index) {
+                $.deleteForm(_hostUrl + '/api/history/' + data, null, function (res) {
+                    if (res.responseCode == 204) {
+                        layer.msg('删除成功!', {
+                            icon: 1,
+                            time: 2000
+                        })
+                        table.reload('historyList')
+                    } else {
+                        layer.msg(res.responseMsg)
+                    }
+                })
+            })
+        })
+
+        $("ul li:eq(0)").click(function () {
+            // layer.msg('基本信息')
+        })
+        $("ul li:eq(1)").click(function () {
+            // layer.msg('历史记录')
+        })
+        $("ul li:eq(2)").click(function () {
+            // layer.msg('测试')
+        })
+
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#api_detail',
+        data () {
+            return {
+                apiId: '',
+                apiInfo: {},
+                groupId: '',
+                superFlag: -1,
+                userType: 0,
+                historyId: -1
+            }
+        },//过滤器
+        filters: {
+            convertType (value) {
+                return projectTypeArray[value]
+            },
+            convertDate (value) {
+                return dateFormat(value)
+            }
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = parseInt(getCookie('superFlag'))
+            this.apiId = getUrlKey('id')
+            this.groupId = getUrlKey('groupId')
+        },
+        mounted () {
+            $('.api_rely .layui-elem-quote').css('height', $('.api_content .layui-elem-quote').height())
+        },
+        watch: {
+            apiId () {
+                axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.apiInfo = response.data.data
+                        parent.$('#editApi').val(JSON.stringify(response.data.data))
+                        layui.use(['form','table'], function () {
+                            $ = layui.jquery
+                            var form = layui.form
+                            $("#L_checkStatus").find("option").remove();
+                            for (var i = 0; i < checkStatusArray.length; i++) {
+                                $('#L_checkStatus').append(new Option(checkStatusArray[i], i))// 下拉菜单里添加元素
+                            }
+                            $('#L_checkStatus').val(vm.apiInfo.checkStatus)
+                            form.render()//下拉菜单渲染 把内容加载进去
+                        })
+                        if (this.superFlag != 1) {
+                            updateClass()
+                        } else {
+                            $('#show-form').removeClass('layui-hide')
+                        }
+
+                    }
+                })
+            },
+            userType () {
+                historyTable.reload({
+                    where: {
+                        id: this.apiId //查询当前用户所在所有组的数据
+                    }
+                })
+            },
+            historyId () {
+                axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.apiInfo = response.data.data
+                        if (this.apiInfo.length === 0) {
+                            this.apiInfo.consumerList = null
+                        }
+                    }
+                    historyTable.reload({
+                        where: {
+                            id: this.apiId //查询当前用户所在所有组的数据
+                        }
+                    })
+                    requestParamTable.reload({
+                        url: _hostUrl + '/api/requestParam/' + this.apiId
+                    })
+                    requestParamTable.reload({
+                        url: _hostUrl + '/api/responseParam/' + this.apiId
+                    })
+                })
+            }
+        }, methods: {
+            handleClick:function(item){
+                if(item.id){
+                   this.apiId = item.id
+                   this.groupId = item.groupId
+                    historyTable.reload({
+                        where: {
+                            id: item.id //查询当前用户所在所有组的数据
+                        }
+                    })
+                }
+            }
+        }
+    })
+</script>
+<script>
+    //获取传过来的apiId
+</script>
+</body>
+</html>

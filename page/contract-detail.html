@@ -277,7 +277,7 @@
             }, function (res) {
                 if (res.responseCode == 201) {
                     vm.projectInfo.checkStatus = data.value
-                    layer.msg('修改状态成功', {
+                    layer.msg('审核操作成功', {
                         icon: 1,
                         time: 2000
                     })
@@ -420,9 +420,8 @@
         //渲染之前加载cookie数据
         beforeMount () {
             this.superFlag = parseInt(getCookie('superFlag'))
-            var _this = this
-            this.contractId = _this.getUrlKey('id')
-            this.groupId = _this.getUrlKey('groupId')
+            this.contractId = getUrlKey('id')
+            this.groupId = getUrlKey('groupId')
         },
         mounted () {
             $('.contract_rely .layui-elem-quote').css('height', $('.contract_content .layui-elem-quote').height())
@@ -477,9 +476,6 @@
                 })
             }
         }, methods: {
-            getUrlKey: function (name) {
-                return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ''])[1].replace(/\+/g, '%20')) || null
-            },
             handleClick:function(item){
                 if(item.id){
                    this.contractId = item.id

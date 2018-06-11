@@ -329,7 +329,7 @@ var firstFlag = true
 // iframe判断登录
 function checkLogin () {
     if (!getCookie('login') || getCookie('login') == 'false') {
-        parent.location.href = 'login.html'
+        parent.location.href = '../login.html'
     }
     var url
     if(firstFlag){
@@ -348,7 +348,7 @@ function checkLogin () {
         success: function (res) {
             if (!res || res.responseCode != 200) {
                 clearCookies()
-                parent.location.href = 'login.html'
+                parent.location.href = '../login.html'
             }else{
                 //更新项目状态值
                 if(res.data && res.data.projectStatus){
@@ -358,26 +358,26 @@ function checkLogin () {
         },
         error: function () {
             clearCookies()
-            parent.location.href = 'login.html'
+            parent.location.href = '../login.html'
         }
     })
 }
 
-function logout () {
-    $.ajax({
-        url: _hostUrl + '/logout',
-        type: 'get',
-        timeout: 3000,
-        success: function (res) {
-            clearCookies()
-            parent.location.href = 'login.html'
-        },
-        error: function () {
-            clearCookies()
-            parent.location.href = 'login.html'
-        }
-    })
-}
+// function logout () {
+//     $.ajax({
+//         url: _hostUrl + '/logout',
+//         type: 'get',
+//         timeout: 3000,
+//         success: function (res) {
+//             clearCookies()
+//             parent.location.href = 'login.html'
+//         },
+//         error: function () {
+//             clearCookies()
+//             parent.location.href = 'login.html'
+//         }
+//     })
+// }
 
 function clearCookies () {
     setCookie('login', 'false')
@@ -472,5 +472,69 @@ function changeBackground (item) {
             $(d[p]).find('a').css('color', '#0AAF53')
             $(d[p]).css('backgroundColor', '#E2F2E4')
         }
+    }
+}
+
+function getUrlKey (name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ''])[1].replace(/\+/g, '%20')) || null
+
+}
+
+function importIntoArray (myId, array, tempArray, tempKeyArray,prex) {
+    var key, value, paramNullFlag, paramType,tempValue
+    for (var x in tempArray) {
+        key = x
+        //判断是否已经存在
+        if(tempKeyArray.indexOf(prex+key) != -1){
+            continue
+        }
+        tempValue = value = tempArray[x]
+        if(jQuery.type(value) === "null"){
+            paramType = 1
+            paramNullFlag = 0
+        }
+        else if(jQuery.type(value) === "number"){
+            paramType = 2
+            paramNullFlag = 1
+        }
+        else if(jQuery.type(value) === "boolean"){
+            paramType = 8
+            paramNullFlag = 1
+        }
+        else if(jQuery.type(value) === "object"){
+            paramType = 13
+            paramNullFlag = 1
+            tempValue = ''
+        }
+        else if(jQuery.type(value) === "array"){
+            paramType = 14
+            paramNullFlag = 1
+            tempValue=''
+        }else{
+            //string处理
+            paramType = 1
+            paramNullFlag = 1
+        }
+        array.push({
+            myId: myId++,
+            paramKey: prex+key,
+            paramName: key,
+            paramType: paramType,
+            paramNullFlag: paramNullFlag,
+            paramLength: '',
+            paramValue: tempValue,
+            paramDesc: '',
+        })
+        tempKeyArray.push(prex + key)
+        //有子节点需要进行递归处理
+        if(jQuery.type(value) === "object"){
+            importIntoArray(myId, array,value, tempKeyArray, prex + key+'>>')
+        }else if(jQuery.type(value) === "array"){
+            //数组需要递归处理，添加完整的key
+            for(var i = 0;i <value.length; i++){
+                importIntoArray(myId, array, value[i], tempKeyArray, prex + key + '>>')
+            }
+        }
+
     }
 }
