@@ -38,26 +38,24 @@
     <div class="x-body">
         <xblock>
             <div class="layui-row">
-                <div class="layui-col-xs4">
+                <div class="layui-col-xs6">
                     <button class="layui-btn" onclick="x_admin_show('添加状态码','./status-code-add.html',600,400)"><i
                             class="layui-icon"></i>添加状态码
                     </button>
                     <button class="layui-btn layui-btn-warm" id="importFile">
                         <i class="layui-icon">&#xe67c;</i>导入状态码表
                     </button>
+                    <button class="layui-btn layui-btn-danger" data-type="deleteBatch" style="margin-left:10px;"><i
+                            class="layui-icon">&#xe640;</i>批量删除
+                    </button>
                 </div>
                 <div class="layui-col-xs6">
-                    <div class="layui-inline" style="width: 200px;">
+                    <div class="layui-inline" style="width: 300px;">
                         <input id="searchKey" type="text" name="searchKey" placeholder="请输入状态码关键字查询" autocomplete="off"
                                class="layui-input">
                     </div>
                     <button class="layui-btn" data-type="search"><i
                             class="layui-icon">&#xe615;</i></button>
-                </div>
-                <div class="layui-col-xs2">
-                    <button class="layui-btn layui-btn-danger" data-type="deleteBatch"><i
-                            class="layui-icon">&#xe640;</i>删除
-                    </button>
                 </div>
             </div>
         </xblock>
@@ -117,7 +115,6 @@
                 for (var i = 0; i < data.length; i++) {
                     checkedArr[i] = data[i].id;
                 }
-                alert(checkedArr);
                 var ids = checkedArr.join(',');
                 layer.confirm('确定删除吗?', function (index) {
                     $.deleteJSON(_hostUrl + "/code?id=" + ids + "&projectId=" + parseInt(getCookie('projectId'))

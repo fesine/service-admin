@@ -36,6 +36,58 @@
       <i class="layui-icon" style="line-height:30px">ဂ</i></a>
   </div>
   <div class="x-body">
+    <xblock>
+      <div class="layui-row">
+        <div class="layui-inline">
+          <div class="layui-inline" style="width: 100px;">
+            <input id="nameKey" type="text" name="nameKey" placeholder="操作用户"
+            autocomplete="off" class="layui-input">
+          </div>
+
+          <div class="layui-inline" style="width: 100px;">
+            <form class="layui-form">
+          <select name="typeKey" lay-filter="typeKey" id="typeKey">
+          <option value="">操作类型</option>
+          <option value="0">添加</option>
+          <option value="1">修改</option>
+          <option value="2">删除</option>
+          <option value="3">其他</option>
+          </select>
+            </form>
+          </div>
+          <div class="layui-inline" style="width: 100px;">
+            <form class="layui-form">
+          <select name="targetKey" lay-filter="targetKey" id="targetKey">
+          <option value="">操作对象</option>
+          <option value="0">项目</option>
+          <option value="1">分组</option>
+          <option value="2">契约</option>
+          <option value="3">接口</option>
+          <option value="4">状态码</option>
+          <option value="5">成员</option>
+          <option value="6">环境</option>
+          </select>
+            </form>
+          </div>
+          <div class="layui-inline">
+          <input type="text" placeholder="选择开始时间" class="layui-input" id="startTime">
+          </div>
+          <div class="layui-inline">
+          <input type="text" placeholder="选择结束时间" class="layui-input" id="endTime">
+          </div>
+
+          <div class="layui-inline" style="width: 240px;">
+            <input id="descKey" type="text" name="descKey" placeholder="请输入操作描述模糊查询"
+                   autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <button id="queryBtn" class="layui-btn" data-type="reload"><i
+                class="layui-icon">&#xe615;</i></button>
+        <button id="restBtn" class="layui-btn" data-type="reload"><i
+                class="iconfont">&#xe6b7;</i></button>
+      </div>
+
+    </xblock>
     <table id="logList" lay-filter="logList"></table>
   </div>
   <input hidden id="editUser" value=""/>
@@ -46,11 +98,22 @@
   {{#  } }}
 </script>
 <script>
-    layui.use(['table','form','layer'], function () {
+    layui.use(['table','form','layer','laydate'], function () {
         var table = layui.table
             , layer = layui.layer
+            , laydate = layui.laydate
+        laydate.render({
+            elem: '#startTime'
+            , type: 'datetime'
+            , min: '2015-1-1'
+        })
+        laydate.render({
+            elem: '#endTime'
+            , type: 'datetime'
+            , min: '2015-1-1'
+        })
         //第一个实例
-        table.render({
+        var logTable = table.render({
             elem: '#logList'
             , url: _hostUrl + '/log/listPage/'+parseInt(getCookie('projectId')) //数据接口
             , page: true //开启分页
@@ -76,6 +139,33 @@
                 , dataName: 'resultList'
             }
         })
+        //加入搜索功能
+        var $ = layui.$, active = {
+            reload: function () {
+                logTable.reload({
+                    where: {
+                        userNickName: $("#nameKey").val()
+                        , opType: $("#typeKey").val()
+                        , opTarget: $("#targetKey").val()
+                        , startTime: $("#startTime").val()
+                        , endTime: $("#endTime").val()
+                        ,opDesc: $("#descKey").val()
+                    }
+                })
+            }
+        };
+        $('#queryBtn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        $('#restBtn').on('click', function () {
+            $("#nameKey").val('')
+            $opType: $("#typeKey").val('')
+            $opTarget: $("#targetKey").val('')
+            $("#startTime").val('')
+            endTime: $("#endTime").val('')
+            $("#descKey").val('')
+        });
         //监听工具条
         table.on('tool(logList)', function (obj) {
             var data = obj.data
