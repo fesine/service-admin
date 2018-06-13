@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../echarts/echarts-rel.js"></script>
+    <style type="text/css">
+        html, body, #main {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0
+        }
+    </style>
+</head>
+<body>
+    <div id="main" style=""></div>
+<script type="text/javascript">
+    var mycharts = echarts.init(document.getElementById('main'), 'macarons')
+    var option = {
+        title: {
+            text: getUrlKey('projectName')+ '——服务契约分组统计',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            right: 10,
+            top: 20,
+            bottom: 20,
+            data: []
+        },
+        series: [
+            {
+                name: '服务契约',
+                type: 'pie',
+                radius: '55%',
+                center: ['40%', '50%'],
+                label: {            //饼图图形上的文本标签
+                    normal: {
+                        show: true,
+                        position: 'inner', //标签的位置
+                        textStyle: {
+                            fontWeight: 300,
+                            fontSize: 16    //文字的字体大小
+                        },
+                        formatter: '{c}'
+
+                    }
+                },
+                data: [],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    mycharts.setOption(option)
+    mycharts.showLoading();
+    $.get(_hostUrl + '/contract/count/'+getUrlKey('projectId'),function (res) {
+        if (res.responseCode == 200) {
+            mycharts.hideLoading();
+            mycharts.setOption({
+                legend: {
+                    data: res.data.legendData
+                },//加载数据图表
+                series: [{
+                    // 根据名字对应到相应的系列
+                    data: res.data.seriesData
+                }]
+            });
+        }
+    })
+
+</script>
+</body>
+</html>

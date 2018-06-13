@@ -108,7 +108,9 @@
                                          style="width: 100%; height: 90px;">
                                         <div carousel-item="">
                                             <ul class="layui-row layui-col-space10 layui-this">
-                                                <li class="layui-col-xs3">
+                                                <li class="layui-col-xs3"
+                                                    title="点击查询分组统计"
+                                                    @click="openContractCount(projectInfo.id,projectInfo.projectName)">
                                                     <a href="javascript:;"
                                                        class="x-admin-backlog-body">
                                                         <h3>契约总数</h3>
@@ -117,7 +119,9 @@
                                                         </p>
                                                     </a>
                                                 </li>
-                                                <li class="layui-col-xs3">
+                                                <li class="layui-col-xs3"
+                                                    title="点击查询分组统计"
+                                                    @click="openApiCount(projectInfo.id,projectInfo.projectName)">
                                                     <a href="javascript:;"
                                                        class="x-admin-backlog-body">
                                                         <h3>接口总数</h3>
@@ -191,7 +195,18 @@
                 projectId: '',
                 projectInfo: {}
             }
-        },//过滤器
+        },
+        methods:{
+            openContractCount(projectId, projectName){
+                x_admin_show('契约统计', './contract-group-data.html?projectId='
+                    + projectId+'&projectName='+ projectName, 800, 400, true)
+            },
+            openApiCount(projectId, projectName){
+                x_admin_show('接口统计', './api-group-data.html?projectId='
+                    + projectId+'&projectName='+ projectName, 800, 400, true)
+            }
+        },
+        //过滤器
         filters: {
             convertType (value) {
                 return projectTypeArray[value]
