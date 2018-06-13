@@ -129,6 +129,9 @@
                                     <span v-if="apiInfo.checkStatus == 3"
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                    <a class="change-rely-service" href="javascript:;"
+                                       @click="openContract(apiInfo.contractId,apiInfo.groupId)"
+                                       title="点击查看接口信息">[契约]</a>
                                 </h1>
                                 <p class="api_info">创建者：{{apiInfo.creator}}
                                     发布时间：{{apiInfo.createTime|convertDate}}</p>
@@ -589,6 +592,9 @@
                         }
                     })
                 }
+            },
+            openContract: function (contractId,groupId) {
+                x_admin_show('契约详情', './contract-detail.html?id=' + contractId + '&groupId=' + groupId)
             }
         }
     })

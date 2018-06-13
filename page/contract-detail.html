@@ -98,6 +98,7 @@
                                     <span v-if="projectInfo.checkStatus == 3"
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                    <a class="change-rely-service" href="javascript:;" v-if="projectInfo.apiId" @click="openApi(projectInfo.apiId)" title="点击查看接口信息">[接口]</a>
                                 </h1>
                                 <p class="contract_info">创建者：{{projectInfo.creator}}
                                     发布时间：{{projectInfo.createTime|convertDate}}</p>
@@ -486,6 +487,9 @@
                         }
                     })
                 }
+            },
+            openApi:function (apiId) {
+                x_admin_show('接口详情', './api-detail.html?id='+apiId)
             }
         }
     })

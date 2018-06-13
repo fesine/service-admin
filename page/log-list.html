@@ -81,10 +81,12 @@
                    autocomplete="off" class="layui-input">
           </div>
         </div>
+        <div class="layui-btn-group">
         <button id="queryBtn" class="layui-btn" data-type="reload"><i
                 class="layui-icon">&#xe615;</i></button>
-        <button id="restBtn" class="layui-btn" data-type="reload"><i
+        <button id="restBtn" class="layui-btn layui-btn-warm" data-type="reload"><i
                 class="iconfont">&#xe6b7;</i></button>
+        </div>
       </div>
 
     </xblock>
@@ -101,6 +103,7 @@
     layui.use(['table','form','layer','laydate'], function () {
         var table = layui.table
             , layer = layui.layer
+            , form = layui.form
             , laydate = layui.laydate
         laydate.render({
             elem: '#startTime'
@@ -160,11 +163,12 @@
         });
         $('#restBtn').on('click', function () {
             $("#nameKey").val('')
-            $opType: $("#typeKey").val('')
-            $opTarget: $("#targetKey").val('')
+            $("#typeKey").val('')
+             $("#targetKey").val('')
             $("#startTime").val('')
-            endTime: $("#endTime").val('')
+            $("#endTime").val('')
             $("#descKey").val('')
+            form.render('select')
         });
         //监听工具条
         table.on('tool(logList)', function (obj) {
