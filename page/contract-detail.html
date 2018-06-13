@@ -392,9 +392,10 @@
             // layer.msg('历史记录')
         })
         $("ul li:eq(2)").click(function () {
-            // layer.msg('依赖拓扑图')
-        })
+            x_admin_show('依赖关系', './contract-rely.html?id='+ vm.contractId+'&serviceCode='+vm.projectInfo.serviceCode,800,400,true)
 
+            return false
+        })
     })
 </script>
 <script>

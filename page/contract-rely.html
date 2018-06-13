@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../echarts/jquery-1.10.2.min.js"></script>
+    <script src="../echarts/echarts-rel.js"></script>
+    <style type="text/css">
+        html, body, #main {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0
+        }
+    </style>
+</head>
+<body>
+    <div id="main" style=""></div>
+<script type="text/javascript">
+    var mycharts = echarts.init(document.getElementById('main'), 'macarons')
+    var option = {
+        title: {
+            text: "服务依赖关系示例图("+getUrlKey('serviceCode')+")", //正标题
+            top: 'top',//上下位置
+            left: 'right',//左右位置
+            //正标题样式
+            textStyle: {
+                fontSize: 20
+            }
+        },
+        tooltip: {
+            show: true,   //默认显示
+            showContent: true, //是否显示提示框浮层
+            trigger: 'item',//触发类型，默认数据项触发
+            triggerOn: 'click',//提示触发条件，mousemove鼠标移至触发，还有click点击触发
+            alwaysShowContent: false, //默认离开提示框区域隐藏，true为一直显示
+            showDelay: 0,//浮层显示的延迟，单位为 ms，默认没有延迟，也不建议设置。在 triggerOn 为 'mousemove' 时有效。
+            hideDelay: 200,//浮层隐藏的延迟，单位为 ms，在 alwaysShowContent 为 true 的时候无效。
+            enterable: false,//鼠标是否可进入提示框浮层中，默认为false，如需详情内交互，如添加链接，按钮，可设置为 true。
+            position: 'right',//提示框浮层的位置，默认不设置时位置会跟随鼠标的位置。只在 trigger 为'item'的时候有效。
+            confine: false,//是否将 tooltip 框限制在图表的区域内。外层的 dom 被设置为 'overflow: hidden'，或者移动端窄屏，导致 tooltip 超出外界被截断时，此配置比较有用。
+            transitionDuration: 0.4,//提示框浮层的移动动画过渡时间，单位是 s，设置为 0 的时候会紧跟着鼠标移动。
+            formatter: '{a} : {b}'
+        },
+        legend: { //=========圖表控件
+            x: 'left',//图例位置
+            data: [{
+                name: '主节点',
+                icon: 'roundRect'//'circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'
+            },
+                {
+                    name: '提供者',
+                    icon: 'circle'
+                }, {
+                    name: '消费者',
+                    icon: 'diamond'
+                }]
+        },
+        series: [{
+            categories: [ //symbol name：用于和 legend 对应以及格式化 tooltip 的内容。 label有效
+                {
+                    name: '主节点',
+                    symbol: 'rect',
+                    itemStyle: {
+                        normal: {
+                            color: 'red'
+                        }
+                    },
+                    label: { //标签样式
+                    }
+                }, {
+                    name: '提供者',
+                    symbol: 'circle',
+                    itemStyle: {
+                        normal: {
+                            color: '#ef8d19'
+                        }
+                    }
+                }, {
+                    name: '消费者',
+                    symbol: 'diamond',
+                    itemStyle: {
+                        normal: {
+                            color: '#459bc2'
+                        }
+                    }
+                }],
+            type: 'graph', //关系图
+            name: '依赖关系', //系列名称，用于tooltip的显示，legend 的图例筛选，在 setOption 更新数据和配置项时用于指定对应的系列。
+            layout: 'force', //图的布局，类型为力导图，'circular' 采用环形布局，见示例 Les Miserables
+            legendHoverLink: true,//是否启用图例 hover(悬停) 时的联动高亮。
+            hoverAnimation: true,//是否开启鼠标悬停节点的显示动画
+            coordinateSystem: null,//坐标系可选
+            xAxisIndex: 0, //x轴坐标 有多种坐标系轴坐标选项
+            yAxisIndex: 0, //y轴坐标
+            force: { //力引导图基本配置
+                //initLayout: ,//力引导的初始化布局，默认使用xy轴的标点
+                repulsion: 1000,//节点之间的斥力因子。支持数组表达斥力范围，值越大斥力越大。
+                gravity: 0.03,//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
+                edgeLength: 50,//边的两个节点之间的距离，这个距离也会受 repulsion。[10, 50] 。值越小则长度越长
+                layoutAnimation: true
+                //因为力引导布局会在多次迭代后才会稳定，这个参数决定是否显示布局的迭代动画，在浏览器端节点数据较多（>100）的时候不建议关闭，布局过程会造成浏览器假死。
+            },
+            roam: true,//是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
+            nodeScaleRatio: 0.6,//鼠标漫游缩放时节点的相应缩放比例，当设为0时节点不随着鼠标的缩放而缩放
+            draggable: true,//节点是否可拖拽，只在使用力引导布局的时候有用。
+            focusNodeAdjacency: true,//是否在鼠标移到节点上的时候突出显示节点以及节点的边和邻接节点。
+            edgeSymbol: ['none', 'arrow'],//边两端的标记类型，可以是一个数组分别指定两端，也可以是单个统一指定。默认不显示标记，常见的可以设置为箭头，如下：edgeSymbol: ['circle', 'arrow']
+            edgeSymbolSize: 10,//边两端的标记大小，可以是一个数组分别指定两端，也可以是单个统一指定。
+            itemStyle: {//===============图形样式，有 normal 和 emphasis 两个状态。normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                normal: { //默认样式
+                    label: {
+                        show: true
+                    },
+                    borderType: 'solid', //图形描边类型，默认为实线，支持 'solid'（实线）, 'dashed'(虚线), 'dotted'（点线）。
+                    borderColor: 'rgba(255,215,0,0.4)', //设置图形边框为淡金色,透明度为0.4
+                    borderWidth: 2, //图形的描边线宽。为 0 时无描边。
+                    opacity: 1
+                    // 图形透明度。支持从 0 到 1 的数字，为 0 时不绘制该图形。默认0.5
+                }
+            },
+            lineStyle: { //==========关系边的公用线条样式。
+                normal: {
+                    color: '#4b565b',
+                    width: '2',
+                }
+            },
+            label: { //=============图形上的文本标签
+                normal: {
+                    show: true,//是否显示标签。
+                    position: 'inside',//标签的位置。['50%', '50%'] [x,y]
+                    textStyle: { //标签的字体样式
+                        color: '#000000', //字体颜色
+                        fontStyle: 'normal',//文字字体的风格 'normal'标准 'italic'斜体 'oblique' 倾斜
+                        fontWeight: 'bold',//'normal'标准'bold'粗的'bolder'更粗的'lighter'更细的或100 | 200 | 300 | 400...
+                        fontFamily: 'sans-serif', //文字的字体系列
+                        fontSize: 12, //字体大小
+                    }
+                }
+            },
+            edgeLabel: {//==============线条的边缘标签
+                normal: {
+                    show: false
+                }
+            },
+            //别名为nodes   name:影响图形标签显示,value:影响选中后值得显示,category:所在类目的index,symbol:类目节点标记图形,symbolSize:10图形大小
+            //label:标签样式。
+            data: [],
+            links: []
+        }]
+    }
+    // 使用刚指定的配置项和数据显示图表。
+    mycharts.setOption(option)
+    mycharts.showLoading();
+    $.get(_hostUrl + '/contract/rely/' + getUrlKey('id'),function (res) {
+        if (res.responseCode == 200) {
+            mycharts.hideLoading();
+            mycharts.setOption({        //加载数据图表
+                series: [{
+                    // 根据名字对应到相应的系列
+                    data: res.data.nodes,
+                    links: res.data.links
+                }]
+            });
+        }
+    })
+</script>
+</body>
+</html>
