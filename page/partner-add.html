@@ -127,7 +127,13 @@
 
         //默认加载第一个
         $('#L_groupCode').val(parent.$('#groupCode').val())
-        $('#L_groupId').val(groupArray[0].id)
+        $.each(groupArray,function (i, item) {
+            if(item.groupCode === $('#L_groupCode').val()){
+                $('#L_groupId').val(item.id)
+                return false
+            }
+        })
+
         $('#L_projectId').val(parseInt(getCookie('projectId')))
         $('#L_inviteUserId').val(parseInt(getCookie('userId')))
         //渲染角色
@@ -139,7 +145,7 @@
             }
         }
         //获取成员数据
-        getUserList(groupArray[0].id,form)
+        getUserList($('#L_groupId').val(),form)
         form.render()//下拉菜单渲染 把内容加载进去
         //监控分组选择事件
         form.on('select(groupCode)', function (data) {

@@ -12,40 +12,18 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="./css/font.css">
     <link rel="stylesheet" href="./css/xadmin.css">
-    <script type="text/javascript" src="./lib/vue/jquery.min.js"></script>
+    <link rel="stylesheet" href="./lib/content-menu/jquery.contextMenu.css">
+    <script src="./lib/content-menu/jquery-1.8.2.min.js"></script>
     <script src="./lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/xadmin.js"></script>
     <script type="text/javascript" src="./js/global.js"></script>
     <script type="text/javascript" src="./js/cookies.js"></script>
     <script src="./lib/vue/vue.min.js"></script>
     <script src="./lib/vue/axios.min.js"></script>
-    <style type="text/css">
-        /**右键菜单*/
-        .rightmenu {
-            position: absolute;
-            width: 110px;
-            z-index: 9999;
-            display: none;
-            background-color: #fff;
-            padding: 2px;
-            color: #333;
-            border: 1px solid #eee;
-            border-radius: 2px;
-            cursor: pointer;
-        }
+    <script src="./lib/content-menu/jquery.contextMenu.js"></script>
+    <script>
 
-        .rightmenu li {
-            text-align: center;
-            display: block;
-            height: 30px;
-            line-height: 32px;
-        }
-
-        .rightmenu li:hover {
-            background-color: #666;
-            color: #fff;
-        }
-    </style>
+    </script>
 </head>
 <body>
 <div id="app">
@@ -100,7 +78,7 @@
                         <cite>服务接口</cite>
                     </a>
                 </li>
-                <li>
+                <li id="status-code-menu">
                     <a _href="./page/status-code-list.html">
                         <i class="iconfont">&#xe842;</i>
                         <cite>状态码</cite>
@@ -112,13 +90,13 @@
                         <cite>环境管理</cite>
                     </a>
                 </li>
-                <li>
+                <li id="partner-menu">
                     <a _href="./page/partner-list.html">
                         <i class="iconfont">&#xe82a;</i>
                         <cite>协作管理</cite>
                     </a>
                 </li>
-                <li>
+                <li id="log-menu">
                     <a _href="./page/log-list.html">
                         <i class="iconfont">&#xe6f3;</i>
                         <cite>项目动态</cite>
@@ -343,7 +321,7 @@
     <div class="page-content">
         <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
             <ul class="layui-tab-title">
-                <li class="home"><i class="layui-icon">&#xe68e;</i>我的项目</li>
+                <li class="home  context-menu-one"><i class="layui-icon">&#xe68e;</i>我的项目</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -362,6 +340,50 @@
     <!-- 底部结束 -->
 </div>
 <script>
+    $(function () {
+        layui.use(['element'],
+            function () {
+               var element = layui.element
+                $.contextMenu({
+                    selector: '.context-menu-one',
+                    callback: function (key, options) {
+                        let tabArray = $(this.context.parentElement).children('li')
+                        let tabLength = tabArray.length
+                        let itemIndex = $(this).index()
+                        let itemId = $(this.context).attr('lay-id')
+                        if(key === "closeAll"){
+                            //全部关闭
+                            for(let i = 1;i<tabLength;i++){
+                                element.tabDelete("xbs_tab", $(tabArray[i]).attr('lay-id'))
+                            }
+                        }
+                        else if(key === "closeOthers"){
+                            //关闭其他
+                            for(let i = 1;i<tabLength;i++){
+                                let otherId = $(tabArray[i]).attr('lay-id')
+                                if(otherId != itemId){
+                                    element.tabDelete("xbs_tab", otherId)
+                                }
+                            }
+                        }
+                        else if(key === "closeRight"){
+                            //关闭右边
+                            for(let i = itemIndex+1;i<tabLength;i++){
+                                element.tabDelete("xbs_tab", $(tabArray[i]).attr('lay-id'))
+                            }
+                        }
+                    },
+                    items: {
+                        "closeAll": {name: "关闭所有", icon: 'all'},
+                        "sep1": "---------",
+                        "closeRight": {name: "关闭右侧", icon: 'right'},
+                        "sep2": "---------",
+                        "closeOthers": {name: "关闭其他", icon: 'others'}
+                    }
+                });
+            })
+
+    });
 </script>
 <script>
     let vm = new Vue({

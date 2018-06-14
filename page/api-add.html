@@ -155,8 +155,8 @@
             <div class="layui-tab layui-tab-brief">
                 <ul class="layui-tab-title">
                     <li class="layui-this">基本信息</li>
-                    <li>请求参数</li>
-                    <li>响应参数</li>
+                    <li id="request-tab">请求参数</li>
+                    <li id="response-tab">响应参数</li>
                 </ul>
                 <div class="layui-tab-content" style="padding: 2px;">
                     <!--接口id-->
@@ -237,6 +237,8 @@
                     </div>
                     <div class="layui-tab-item">
                         <a href="javascript:;" @click="importJson(1)" class="layui-btn  layui-btn-sm layui-btn-normal">导入JSON</a>
+                        <a href="javascript:;" @click="autoClick()"
+                           class="layui-btn  layui-btn-sm layui-btn-normal">刷新</a>
                         <table class="layui-table">
                             <colgroup>
                                 <col width="300">
@@ -262,7 +264,7 @@
                         <ul id="requestParamTable" class="req-ul">
                             <li class="index" v-for='(list,index) in requestParamList'
                                 :key='list.id'>
-                                <form>
+                                <form class="layui-form">
                                     <div class="layui-inline">
                                         <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline"
@@ -357,6 +359,8 @@
                     <div class="layui-tab-item">
                         <a href="javascript:;" @click="importJson(2)"
                            class="layui-btn  layui-btn-sm layui-btn-normal">导入JSON</a>
+                        <a href="javascript:;"  @click="autoClick()"
+                           class="layui-btn  layui-btn-sm layui-btn-normal">刷新</a>
                         <table class="layui-table">
                             <colgroup>
                                 <col width="300">
@@ -382,7 +386,7 @@
                         <ul id="responseParamTable" class="req-ul">
                             <li class="index" v-for='(list,index) in responseParamList'
                                 :key='list.id'>
-                                <form>
+                                <form class="layui-form">
                                     <div class="layui-inline">
                                         <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline"
@@ -469,7 +473,13 @@
 </div>
 <script>
     var serviceArray;
-
+    function autoClick () {
+            layui.use('form', function () {
+                var form = layui.form;
+                //根据的type类型修改
+                form.render();
+        });
+    }
     function onInput (e,flag) {
         let lastId
         let checkId
@@ -479,13 +489,16 @@
             if (lastId === checkId){
                 vm.addNewRequestParam(e)
             }
+            $('#request-tab').trigger("click");
         }else{
             lastId = $(e.path[5]).children('li:last')[0].firstElementChild.firstElementChild.firstElementChild.innerText
             checkId = e.path[2].firstElementChild.innerText
             if (lastId === checkId) {
                 vm.addNewResponseParam(e)
             }
+            $('#response-tab').trigger("click");
         }
+        // autoClick()
         // alert("The new content: " + e.target.value);
 
     }
