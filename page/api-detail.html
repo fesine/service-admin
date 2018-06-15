@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<head xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html>
+<head>
     <meta charset="UTF-8">
     <title>服务接口管理系统</title>
     <meta name="renderer" content="webkit">
@@ -99,7 +100,7 @@
                                         <form class="layui-form">
                                             <div class="layui-input-inline" style="width: 150px;">
                                                 <select id="L_checkStatus" name="checkStatus"
-                                                        lay-verify="checkStatus">
+                                                        lay-verify="checkStatus" lay-filter="checkStatus">
                                                 </select>
                                             </div>
                                         </form>
@@ -187,6 +188,30 @@
                 <table id="historyList" lay-filter="historyList"></table>
             </div>
             <div class="layui-tab-item">
+                <!--测试功能-->
+                <!--加载测试环境，首选mock环境-->
+                <div class="layui-row  layui-col-space10">
+                    <div class="layui-col-md2">
+                        <form class="layui-form">
+                            <select id="L_envSelect" name="test-env" lay-filter="testEnv">
+                                <option value="">选择测试环境</option>
+                                <option value="0">mock测试</option>
+                            </select>
+                            <br>
+                            <button class="layui-btn layui-btn-normal layui-btn-fluid"
+                                    @click="executeTest($event)"
+                                    lay-submit
+                                    lay-filter="executeTest">执行测试</button>
+                        </form>
+                    </div>
+                    <div class="layui-col-md5">
+                        <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
+                                  class="layui-textarea" style="height: 410px;"></textarea>
+                    </div>
+                    <div class="layui-col-md5"><textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
+                                                         class="layui-textarea"
+                                                         style="height: 410px;"></textarea></div>
+                </div>
             </div>
         </div>
     </div>
@@ -197,11 +222,6 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even id="delete">删除</a>
     {{# } }}
 </script>
-<!--<script type="text/html" id="showParamKey">-->
-    <!--{{# if(d.paramKey.split('>>').length -1 > 0 ){ }}-->
-    <!--<a>切换</a>-->
-    <!--{{# } }}-->
-<!--</script>-->
 <script type="text/html" id="moreBar">
     <button class="layui-btn layui-btn-xs" id="detail" lay-event="detail">查看</button>
     <a hidden>{{d.paramDesc}}</a>
@@ -284,6 +304,9 @@
                 ]]
                 ,done: function (res, curr, count) {
                     $('th').css({'background-color': '#009688', 'color': '#fff'});
+                    let requestParamArray = res.data
+                let str = arrayToJson(requestParamArray,1)
+                console.log(str)
             }
             })
         responseParamTable = table.render({
@@ -348,7 +371,12 @@
             parent.layer.close(index)
             parent.x_admin_show('复制新增','api-add.html?copy=1', 500, 500,true)
         })
-        form.on('select', function (data) {
+        // form.on('submit(executeTest)',function (data) {
+        //     // 获得frame索引
+        //     layer.msg(111)
+        //     return false
+        // })
+        form.on('select(checkStatus)', function (data) {
             $.putForm(_hostUrl + '/api/check', {
                 id: vm.apiId,
                 serviceName: vm.apiInfo.serviceName,
@@ -424,14 +452,6 @@
         //监听工具条
         $(document).on('click', '#detail', function (obj) {
             let paramDesc = obj.currentTarget.parentElement.children[1].innerText
-            // layer.prompt({
-            //     formType: 2,
-            //     value: paramDesc,
-            //     title: '更多描述内容',
-            //     area: ['500px', '200px'] //自定义文本域宽高
-            // }, function (value, index, elem) {
-            //     layer.close(index);
-            // })
             if(paramDesc === ''){
                 paramDesc = '暂无更多描述!'
             }
@@ -508,7 +528,9 @@
                 groupId: '',
                 superFlag: -1,
                 userType: 0,
-                historyId: -1
+                historyId: -1,
+                requestParamJson:{},
+                responseParamJson:{}
             }
         },//过滤器
         filters: {
@@ -524,12 +546,28 @@
             this.superFlag = parseInt(getCookie('superFlag'))
             this.apiId = getUrlKey('id')
             this.groupId = getUrlKey('groupId')
+            axios.get(_hostUrl + '/envs').then(response=>{
+                if (response.data.responseCode == 200) {
+                    let envArray = response.data.data
+                    layui.use(['form', 'table'], function () {
+                        $ = layui.jquery
+                        var form = layui.form
+                        for (var i = 0; i < envArray.length; i++) {
+                            $('#L_envSelect').append(new Option(envArray[i].envName, envArray[i].id))// 下拉菜单里添加元素
+                        }
+                        form.render()
+                    })
+                }
+            })
         },
         mounted () {
             $('.api_rely .layui-elem-quote').css('height', $('.api_content .layui-elem-quote').height())
         },
         watch: {
             apiId () {
+                if (!this.apiId || this.apiId === '') {
+                    return
+                }
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
@@ -561,6 +599,9 @@
                 })
             },
             historyId () {
+                if (!this.apiId || this.apiId === '') {
+                    return
+                }
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
@@ -595,6 +636,11 @@
             },
             openContract: function (contractId,groupId) {
                 x_admin_show('契约详情', './contract-detail.html?id=' + contractId + '&groupId=' + groupId)
+            },
+            executeTest(e){
+                e.stopPropagation()
+                e.preventDefault()
+                alert(1111)
             }
         }
     })
