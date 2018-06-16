@@ -24,14 +24,16 @@
             background-color: #f2f3f0;
         }
 
-        .layui-colla-title{
-            color: #009688;!important;
+        .layui-colla-title {
+            color: #009688;
+        !important;
             font-weight: bolder;
         }
 
-        .layui-table-cell{
+        .layui-table-cell {
             padding: 2px;
         }
+
         .api_title {
             font-size: 20px;
             text-align: center;
@@ -75,7 +77,7 @@
             font-weight: bold;
         }
 
-        a.change-rely-service:hover{
+        a.change-rely-service:hover {
             color: #009688;
         }
     </style>
@@ -100,7 +102,8 @@
                                         <form class="layui-form">
                                             <div class="layui-input-inline" style="width: 150px;">
                                                 <select id="L_checkStatus" name="checkStatus"
-                                                        lay-verify="checkStatus" lay-filter="checkStatus">
+                                                        lay-verify="checkStatus"
+                                                        lay-filter="checkStatus">
                                                 </select>
                                             </div>
                                         </form>
@@ -201,18 +204,20 @@
                             <button class="layui-btn layui-btn-normal layui-btn-fluid"
                                     @click="executeTest($event)"
                                     lay-submit
-                                    lay-filter="executeTest">执行测试</button>
+                                    lay-filter="executeTest">执行测试
+                            </button>
                         </form>
                     </div>
                     <div class="layui-col-md5">
                         <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
-                                  class="layui-textarea" v-model="requestParamJson" style="height: 410px;"></textarea>
+                                  class="layui-textarea" v-model="requestParamJson"
+                                  style="height: 410px;"></textarea>
                     </div>
                     <div class="layui-col-md5">
                         <textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
                                   v-model="responseParamJson"
                                   class="layui-textarea"
-                                                         style="height: 410px;"></textarea></div>
+                                  style="height: 410px;"></textarea></div>
                 </div>
             </div>
         </div>
@@ -232,6 +237,7 @@
     let historyTable
     let requestParamTable
     let responseParamTable
+
     function updateClass () {
         $.get(_hostUrl + '/partner/' + vm.groupId + '/' + parseInt(getCookie('userId')), function (res) {
             if (res.data && res.data < 2) {
@@ -244,23 +250,23 @@
         })
     }
 
-    layui.use(['form', 'layer', 'table','element'], function () {
+    layui.use(['form', 'layer', 'table', 'element'], function () {
         $ = layui.jquery
         var form = layui.form,
             layer = layui.layer,
             table = layui.table,
             element = layui.element
         requestParamTable = table.render({
-                elem: '#requestParamTable'
-                , url: _hostUrl + '/api/requestParam/'+getUrlKey('id')  //数据接口
-                , response: {
-                    statusName: 'responseCode' //数据状态的字段名称，默认：code
-                    , statusCode: 200 //成功的状态码，默认：0
-                    , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
-                    , dataName: 'data'
-                }
-                , cols: [[ //表头
-                    {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
+            elem: '#requestParamTable'
+            , url: _hostUrl + '/api/requestParam/' + getUrlKey('id')  //数据接口
+            , response: {
+                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                , statusCode: 200 //成功的状态码，默认：0
+                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , dataName: 'data'
+            }
+            , cols: [[ //表头
+                {field: 'rownumbers', width: 38, type: 'numbers', align: 'left'},
                 {
                     field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
                         let n = d.paramKey.split('>>').length - 1
@@ -270,10 +276,10 @@
                         }
                         space += '</a>'
                         if (n === 1) {
-                            space =  space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
-                        }else if (n === 2) {
+                            space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        } else if (n === 2) {
                             space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
-                        }else if (n === 3) {
+                        } else if (n === 3) {
                             space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
                         } else {
                             space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
@@ -281,103 +287,103 @@
                         return space + d.paramKey.split('>>')[n] + '</a>'
                     }
                 }
-                    , {
-                        field: 'paramName', title: '参数说明', width: 250, align: 'left'
-                    }
-                    , {
-                        field: 'paramType',
-                        title: '参数类型',
-                        width: 75,
-                        templet: function (d) {
-                            return paramTypeArray[d.paramType]
-                        }, align: 'center'
-                    }
-                    , {
-                        field: 'paramNullFlag',
-                        title: '必输',
+                , {
+                    field: 'paramName', title: '参数说明', width: 250, align: 'left'
+                }
+                , {
+                    field: 'paramType',
+                    title: '参数类型',
+                    width: 75,
+                    templet: function (d) {
+                        return paramTypeArray[d.paramType]
+                    }, align: 'center'
+                }
+                , {
+                    field: 'paramNullFlag',
+                    title: '必输',
                     width: 40, align: 'center',
-                        templet: function (d) {
-                            return d.paramNullFlag === 1 ? '是' : '否'
-                        }
+                    templet: function (d) {
+                        return d.paramNullFlag === 1 ? '是' : '否'
                     }
-                    , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
-                    , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
-                    , {title: '说明',  toolbar: '#moreBar',width:50,align:'center'}
-                ]]
-                ,done: function (res, curr, count) {
-                    $('th').css({'background-color': '#009688', 'color': '#fff'});
-                    let requestParamArray = res.data
-                let str = arrayToJson(requestParamArray,1)
-                vm.requestParamJson = JSON.stringify(JSON.parse(str),null,'\t')
+                }
+                , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
+                , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
+                , {title: '说明', toolbar: '#moreBar', width: 50, align: 'center'}
+            ]]
+            , done: function (res, curr, count) {
+                $('th').css({'background-color': '#009688', 'color': '#fff'});
+                let requestParamArray = res.data
+                let str = arrayToJson(requestParamArray, 1)
+                vm.requestParamJson = JSON.stringify(JSON.parse(str), null, '\t')
                 // console.log(str)
             }
-            })
+        })
         responseParamTable = table.render({
-                elem: '#responseParamTable'
-                , url: _hostUrl + '/api/responseParam/'+getUrlKey('id')  //数据接口
-                , response: {
-                    statusName: 'responseCode' //数据状态的字段名称，默认：code
-                    , statusCode: 200 //成功的状态码，默认：0
-                    , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
-                    , dataName: 'data'
-                }
-                ,done:function (res, curr, count) {
+            elem: '#responseParamTable'
+            , url: _hostUrl + '/api/responseParam/' + getUrlKey('id')  //数据接口
+            , response: {
+                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                , statusCode: 200 //成功的状态码，默认：0
+                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , dataName: 'data'
+            }
+            , done: function (res, curr, count) {
                 let str = arrayToJson(res.data, 1)
                 vm.responseParamJson = JSON.stringify(JSON.parse(str), null, '\t')
                 // console.log(str)
             }
-                , cols: [[ //表头
-                    {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
-                    {
-                        field: 'paramKey', title: '参数名', align:'left',templet:function (d) {
-                            let n = d.paramKey.split('>>').length - 1
-                            let space = '<a>'
-                            for(var i = 0;i < n;i++){
-                                space +='&nbsp;&nbsp;&nbsp;&nbsp;'
-                            }
-                            space +='</a>'
-                            if (n === 1) {
-                                space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
-                            } else if (n === 2) {
-                                space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
-                            } else if (n === 3) {
-                                space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
-                            } else {
-                                space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
-                            }
-                            return space + d.paramKey.split('>>')[n] + '</a>'
+            , cols: [[ //表头
+                {field: 'rownumbers', width: 38, type: 'numbers', align: 'left'},
+                {
+                    field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
+                        let n = d.paramKey.split('>>').length - 1
+                        let space = '<a>'
+                        for (var i = 0; i < n; i++) {
+                            space += '&nbsp;&nbsp;&nbsp;&nbsp;'
                         }
+                        space += '</a>'
+                        if (n === 1) {
+                            space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        } else if (n === 2) {
+                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        } else if (n === 3) {
+                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        } else {
+                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                        }
+                        return space + d.paramKey.split('>>')[n] + '</a>'
                     }
-                    , {
-                        field: 'paramName', title: '参数说明', width: 250, align: 'left'
-                    }
-                    , {
-                        field: 'paramType',
-                        title: '参数类型',
-                        width: 75,
-                        templet: function (d) {
-                            return paramTypeArray[d.paramType]
-                        }, align: 'center'
-                    }
-                    , {
-                        field: 'paramNullFlag',
-                        title: '必含',
+                }
+                , {
+                    field: 'paramName', title: '参数说明', width: 250, align: 'left'
+                }
+                , {
+                    field: 'paramType',
+                    title: '参数类型',
+                    width: 75,
+                    templet: function (d) {
+                        return paramTypeArray[d.paramType]
+                    }, align: 'center'
+                }
+                , {
+                    field: 'paramNullFlag',
+                    title: '必含',
                     width: 40, align: 'center',
-                        templet: function (d) {
-                            return d.paramNullFlag === 1 ? '是' : '否'
-                        }
+                    templet: function (d) {
+                        return d.paramNullFlag === 1 ? '是' : '否'
                     }
-                    , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
-                    , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
-                    , {title: '说明',  toolbar: '#moreBar',width:50,align:'center'}
-                ]]
-            })
-        form.on('submit(copy)',function (data) {
+                }
+                , {field: 'paramLength', title: '长度', width: 40, align: 'center'}
+                , {field: 'paramValue', title: '示例', width: 160, align: 'left'}
+                , {title: '说明', toolbar: '#moreBar', width: 50, align: 'center'}
+            ]]
+        })
+        form.on('submit(copy)', function (data) {
             // 获得frame索引
             var index = parent.layer.getFrameIndex(window.name)
             //关闭当前frame
             parent.layer.close(index)
-            parent.x_admin_show('复制新增','api-add.html?copy=1', 500, 500,true)
+            parent.x_admin_show('复制新增', 'api-add.html?copy=1', 500, 500, true)
         })
         // form.on('submit(executeTest)',function (data) {
         //     // 获得frame索引
@@ -460,7 +466,7 @@
         //监听工具条
         $(document).on('click', '#detail', function (obj) {
             let paramDesc = obj.currentTarget.parentElement.children[1].innerText
-            if(paramDesc === ''){
+            if (paramDesc === '') {
                 paramDesc = '暂无更多描述!'
             }
             layer.tab({
@@ -537,8 +543,8 @@
                 superFlag: -1,
                 userType: 0,
                 historyId: -1,
-                requestParamJson:{},
-                responseParamJson:{}
+                requestParamJson: {},
+                responseParamJson: {}
             }
         },//过滤器
         filters: {
@@ -554,7 +560,7 @@
             this.superFlag = parseInt(getCookie('superFlag'))
             this.apiId = getUrlKey('id')
             this.groupId = getUrlKey('groupId')
-            axios.get(_hostUrl + '/envs').then(response=>{
+            axios.get(_hostUrl + '/envs').then(response => {
                 if (response.data.responseCode == 200) {
                     let envArray = response.data.data
                     layui.use(['form', 'table'], function () {
@@ -580,7 +586,7 @@
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
                         parent.$('#editApi').val(JSON.stringify(response.data.data))
-                        layui.use(['form','table'], function () {
+                        layui.use(['form', 'table'], function () {
                             $ = layui.jquery
                             var form = layui.form
                             $("#L_checkStatus").find("option").remove();
@@ -625,22 +631,22 @@
                     requestParamTable.reload({
                         url: _hostUrl + '/api/requestParam/' + this.apiId
                     })
-                    requestParamTable.reload({
+                    responseParamTable.reload({
                         url: _hostUrl + '/api/responseParam/' + this.apiId
                     })
                 })
             },
-            requestParamJson(){
+            requestParamJson () {
 
             },
-            responseParamJson(){
+            responseParamJson () {
 
             }
         }, methods: {
-            handleClick:function(item){
-                if(item.id){
-                   this.apiId = item.id
-                   this.groupId = item.groupId
+            handleClick: function (item) {
+                if (item.id) {
+                    this.apiId = item.id
+                    this.groupId = item.groupId
                     historyTable.reload({
                         where: {
                             id: item.id //查询当前用户所在所有组的数据
@@ -648,10 +654,10 @@
                     })
                 }
             },
-            openContract: function (contractId,groupId) {
+            openContract: function (contractId, groupId) {
                 x_admin_show('契约详情', './contract-detail.html?id=' + contractId + '&groupId=' + groupId)
             },
-            executeTest(e){
+            executeTest (e) {
                 e.stopPropagation()
                 e.preventDefault()
                 alert(1111)

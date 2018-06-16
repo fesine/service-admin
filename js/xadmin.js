@@ -1,9 +1,10 @@
 $(function () {
     //加载弹出层
+    let layer, element, util
     layui.use(['form', 'element', 'util'],
         function () {
-            layer = layui.layer
-            element = layui.element
+            layer = layui.layer,
+            element = layui.element,
             util = layui.util
         })
 
@@ -567,6 +568,7 @@ function arrayToJson (paramArray) {
         tempKey = tempParam.paramKey
         tempType = tempParam.paramType
         tempValue = tempParam.paramValue
+        try{
         //对象，存在子节点
         if(tempType === 13){
             let subLen = tempKey.lastIndexOf('>>')
@@ -677,8 +679,21 @@ function arrayToJson (paramArray) {
                 }
             }
         }
+        }
+        catch (e) {
+            console.log('异常json：'+str)
+            layui.use(['layer'], function () {
+                let layer = layui.layer
+                layer.alert(tempKey + ':字段解析失败,请检查!', {
+                    icon: 2
+                })
+
+            })
+            return '{}'
+        }
     }
-    //TODO 需要处理无法截取的问题
+
+    //
     if (str.lastIndexOf(',')) {
         let len = str.length - 1
         str = str.substring(0, len)
