@@ -318,6 +318,10 @@
                     , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
                     , dataName: 'data'
                 }
+                ,done:function (res, curr, count) {
+                let str = arrayToJson(res.data, 1)
+                console.log(str)
+            }
                 , cols: [[ //表头
                     {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
                     {

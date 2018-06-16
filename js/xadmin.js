@@ -679,15 +679,16 @@ function arrayToJson (paramArray) {
         }
     }
     //TODO 需要处理无法截取的问题
-    // if (str.lastIndexOf(',')) {
-    //     let len = str.length - 1
-    //     str = str.substring(0, len)
-    // }
+    if (str.lastIndexOf(',')) {
+        let len = str.length - 1
+        str = str.substring(0, len)
+    }
+    //收尾工作，需要处理parentKeyArray中还存在的父节点进行end处理
     for (var k = parentKeyArray.length - 1; k >= 0; k--) {
         if (parentKeyArray[k].type === 13 || parentKeyArray[k].type === 1) {
             str += '}'
         } else {
-            str += ']'
+            str += '}]'
         }
         parentKeyArray.pop()
     }
