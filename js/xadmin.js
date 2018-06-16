@@ -552,7 +552,7 @@ function arrayToJson (paramArray) {
     let length = paramArray.length
     let tempParamArray = paramArray
     if(length === 0){
-        return null
+        return '{}'
     }
     let tempParam, tempType,tempKey,tempValue
         ,str= '{'

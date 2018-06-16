@@ -206,10 +206,12 @@
                     </div>
                     <div class="layui-col-md5">
                         <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
-                                  class="layui-textarea" style="height: 410px;"></textarea>
+                                  class="layui-textarea" v-model="requestParamJson" style="height: 410px;"></textarea>
                     </div>
-                    <div class="layui-col-md5"><textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
-                                                         class="layui-textarea"
+                    <div class="layui-col-md5">
+                        <textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
+                                  v-model="responseParamJson"
+                                  class="layui-textarea"
                                                          style="height: 410px;"></textarea></div>
                 </div>
             </div>
@@ -306,7 +308,8 @@
                     $('th').css({'background-color': '#009688', 'color': '#fff'});
                     let requestParamArray = res.data
                 let str = arrayToJson(requestParamArray,1)
-                console.log(str)
+                vm.requestParamJson = JSON.stringify(JSON.parse(str),null,'\t')
+                // console.log(str)
             }
             })
         responseParamTable = table.render({
@@ -320,7 +323,8 @@
                 }
                 ,done:function (res, curr, count) {
                 let str = arrayToJson(res.data, 1)
-                console.log(str)
+                vm.responseParamJson = JSON.stringify(JSON.parse(str), null, '\t')
+                // console.log(str)
             }
                 , cols: [[ //表头
                     {field: 'rownumbers',width: 38, type:'numbers', align: 'left'},
@@ -625,6 +629,12 @@
                         url: _hostUrl + '/api/responseParam/' + this.apiId
                     })
                 })
+            },
+            requestParamJson(){
+
+            },
+            responseParamJson(){
+
             }
         }, methods: {
             handleClick:function(item){
