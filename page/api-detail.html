@@ -133,9 +133,14 @@
                                     <span v-if="apiInfo.checkStatus == 3"
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
+                                    <a href="javascript:;" title="编辑接口" @click="editApi(apiInfo.id)"
+                                       v-if="userType < 3">
+                                    <i class="iconfont">&#xe69e;</i>
+                                    </a>
                                     <a class="change-rely-service" href="javascript:;"
                                        @click="openContract(apiInfo.contractId,apiInfo.groupId)"
                                        title="点击查看接口信息">[契约]</a>
+
                                 </h1>
                                 <p class="api_info">创建者：{{apiInfo.creator}}
                                     发布时间：{{apiInfo.createTime|convertDate}}</p>
@@ -209,13 +214,18 @@
                         </form>
                     </div>
                     <div class="layui-col-md5">
+                        <button class="layui-btn layui-btn-warm"
+                                @click="clearParamArea($event,1)">清空请求参数
+                        </button>
                         <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
-                                  class="layui-textarea" v-model="requestParamJson"
+                                  class="layui-textarea"
                                   style="height: 410px;"></textarea>
                     </div>
                     <div class="layui-col-md5">
+                        <button class="layui-btn layui-btn-danger"
+                                @click="clearParamArea($event,2)">清空响应参数
+                        </button>
                         <textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
-                                  v-model="responseParamJson"
                                   class="layui-textarea"
                                   style="height: 410px;"></textarea></div>
                 </div>
@@ -235,8 +245,10 @@
 </script>
 <script>
     let historyTable
-    let requestParamTable
-    let responseParamTable
+        ,requestParamTable
+        ,responseParamTable
+        , requestParamData
+        ,responseParamData
 
     function updateClass () {
         $.get(_hostUrl + '/partner/' + vm.groupId + '/' + parseInt(getCookie('userId')), function (res) {
@@ -312,10 +324,7 @@
             ]]
             , done: function (res, curr, count) {
                 $('th').css({'background-color': '#009688', 'color': '#fff'});
-                let requestParamArray = res.data
-                let str = arrayToJson(requestParamArray, 1)
-                vm.requestParamJson = JSON.stringify(JSON.parse(str), null, '\t')
-                // console.log(str)
+                requestParamData = res.data
             }
         })
         responseParamTable = table.render({
@@ -328,9 +337,7 @@
                 , dataName: 'data'
             }
             , done: function (res, curr, count) {
-                let str = arrayToJson(res.data, 1)
-                vm.responseParamJson = JSON.stringify(JSON.parse(str), null, '\t')
-                // console.log(str)
+                responseParamData = res.data
             }
             , cols: [[ //表头
                 {field: 'rownumbers', width: 38, type: 'numbers', align: 'left'},
@@ -492,7 +499,6 @@
                             icon: 1,
                             time: 2000
                         })
-                        // table.reload('historyList')
                         vm.historyId = historyId
                     } else {
                         layer.msg(res.responseMsg)
@@ -527,7 +533,11 @@
             // layer.msg('历史记录')
         })
         $("ul li:eq(2)").click(function () {
-            // layer.msg('测试')
+            if(vm.convertFlag === 1){
+                let str = arrayToJson(requestParamData)
+                vm.requestParamJson = JSON.stringify(JSON.parse(str), null, '\t')
+            }
+            $('#requestParamArea').val(vm.requestParamJson)
         })
 
     })
@@ -543,6 +553,7 @@
                 superFlag: -1,
                 userType: 0,
                 historyId: -1,
+                convertFlag: 1,
                 requestParamJson: {},
                 responseParamJson: {}
             }
@@ -643,6 +654,13 @@
 
             }
         }, methods: {
+            editApi(id){
+                // 获得frame索引
+                var index = parent.layer.getFrameIndex(window.name)
+                //关闭当前frame
+                parent.layer.close(index)
+                parent.x_admin_show('修改接口', './api-edit.html?id=' + id, 600, 550, true)
+            },
             handleClick: function (item) {
                 if (item.id) {
                     this.apiId = item.id
@@ -660,7 +678,24 @@
             executeTest (e) {
                 e.stopPropagation()
                 e.preventDefault()
-                alert(1111)
+                if($('#L_envSelect').val() === '0'){
+                    //mock测试
+                    this.responseParamJson = JSON.stringify(JSON.parse(arrayToJson(responseParamData)), null, '\t')
+                    $('#responseParamArea').val(this.responseParamJson)
+                }
+                //请求参数有可能修改，需要临时保存
+                this.requestParamJson = $('#requestParamArea').val()
+                this.convertFlag = 0
+            },
+            clearParamArea(e,flag){
+                e.stopPropagation()
+                e.preventDefault()
+                if (flag === 2) {
+                    $('#responseParamArea').val(null)
+                }else{
+                    $('#requestParamArea').val(null)
+                    this.convertFlag =1
+                }
             }
         }
     })

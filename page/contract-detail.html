@@ -85,86 +85,90 @@
                     <div class="layui-col-md9">
                         <div class="contract_content">
                             <blockquote class="layui-elem-quote">
-                                <h1 class="contract_title">{{projectInfo.serviceName}}
-                                    <span v-if="projectInfo.checkStatus == 0"
+                                <h1 class="contract_title">{{contract.serviceName}}
+                                    <span v-if="contract.checkStatus == 0"
                                           class="layui-badge-dot"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <span v-if="projectInfo.checkStatus == 1"
+                                    <span v-if="contract.checkStatus == 1"
                                           class="layui-badge-dot layui-bg-green"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <span v-if="projectInfo.checkStatus == 2"
+                                    <span v-if="contract.checkStatus == 2"
                                           class="layui-badge-dot layui-bg-orange"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <span v-if="projectInfo.checkStatus == 3"
+                                    <span v-if="contract.checkStatus == 3"
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <a class="change-rely-service" href="javascript:;" v-if="projectInfo.apiId" @click="openApi(projectInfo.apiId)" title="点击查看接口信息">[接口]</a>
+                                    <a href="javascript:;" title="编辑契约" @click="editApi(apiInfo.id)"
+                                       v-if="userType < 3">
+                                        <i class="iconfont">&#xe69e;</i>
+                                    </a>
+                                    <a class="change-rely-service" href="javascript:;" v-if="contract.apiId" @click="openApi(contract.apiId)" title="点击查看接口信息">[接口]</a>
                                 </h1>
-                                <p class="contract_info">创建者：{{projectInfo.creator}}
-                                    发布时间：{{projectInfo.createTime|convertDate}}</p>
+                                <p class="contract_info">创建者：{{contract.creator}}
+                                    发布时间：{{contract.createTime|convertDate}}</p>
                                 <a class="contract_content_title">服务编号：</a>
                                 <a class="contract_content_item"
-                                   style="margin-left: 0px">{{projectInfo.serviceCode}}</a>
+                                   style="margin-left: 0px">{{contract.serviceCode}}</a>
                                 <br>
                                 <a class="contract_content_title">服务名称：</a>
-                                <a class="contract_content_item">{{projectInfo.serviceName}}</a>
+                                <a class="contract_content_item">{{contract.serviceName}}</a>
                                 <br>
                                 <a class="contract_content_title">版&nbsp;本&nbsp;号：</a>
-                                <a class="contract_content_item">V{{projectInfo.versionNo}}</a>
+                                <a class="contract_content_item">V{{contract.versionNo}}</a>
                                 <br>
                                 <a class="contract_content_title">所属服务组：</a>
-                                <a class="contract_content_item">{{projectInfo.groupCode}}</a>
+                                <a class="contract_content_item">{{contract.groupCode}}</a>
                                 <br>
                                 <a class="contract_content_title">共享范围：</a>
-                                <a class="contract_content_item">{{projectInfo.shareSpace}}</a>
+                                <a class="contract_content_item">{{contract.shareSpace}}</a>
                                 <br>
                                 <a class="contract_content_title">服务消费方：</a>
-                                <a class="contract_content_item">{{projectInfo.consumerGroup}}</a>
+                                <a class="contract_content_item">{{contract.consumerGroup}}</a>
                                 <br>
                                 <a class="contract_content_title">操作列表：</a>
-                                <a class="contract_content_item">{{projectInfo.operateType}}</a>
+                                <a class="contract_content_item">{{contract.operateType}}</a>
                                 <br>
                                 <a class="contract_content_title">数据存储类型：</a>
-                                <a class="contract_content_item">{{projectInfo.dataType}}</a>
+                                <a class="contract_content_item">{{contract.dataType}}</a>
                                 <br>
                                 <a class="contract_content_title">超时时间(秒)：</a>
-                                <a class="contract_content_item">{{projectInfo.timeout}}</a>
+                                <a class="contract_content_item">{{contract.timeout}}</a>
                                 <br>
                                 <a class="contract_content_title">是否等幂：</a>
-                                <a class="contract_content_item">{{projectInfo.idempotentFlag}}</a>
+                                <a class="contract_content_item">{{contract.idempotentFlag}}</a>
                                 <br>
                                 <a class="contract_content_title">依赖分组：</a>
-                                <a class="contract_content_item">{{projectInfo.relyGroup}}</a>
+                                <a class="contract_content_item">{{contract.relyGroup}}</a>
                                 <br>
                                 <a class="contract_content_title">依赖分组编号：</a>
-                                <a class="contract_content_item">{{projectInfo.relyServiceCode}}</a>
+                                <a class="contract_content_item">{{contract.relyServiceCode}}</a>
                                 <br>
                                 <a class="contract_content_title">业务负责人：</a>
-                                <a class="contract_content_item">{{projectInfo.businessOwner}}</a>
+                                <a class="contract_content_item">{{contract.businessOwner}}</a>
                                 <br>
                                 <a class="contract_content_title">开发负责人：</a>
-                                <a class="contract_content_item">{{projectInfo.developer}}</a>
+                                <a class="contract_content_item">{{contract.developer}}</a>
                                 <br>
                                 <a class="contract_content_title">维护负责人：</a>
-                                <a class="contract_content_item">{{projectInfo.maintainer}}</a>
+                                <a class="contract_content_item">{{contract.maintainer}}</a>
                                 <br>
                                 <a class="contract_content_title">服务描述：</a>
-                                <a class="contract_content_item">{{projectInfo.memo}}
+                                <a class="contract_content_item">{{contract.memo}}
                                 </a>
                                 <br>
                                 <a class="contract_content_title">服务质量：</a>
-                                <a class="contract_content_item">{{projectInfo.quality}}
+                                <a class="contract_content_item">{{contract.quality}}
                                 </a>
                                 <br>
                                 <a class="contract_content_title">安全要求：</a>
-                                <a class="contract_content_item">{{projectInfo.secure}}
+                                <a class="contract_content_item">{{contract.secure}}
                                 </a>
                                 <br>
                                 <a class="contract_content_title">最后更新时间：</a>
-                                <a class="contract_content_item">{{projectInfo.lastUpdateTime}}</a>
+                                <a class="contract_content_item">{{contract.lastUpdateTime}}</a>
                                 <br>
                                 <a class="contract_content_title">修改者：</a>
-                                <a class="contract_content_item">{{projectInfo.lastModifier}} </a>
+                                <a class="contract_content_item">{{contract.lastModifier}} </a>
                             </blockquote>
                         </div>
                     </div>
@@ -198,8 +202,8 @@
                                 <a class="contract_content_rely_title">服务提供者：</a>
                             </div>
                             <div>
-                                <ul id="relyList" v-if="projectInfo.relyList">
-                                    <li v-for="item in projectInfo.relyList" @click="handleClick(item)">
+                                <ul id="relyList" v-if="contract.relyList">
+                                    <li v-for="item in contract.relyList" @click="handleClick(item)">
                                         <a class="contract_content_item  change-rely-service" v-if="item.serviceName" href="javascript:;">
                                             {{ item.serviceName }}</a>
                                         <a class="contract_content_item" v-else>{{ item.serviceCode }}</a>
@@ -212,8 +216,8 @@
                                 <a class="contract_content_rely_title">服务消费者：</a>
                             </div>
                             <div>
-                                <ul id="consumerList" v-if="projectInfo.consumerList">
-                                    <li v-for="item in projectInfo.consumerList" @click="handleClick(item)">
+                                <ul id="consumerList" v-if="contract.consumerList">
+                                    <li v-for="item in contract.consumerList" @click="handleClick(item)">
                                         <a class="contract_content_item  change-rely-service" v-if="item.serviceName"
                                            href="javascript:;">{{
                                             item.serviceName }}</a>
@@ -271,13 +275,13 @@
         form.on('select', function (data) {
             $.putForm(_hostUrl + '/contract/check', {
                 id: vm.contractId,
-                serviceName: vm.projectInfo.serviceName,
-                projectId: vm.projectInfo.projectId,
-                groupId: vm.projectInfo.groupId,
+                serviceName: vm.contract.serviceName,
+                projectId: vm.contract.projectId,
+                groupId: vm.contract.groupId,
                 checkStatus: data.value
             }, function (res) {
                 if (res.responseCode == 201) {
-                    vm.projectInfo.checkStatus = data.value
+                    vm.contract.checkStatus = data.value
                     layer.msg('审核操作成功', {
                         icon: 1,
                         time: 2000
@@ -392,7 +396,7 @@
             // layer.msg('历史记录')
         })
         $("ul li:eq(2)").click(function () {
-            x_admin_show('依赖关系', './contract-rely.html?id='+ vm.contractId+'&serviceCode='+vm.projectInfo.serviceCode,800,400,true)
+            x_admin_show('依赖关系', './contract-rely.html?id='+ vm.contractId+'&serviceCode='+vm.contract.serviceCode,800,400,true)
 
             return false
         })
@@ -404,7 +408,7 @@
         data () {
             return {
                 contractId: '',
-                projectInfo: {},
+                contract: {},
                 groupId: '',
                 superFlag: -1,
                 userType: 0,
@@ -432,10 +436,10 @@
             contractId () {
                 axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
                     if (response.data.responseCode == 200) {
-                        this.projectInfo = response.data.data
+                        this.contract = response.data.data
                         this.consumerList = response.data.data.consumerList
-                        if(this.projectInfo.consumerList.length === 0){
-                            this.projectInfo.consumerList = null
+                        if(this.contract.consumerList.length === 0){
+                            this.contract.consumerList = null
                         }
                         layui.use(['form'], function () {
                             $ = layui.jquery
@@ -444,7 +448,7 @@
                             for (var i = 0; i < checkStatusArray.length; i++) {
                                 $('#L_checkStatus').append(new Option(checkStatusArray[i], i))// 下拉菜单里添加元素
                             }
-                            $('#L_checkStatus').val(vm.projectInfo.checkStatus)
+                            $('#L_checkStatus').val(vm.contract.checkStatus)
                             form.render()//下拉菜单渲染 把内容加载进去
                         })
                         if (this.superFlag != 1) {
@@ -465,9 +469,9 @@
             historyId () {
                 axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
                     if (response.data.responseCode == 200) {
-                        this.projectInfo = response.data.data
-                        if (this.projectInfo.length === 0) {
-                            this.projectInfo.consumerList = null
+                        this.contract = response.data.data
+                        if (this.contract.length === 0) {
+                            this.contract.consumerList = null
                         }
                     }
                     historyTable.reload({
