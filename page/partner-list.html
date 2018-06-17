@@ -53,11 +53,12 @@
             background-color: #E2F2E4;
         }
 
-        .layui-table-cell{
+        .layui-table-cell {
             padding: 0 2px;
         }
-        .margin-0{
-            margin: 0!important;
+
+        .margin-0 {
+            margin: 0 !important;
         }
     </style>
 </head>
@@ -92,15 +93,15 @@
                     </thead>
                     <tbody>
                     <!--<tr>-->
-                        <!--<td style="padding: 0px;">-->
-                            <!--<ul>-->
-                                <!--<li id="allPartner">-->
-                                    <!--<a class="backup" href="javascript:;">-->
-                                        <!--<i class="iconfont">&#xe699;</i>-->
-                                        <!--<cite>所有成员</cite></a>-->
-                                <!--</li>-->
-                            <!--</ul>-->
-                        <!--</td>-->
+                    <!--<td style="padding: 0px;">-->
+                    <!--<ul>-->
+                    <!--<li id="allPartner">-->
+                    <!--<a class="backup" href="javascript:;">-->
+                    <!--<i class="iconfont">&#xe699;</i>-->
+                    <!--<cite>所有成员</cite></a>-->
+                    <!--</li>-->
+                    <!--</ul>-->
+                    <!--</td>-->
                     <!--</tr>-->
                     <tr>
                     </tr>
@@ -120,6 +121,7 @@
     <input hidden id="editPartner" value=""/>
     <input hidden id="groupArray" value=""/>
     <input hidden id="groupCode" value=""/>
+    <input hidden id="groupId" value=""/>
 </div>
 <script type="text/html" id="partnerBar">
     {{#  if(d.userType != 0 && myFlag < 2){ }}
@@ -146,19 +148,20 @@
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
                         $("#groupCode").val(item.groupCode)
+                        $("#groupId").val(item.id)
                         //查询自己所在分组身份
-                        if(vm.superFlag !=1){
-                            $.get(_hostUrl+'/partner/'+item.id+'/'+parseInt(getCookie('userId')),function (res) {
-                                if(res.responseCode == 200){
+                        if (vm.superFlag != 1) {
+                            $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
+                                if (res.responseCode == 200) {
                                     myFlag = res.data
                                 }
                             })
-                        }else {
+                        } else {
                             myFlag = 0
                         }
                         // 查询点击分组的成员数据
                         partnerTable.reload({
-                            url: _hostUrl + '/partner/'+item.id
+                            url: _hostUrl + '/partner/' + item.id
                         })
                     }
                 })
@@ -169,7 +172,7 @@
             elem: '#partnerList'
             , url: _hostUrl + '/partner/0'  //数据接口
             , page: true //开启分页
-            , text:{
+            , text: {
                 none: '点击分组查看成员'
             }
             , cols: [[ //表头
@@ -245,13 +248,13 @@
                     icon: 3,
                     title: '移除成员'
                 }, function (index) {
-                    $.deleteJSON(_hostUrl+"/partner/remove/"+data.projectId+'/'+data.groupId+'/'+data.id, null, function (res) {
+                    $.deleteJSON(_hostUrl + "/partner/remove/" + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
                         if (res.responseCode == 204) {
                             layer.msg('移除成功', {
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('partnerList',{
+                            table.reload('partnerList', {
                                 url: _hostUrl + '/partner/' + data.groupId
                             })
                         } else {
@@ -275,7 +278,7 @@
         // })
     })
 
-    function batchDelete () {
+    function batchDelete() {
         var data = tableCheck.getData()
         layer.confirm('确认要删除吗？' + data, function (index) {
             //捉到所有被选中的，发异步进行删除
@@ -287,14 +290,14 @@
 <script>
     let vm = new Vue({
         el: '#partner',
-        data () {
+        data() {
             return {
                 superFlag: 0,
                 projectStatus: 1
             }
         },
         //渲染之前加载cookie数据
-        beforeMount () {
+        beforeMount() {
             this.superFlag = getCookie('superFlag')
             this.projectStatus = getCookie('projectStatus')
         }

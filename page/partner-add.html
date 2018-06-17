@@ -26,94 +26,95 @@
 <div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
     <form class="layui-form">
         <div class="layui-tab layui-tab-brief">
-                <div class="layui-tab-item layui-show">
-                    <!--id-->
-                    <div class="layui-form-item" hidden>
-                        <div class="layui-input-inline">
-                            <input type="text" id="L_id" name="id" required=""
-                                   lay-verify=""
-                                   autocomplete="off" class="layui-input">
-                        </div>
+            <div class="layui-tab-item layui-show">
+                <!--id-->
+                <div class="layui-form-item" hidden>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_id" name="id" required=""
+                               lay-verify=""
+                               autocomplete="off" class="layui-input">
                     </div>
-                    <!--项目id-->
-                    <div class="layui-form-item" hidden>
-                        <div class="layui-input-inline">
-                            <input type="text" id="L_projectId" name="projectId" required=""
-                                   lay-verify=""
-                                   autocomplete="off" class="layui-input">
-                        </div>
+                </div>
+                <!--项目id-->
+                <div class="layui-form-item" hidden>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_projectId" name="projectId" required=""
+                               lay-verify=""
+                               autocomplete="off" class="layui-input">
                     </div>
-                    <!--groupId-->
-                    <div class="layui-form-item" hidden>
-                        <div class="layui-input-inline">
-                            <input type="text" id="L_groupId" name="groupId" required=""
-                                   lay-verify=""
-                                   autocomplete="off" class="layui-input">
-                        </div>
+                </div>
+                <!--groupId-->
+                <div class="layui-form-item" hidden>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_groupId" name="groupId" required=""
+                               lay-verify=""
+                               autocomplete="off" class="layui-input">
                     </div>
-                    <div class="layui-form-item" hidden>
-                        <div class="layui-input-inline">
-                            <input type="text" id="L_inviteUserId" name="inviteUserId" required=""
-                                   lay-verify=""
-                                   autocomplete="off" class="layui-input">
-                        </div>
+                </div>
+                <div class="layui-form-item" hidden>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_inviteUserId" name="inviteUserId" required=""
+                               lay-verify=""
+                               autocomplete="off" class="layui-input">
                     </div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label for="L_groupCode" class="layui-form-label" >
-                                <span class="x-red">*</span>所属分组
-                            </label>
-                            <div class="layui-input-inline" style="width: 300px;">
-                                <select id="L_groupCode" name="groupCode" lay-filter="groupCode">
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label for="L_userId" class="layui-form-label">
-                                <span class="x-red">*</span>成员列表
-                            </label>
-                            <div class="layui-input-inline" style="width: 300px;">
-                                <select id="L_userId" name="userId" lay-filter="userId">
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <!--用户类型 0:创建者 1:管理员 2:开发者(读写) 3:开发者(只读)-->
-                        <label for="L_userType" class="layui-form-label">
-                            <span class="x-red">*</span>角色
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label for="L_groupCode" class="layui-form-label">
+                            <span class="x-red">*</span>所属分组
                         </label>
-                        <div class="layui-input-inline" style="width: 400px;">
-                            <div id="L_userType"></div>
+                        <div class="layui-input-inline" style="width: 300px;">
+                            <select id="L_groupCode" name="groupCode" lay-filter="groupCode">
+                            </select>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label for="L_userId" class="layui-form-label">
+                            <span class="x-red">*</span>成员列表
                         </label>
-                        <button class="layui-btn layui-btn-lg" lay-filter="add" lay-submit="">
-                            保存
-                        </button>
+                        <div class="layui-input-inline" style="width: 300px;">
+                            <select id="L_userId" name="userId" lay-filter="userId">
+                            </select>
+                        </div>
                     </div>
+                </div>
+                <div class="layui-form-item">
+                    <!--用户类型 0:创建者 1:管理员 2:开发者(读写) 3:开发者(只读)-->
+                    <label for="L_userType" class="layui-form-label">
+                        <span class="x-red">*</span>角色
+                    </label>
+                    <div class="layui-input-inline" style="width: 400px;">
+                        <div id="L_userType"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                    </label>
+                    <button class="layui-btn layui-btn-lg" lay-filter="add" lay-submit="">
+                        保存
+                    </button>
+                </div>
             </div>
         </div>
     </form>
 </div>
 <script>
-    function getUserList (groupId,form) {
+    function getUserList(groupId, form) {
         //获取成员数据
         $.get(_hostUrl + '/users/' + groupId, function (res) {
             if (res.responseCode == 200) {
                 $("#L_userId").find("option").remove();
                 var userArray = res.data
-                for(var i=0;i<userArray.length;i++){
+                for (var i = 0; i < userArray.length; i++) {
                     $('#L_userId').append(new Option(userArray[i].nickName, userArray[i].id))// 下拉菜单里添加元素
                 }
             }
             form.render();
         })
     }
+
     layui.use(['form', 'layer'], function () {
         $ = layui.jquery
         var form = layui.form
@@ -127,26 +128,28 @@
 
         //默认加载第一个
         $('#L_groupCode').val(parent.$('#groupCode').val())
-        $('#L_groupId').val(groupArray[0].id)
+        alert(parent.$('#groupCode').val())
+        alert(parent.$("#groupId").val())
+        $('#L_groupId').val(parent.$("#groupId").val())
         $('#L_projectId').val(parseInt(getCookie('projectId')))
         $('#L_inviteUserId').val(parseInt(getCookie('userId')))
         //渲染角色
-        for(var i=1;i<userTypeArray.length;i++){
-            if(i===2){
+        for (var i = 1; i < userTypeArray.length; i++) {
+            if (i === 2) {
                 $('#L_userType').append("<input type='radio' name='userType' value='" + i + "' title='" + userTypeArray[i] + "' lay-skin='primary' checked> ")
-            }else {
+            } else {
                 $('#L_userType').append("<input type='radio' name='userType' value='" + i + "' title='" + userTypeArray[i] + "' lay-skin='primary'> ")
             }
         }
         //获取成员数据
-        getUserList(groupArray[0].id,form)
+        getUserList(parent.$("#groupId").val(), form)
         form.render()//下拉菜单渲染 把内容加载进去
         //监控分组选择事件
         form.on('select(groupCode)', function (data) {
             $.each(groupArray, function (i, item) {
                 if (item.groupCode == data.value) {
                     $('#L_groupId').val(item.id)
-                    getUserList(item.id,form)
+                    getUserList(item.id, form)
                     return
                 }
             })
@@ -162,7 +165,7 @@
                     layer.msg('添加成员成功', {
                         icon: 1,
                         time: 2000
-                    },function () {
+                    }, function () {
                         // 获得frame索引
                         var index = parent.layer.getFrameIndex(window.name)
                         //关闭当前frame
