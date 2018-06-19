@@ -34,8 +34,8 @@
             <i title="展开左侧栏" class="iconfont">&#xe699;</i>
         </div>
         <ul class="layui-nav right" lay-filter="">
-            <li class="layui-nav-item "><a>消息
-                <span class="layui-badge" style="margin: -10px 0px 0;">9</span>&nbsp;&nbsp;</a></li>
+            <li class="layui-nav-item" ><a id="notice" onclick="x_admin_show('消息通知','./page/message.html')">消息
+            </a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">{{ nickName }}</a>
                 <dl class="layui-nav-child"> <!-- 二级菜单 -->
@@ -46,7 +46,6 @@
                 </dl>
             </li>
         </ul>
-
     </div>
     <!-- 顶部结束 -->
     <!-- 中部开始 -->
@@ -392,7 +391,8 @@
             return {
                 nickName: '',
                 superFlag: 0,
-                projectInfo: []
+                projectInfo: [],
+                count: 0
             }
         },
         beforeCreate() {
@@ -402,6 +402,14 @@
             checkLogin()
             this.nickName = getCookie('nickName')
             this.superFlag = getCookie('superFlag')
+            axios.get(_hostUrl + "/msgs").then(response => {
+                if (response.data.responseCode === 200) {
+                    this.count = response.data.data.totalRecord;
+                    if (this.count > 0) {
+                        $("#notice").append('<span class="layui-badge" style="margin: -10px 0px 0;">' + this.count + '</span>&nbsp;&nbsp;');
+                    }
+                }
+            })
         },
         methods: {
             logout() {
