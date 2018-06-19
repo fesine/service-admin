@@ -179,10 +179,16 @@ function getCateId (cateId) {
 */
 
 function x_admin_show (title, url, w, h) {
-    x_admin_show(title,url,w,h,null)
+    x_admin_show(title,url,w,h,null,null)
 }
 
 function x_admin_show (title, url, w, h,max) {
+    x_admin_show(title,url,w,h,max,function () {
+        
+    })
+}
+
+function x_admin_show (title, url, w, h,max,cancelFun) {
     if (title == null || title == '') {
         title = false
     }
@@ -207,12 +213,14 @@ function x_admin_show (title, url, w, h,max) {
         shadeClose: true,
         shade: 0.4,
         title: title,
-        content: url
+        content: url,
+        cancel: cancelFun
     })
     if(max){
         layer.full(index)
     }
 }
+
 
 /*关闭弹出框口*/
 function x_admin_close () {

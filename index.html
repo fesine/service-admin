@@ -34,7 +34,9 @@
             <i title="展开左侧栏" class="iconfont">&#xe699;</i>
         </div>
         <ul class="layui-nav right" lay-filter="">
-            <li class="layui-nav-item" ><a id="notice" onclick="x_admin_show('消息通知','./page/message.html')">消息
+            <li class="layui-nav-item" >
+                <a id="notice" onclick="x_admin_show('消息通知','./page/message.html',1230,620,false,updateMsgCount)">消息
+                    <span v-show="msgCount > 0" class="layui-badge" style="margin: -10px 0px 0;">{{msgCount}}</span>&nbsp;&nbsp;
             </a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">{{ nickName }}</a>
@@ -383,6 +385,17 @@
             })
 
     });
+    function updateMsgCount () {
+    $.get(_hostUrl + "/msgs").then(response => {
+            if (response.responseCode === 200) {
+                if(response.data){
+                    vm.msgCount = response.data.totalRecord
+                }else{
+                    vm.msgCount = 0
+                }
+            }
+        })
+    }
 </script>
 <script>
     let vm = new Vue({
@@ -392,7 +405,7 @@
                 nickName: '',
                 superFlag: 0,
                 projectInfo: [],
-                count: 0
+                msgCount: 0
             }
         },
         beforeCreate() {
@@ -404,9 +417,8 @@
             this.superFlag = getCookie('superFlag')
             axios.get(_hostUrl + "/msgs").then(response => {
                 if (response.data.responseCode === 200) {
-                    this.count = response.data.data.totalRecord;
-                    if (this.count > 0) {
-                        $("#notice").append('<span class="layui-badge" style="margin: -10px 0px 0;">' + this.count + '</span>&nbsp;&nbsp;');
+                    if(response.data.data){
+                        this.msgCount = response.data.data.totalRecord
                     }
                 }
             })
