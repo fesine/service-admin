@@ -566,13 +566,14 @@ function arrayToJson (paramArray) {
     for(let i = 0;i<length;i++){
         tempParam = tempParamArray[i]
         tempKey = tempParam.paramKey
-        tempType = tempParam.paramType
+        tempType = parseInt(tempParam.paramType)
         tempValue = tempParam.paramValue
         try{
         //对象，存在子节点
         if(tempType === 13){
             let subLen = tempKey.lastIndexOf('>>')
             let parent = tempKey.substring(0, subLen)
+            checkParent(parent, parentKeyArray)
             if (subLen < 0 ) {
                 str += '"' + tempKey + '":{'
             }else{
@@ -609,6 +610,7 @@ function arrayToJson (paramArray) {
             let subLen = tempKey.lastIndexOf('>>')
             //是子数组
             let parent = tempKey.substring(0, subLen)
+            checkParent(parent, parentKeyArray)
             if (subLen < 0) {
                 str += '"' + tempKey + '":[{'
             } else {
@@ -644,6 +646,7 @@ function arrayToJson (paramArray) {
             //子一级参数
             let subLen = tempKey.lastIndexOf('>>')
             let parent = tempKey.substring(0, subLen)
+            checkParent(parent, parentKeyArray)
             let subKey = tempKey.substring(subLen + 2)
             if(subLen < 0){
                 subKey = tempKey
@@ -687,9 +690,10 @@ function arrayToJson (paramArray) {
                 layer.alert(tempKey + ':字段解析失败,请检查!', {
                     icon: 2
                 })
-
+                return '{}'
             })
-            return '{}'
+            throw SyntaxError();
+
         }
     }
 
@@ -708,4 +712,17 @@ function arrayToJson (paramArray) {
         parentKeyArray.pop()
     }
     return str
+}
+
+function checkParent (key,array) {
+    var success = false
+    $.each(array,function (index, item) {
+        if(key === item.key){
+            success = true
+            return false
+        }
+    })
+    if(!success){
+        throw new Error('字段解析错误')
+    }
 }

@@ -90,7 +90,7 @@ paramTypeArray[10] = '[date]'
 paramTypeArray[11] = '[datetime]'
 paramTypeArray[12] = '[json]'
 paramTypeArray[13] = '[object]'
-paramTypeArray[14] = '[array]'
+paramTypeArray[14] = '[array/list]'
 paramTypeArray[15] = '[file]'
 
 /**

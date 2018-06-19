@@ -111,7 +111,7 @@
                 eachArray = $('li.index', ui.item.parent())
             }
             eachArray.each(function (i, item) {
-                var id = item.firstElementChild.firstElementChild.innerText
+                var id = item.firstElementChild.firstElementChild.firstElementChild.innerText
                 temp = responseArray[i]
                 if (temp.myId === parseInt(id)) {
                     tempArray[i] = responseArray[i]
@@ -239,6 +239,8 @@
                         <a href="javascript:;" @click="importJson(1)" class="layui-btn  layui-btn-sm layui-btn-normal">导入JSON</a>
                         <a href="javascript:;" @click="autoClick()"
                            class="layui-btn  layui-btn-sm layui-btn-normal">刷新</a>
+                        <a href="javascript:;" @click="paramCheck(1)"
+                           class="layui-btn  layui-btn-sm layui-btn-danger">参数校验</a>
                         <table class="layui-table">
                             <colgroup>
                                 <col width="300">
@@ -287,21 +289,21 @@
                                             <select name="paramType" lay-filter="paramType"
                                                     :selected="list.paramType"
                                                     v-model="list.paramType"
-                                                    lay-verify="paramType">
+                                                    lay-verify="paramType" lay-search>
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
+                                                <option value="14">array/list</option>
+                                                <option value="9">decimal</option>
+                                                <option value="10">date</option>
+                                                <option value="11">datetime</option>
                                                 <option value="3">float</option>
                                                 <option value="4">double</option>
                                                 <option value="5">byte</option>
                                                 <option value="6">short</option>
                                                 <option value="7">long</option>
                                                 <option value="8">boolean</option>
-                                                <option value="9">decimal</option>
-                                                <option value="10">date</option>
-                                                <option value="11">datetime</option>
                                                 <option value="12">json</option>
                                                 <option value="13">object</option>
-                                                <option value="14">array</option>
                                                 <option value="15">file</option>
                                             </select>
                                         </div>
@@ -361,6 +363,8 @@
                            class="layui-btn  layui-btn-sm layui-btn-normal">导入JSON</a>
                         <a href="javascript:;"  @click="autoClick()"
                            class="layui-btn  layui-btn-sm layui-btn-normal">刷新</a>
+                        <a href="javascript:;" @click="paramCheck(2)"
+                           class="layui-btn  layui-btn-sm layui-btn-danger">参数校验</a>
                         <table class="layui-table">
                             <colgroup>
                                 <col width="300">
@@ -409,21 +413,21 @@
                                             <select name="paramType" lay-filter="paramType"
                                                     :selected="list.paramType"
                                                     v-model="list.paramType"
-                                                    lay-verify="paramType">
+                                                    lay-verify="paramType" lay-search>
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
+                                                <option value="14">array/list</option>
+                                                <option value="9">decimal</option>
+                                                <option value="10">date</option>
+                                                <option value="11">datetime</option>
                                                 <option value="3">float</option>
                                                 <option value="4">double</option>
                                                 <option value="5">byte</option>
                                                 <option value="6">short</option>
                                                 <option value="7">long</option>
                                                 <option value="8">boolean</option>
-                                                <option value="9">decimal</option>
-                                                <option value="10">date</option>
-                                                <option value="11">datetime</option>
                                                 <option value="12">json</option>
                                                 <option value="13">object</option>
-                                                <option value="14">array</option>
                                                 <option value="15">file</option>
                                             </select>
                                         </div>
@@ -689,6 +693,8 @@
 
         //监听提交
         form.on('submit(add)', function (data) {
+            event.stopPropagation()
+            event.preventDefault()
             data.field.id = null
             updateRequestIndex('stop',null)
             updateResponseIndex('stop',null)
@@ -703,6 +709,18 @@
                     vm.responseListUpdate.splice(index, 1)
                 }
             })
+            if (vm.requestListUpdate.length > 0) {
+                let checkStr = arrayToJson(vm.requestListUpdate)
+                if (checkStr === '{}') {
+                    return false
+                }
+            }
+            if (vm.responseListUpdate.length > 0) {
+                let checkStr = arrayToJson(vm.responseListUpdate)
+                if (checkStr === '{}') {
+                    return false
+                }
+            }
             // console.log(JSON.stringify(vm.requestListUpdate))
             data.field.requestParamArray= JSON.stringify(vm.requestListUpdate)
             data.field.responseParamArray= JSON.stringify(vm.responseListUpdate)
@@ -917,6 +935,44 @@
                         myId++
                         layer.close(index);
                     })
+                })
+            },
+            paramCheck (flag) {
+                if (flag === 1) {
+                    updateRequestIndex('stop', null)
+                    $.each(vm.requestListUpdate, function (index, item) {
+                        if (!item || !item.paramKey || item.paramKey === '') {
+                            vm.requestListUpdate.splice(index, 1)
+                        }
+                    })
+                    if (vm.requestListUpdate.length > 0) {
+                        let checkStr = arrayToJson(vm.requestListUpdate)
+                        if (checkStr === '{}') {
+                            return false
+                        }
+                    }
+                }
+                else {
+                    updateResponseIndex('stop', null)
+                    //过滤未添加paramKey的数据
+                    $.each(vm.responseListUpdate, function (index, item) {
+                        if (!item || !item.paramKey || item.paramKey === '') {
+                            vm.responseListUpdate.splice(index, 1)
+                        }
+                    })
+                    if (vm.responseListUpdate.length > 0) {
+                        let checkStr = arrayToJson(vm.responseListUpdate)
+                        if (checkStr === '{}') {
+                            return false
+                        }
+                    }
+                }
+                layui.use(['layer'], function () {
+                    let layer = layui.layer
+                    layer.alert('校验成功!', {
+                        icon: 1
+                    })
+
                 })
             }
         }

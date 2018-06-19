@@ -283,18 +283,22 @@
                     field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
                         let n = d.paramKey.split('>>').length - 1
                         let space = '<a>'
+                        let icon = '&#xe6fe;'
+                        if(d.paramType === 13 || d.paramType === 14){
+                            icon = '&#xe6a6;'
+                        }
                         for (var i = 0; i < n; i++) {
                             space += '&nbsp;&nbsp;&nbsp;&nbsp;'
                         }
                         space += '</a>'
                         if (n === 1) {
-                            space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #3af;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         } else if (n === 2) {
-                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         } else if (n === 3) {
-                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         } else {
-                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         }
                         return space + d.paramKey.split('>>')[n] + '</a>'
                     }
@@ -345,18 +349,22 @@
                     field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
                         let n = d.paramKey.split('>>').length - 1
                         let space = '<a>'
+                        let icon = '&#xe6fe;'
+                        if (d.paramType === 13 || d.paramType === 14) {
+                            icon = '&#xe6a6;'
+                        }
                         for (var i = 0; i < n; i++) {
                             space += '&nbsp;&nbsp;&nbsp;&nbsp;'
                         }
                         space += '</a>'
                         if (n === 1) {
-                            space = space + '<a style="color: #33aaff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #3af;font-weight: bolder;"><span class="iconfont">' + icon + '</span></a><a style="font-weight: bolder;">'
                         } else if (n === 2) {
-                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">' + icon + '</span></a><a style="font-weight: bolder;">'
                         } else if (n === 3) {
-                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">' + icon + '</span></a><a style="font-weight: bolder;">'
                         } else {
-                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">&#xe6a7;</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">' + icon + '</span></a><a style="font-weight: bolder;">'
                         }
                         return space + d.paramKey.split('>>')[n] + '</a>'
                     }
