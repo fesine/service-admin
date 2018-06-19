@@ -43,7 +43,7 @@
     </div>
 </div>
 <script type="text/html" id="newMessageBar">
-    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="ready">标记已读</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="ready">查看详情</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
 </script>
 <script type="text/html" id="allMessageBar">
@@ -63,12 +63,12 @@
             , page: true //开启分页
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
-                , {field: 'id', title: 'ID', width: 60, align: 'center'}
+                , {field: 'id', title: 'ID', width: 80, align: 'center'}
                 , {
-                    field: 'fromUserName', title: '消息来源', width: 100, align: 'center'
+                    field: 'fromUserName', title: '消息来源', width: 150, align: 'center'
                 }
                 , {
-                    field: 'msgType', title: '消息类型', width: 100, align: 'center', templet:
+                    field: 'msgType', title: '消息类型', width: 150, align: 'center', templet:
                         function (d) {
                             var msgType = d.msgType;
                             switch (msgType) {
@@ -91,8 +91,7 @@
                             return msgType;
                         }
                 }
-                , {field: 'title', title: '消息标题', width: 250, align: 'center'}
-                , {field: 'msg', title: '消息详情', width: 320, align: 'center'}
+                , {field: 'title', title: '消息标题', width: 380, align: 'center'}
                 , {
                     field: 'sendTime', title: '发送时间', width: 180, align: 'center'
                     , templet: function (d) {
@@ -122,12 +121,12 @@
             }
             , page: true //开启分页
             , cols: [[ //表头
-                {field: 'id', title: 'ID', width: 60, align: 'center'}
+                {field: 'id', title: 'ID', width: 80, align: 'center'}
                 , {
-                    field: 'fromUserName', title: '消息来源', width: 100, align: 'center'
+                    field: 'fromUserName', title: '消息来源', width: 150, align: 'center'
                 }
                 , {
-                    field: 'msgType', title: '消息类型', width: 100, align: 'center', templet:
+                    field: 'msgType', title: '消息类型', width: 150, align: 'center', templet:
                         function (d) {
                             var msgType = d.msgType;
                             switch (msgType) {
@@ -150,10 +149,10 @@
                             return msgType;
                         }
                 }
-                , {field: 'title', title: '消息标题', width: 250, align: 'center'}
-                , {field: 'msg', title: '消息详情', width: 320, align: 'center'}
+                , {field: 'title', title: '消息标题', width: 380, align: 'center'}
+
                 , {
-                    field: 'sendTime', title: '发送时间', width: 180, align: 'center'
+                    field: 'sendTime', title: '发送时间', width: 250, align: 'center'
                     , templet: function (d) {
                         return dateFormat(d.sendTime);
                     }
@@ -205,13 +204,16 @@
                 $.putJSON(_hostUrl + "/msg/" + data.id
                     , null, function (res) {
                         if (res.responseCode == 201) {
-                            layer.msg('您已标记成功！', {
-                                icon: 1,
-                                time: 2000
+                            layer.msg(data.msg, {
+                                title:"消息详情",
+                                icon:1,
+                                time: 10000,
+                                closeBtn:1
+                            },function () {
+                                table.reload('newMessageList');
+                                //重新渲染历史消息表
+                                allMessageTable.reload();
                             });
-                            table.reload('newMessageList');
-                            //重新渲染历史消息表
-                            allMessageTable.reload();
                         } else {
                             layer.msg(res.responseMsg, {icon: 2, time: 1500})
                         }
