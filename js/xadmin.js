@@ -1,9 +1,10 @@
 $(function () {
     //加载弹出层
+    let layer, element, util
     layui.use(['form', 'element', 'util'],
         function () {
-            layer = layui.layer
-            element = layui.element
+            layer = layui.layer,
+            element = layui.element,
             util = layui.util
         })
 
@@ -21,6 +22,7 @@ $(function () {
             //增加点击关闭事件
             var r = $(".layui-tab-title").find("li");
             //每次新打开tab都是最后一个，所以只对最后一个tab添加点击关闭事件
+            r.addClass('context-menu-one')
             r.eq(r.length - 1).children("i").on("click", function () {
                 // alert($(this).parent("li").attr('lay-id'));
                 element.tabDelete("xbs_tab", $(this).parent("li").attr('lay-id'));
@@ -480,6 +482,14 @@ function getUrlKey (name) {
 
 }
 
+/**
+ * json转列表
+ * @param myId
+ * @param array
+ * @param tempArray
+ * @param tempKeyArray
+ * @param prex
+ */
 function importIntoArray (myId, array, tempArray, tempKeyArray,prex) {
     var key, value, paramNullFlag, paramType,tempValue
     for (var x in tempArray) {
@@ -537,4 +547,165 @@ function importIntoArray (myId, array, tempArray, tempKeyArray,prex) {
         }
 
     }
+}
+
+function arrayToJson (paramArray) {
+    let length = paramArray.length
+    let tempParamArray = paramArray
+    if(length === 0){
+        return '{}'
+    }
+    let tempParam, tempType,tempKey,tempValue
+        ,str= '{'
+    let parentKeyArray = new Array()
+    //初始化根节点，string类型
+    parentKeyArray.push({
+        key: '',
+        type: 1
+    })
+    for(let i = 0;i<length;i++){
+        tempParam = tempParamArray[i]
+        tempKey = tempParam.paramKey
+        tempType = tempParam.paramType
+        tempValue = tempParam.paramValue
+        try{
+        //对象，存在子节点
+        if(tempType === 13){
+            let subLen = tempKey.lastIndexOf('>>')
+            let parent = tempKey.substring(0, subLen)
+            if (subLen < 0 ) {
+                str += '"' + tempKey + '":{'
+            }else{
+                //是子数组
+                let subKey = tempKey.substring(subLen + 2)
+                //判断父节点参数与传入参数是否相同
+                if (parent !== parentKeyArray[parentKeyArray.length - 1].key) {
+                    //说明子节点元素结束，需要处理end的括号
+                    for (var k = parentKeyArray.length - 1; k >= 0; k--) {
+                        if (parent !== parentKeyArray[k].key) {
+                            if (str.lastIndexOf(',')) {
+                                str = str.substring(0, str.length - 1)
+                            }
+                            if (parentKeyArray[k].type === 13 || parentKeyArray[k].type === 1) {
+                                str += '},'
+                            } else {
+                                str += '}],'
+                            }
+                            parentKeyArray.pop()
+                        } else {
+                            break
+                        }
+                    }
+                }
+                str += '"' + subKey + '":{'
+            }
+            //数组
+            parentKeyArray.push({
+                key: tempKey,
+                type: tempType
+            })
+
+        }else if(tempType === 14){
+            let subLen = tempKey.lastIndexOf('>>')
+            //是子数组
+            let parent = tempKey.substring(0, subLen)
+            if (subLen < 0) {
+                str += '"' + tempKey + '":[{'
+            } else {
+                let subKey = tempKey.substring(subLen + 2)
+                //判断父节点参数与传入参数是否相同
+                if (parent !== parentKeyArray[parentKeyArray.length - 1].key) {
+                    //说明子节点元素结束，需要处理end的括号
+                    for (var k = parentKeyArray.length - 1; k >= 0; k--) {
+                        if (parent !== parentKeyArray[k].key) {
+                            if (str.lastIndexOf(',')) {
+                                str = str.substring(0, str.length - 1)
+                            }
+                            if (parentKeyArray[k].type === 13 || parentKeyArray[k].type === 1) {
+                                str += '},'
+                            }else {
+                                str += '}],'
+                            }
+                            parentKeyArray.pop()
+                        } else {
+                            break
+                        }
+                    }
+                }
+                str += '"' + subKey + '":[{'
+            }
+            //数组
+            parentKeyArray.push({
+                key: tempKey,
+                type: tempType
+            })
+        }else{
+            //根节点下元素，非对象，数组元素
+            //子一级参数
+            let subLen = tempKey.lastIndexOf('>>')
+            let parent = tempKey.substring(0, subLen)
+            let subKey = tempKey.substring(subLen + 2)
+            if(subLen < 0){
+                subKey = tempKey
+            }
+            //判断父节点参数与传入参数是否相同
+            if (parent === parentKeyArray[parentKeyArray.length - 1].key) {
+                if (tempValue && tempValue !== 'null') {
+                    str += '"' + subKey + '":"' + tempValue + '",'
+                } else {
+                    str += '"' + subKey + '":null,'
+                }
+            } else {
+                //说明子节点元素结束，需要处理end的括号
+                for(var k = parentKeyArray.length-1;k>=0;k--){
+                    if(parent !== parentKeyArray[k].key){
+                        if (str.lastIndexOf(',')) {
+                            str = str.substring(0, str.length - 1)
+                        }
+                        if (parentKeyArray[k].type === 13 || parentKeyArray[k].type === 1) {
+                            str += '},'
+                        } else {
+                            str += '}],'
+                        }
+                        parentKeyArray.pop()
+                    }else{
+                        break
+                    }
+                }
+                if (tempValue && tempValue !== 'null') {
+                    str += '"' + subKey + '":"' + tempValue + '",'
+                } else {
+                    str += '"' + subKey + '":null,'
+                }
+            }
+        }
+        }
+        catch (e) {
+            console.log('异常json：'+str)
+            layui.use(['layer'], function () {
+                let layer = layui.layer
+                layer.alert(tempKey + ':字段解析失败,请检查!', {
+                    icon: 2
+                })
+
+            })
+            return '{}'
+        }
+    }
+
+    //
+    if (str.lastIndexOf(',')) {
+        let len = str.length - 1
+        str = str.substring(0, len)
+    }
+    //收尾工作，需要处理parentKeyArray中还存在的父节点进行end处理
+    for (var k = parentKeyArray.length - 1; k >= 0; k--) {
+        if (parentKeyArray[k].type === 13 || parentKeyArray[k].type === 1) {
+            str += '}'
+        } else {
+            str += '}]'
+        }
+        parentKeyArray.pop()
+    }
+    return str
 }

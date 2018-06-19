@@ -246,6 +246,10 @@
                         </div>
                     </div>
                     <div class="layui-tab-item">
+                        <a href="javascript:;" @click="importJson(1)"
+                           class="layui-btn  layui-btn-sm layui-btn-normal">导入JSON</a>
+                        <a href="javascript:;" @click="autoClick()"
+                           class="layui-btn  layui-btn-sm layui-btn-normal">刷新</a>
                         <table class="layui-table">
                             <colgroup>
                                 <col width="300">
@@ -346,6 +350,10 @@
                         </ul>
                     </div>
                     <div class="layui-tab-item">
+                        <a href="javascript:;" @click="importJson(2)"
+                           class="layui-btn  layui-btn-sm layui-btn-normal">导入JSON</a>
+                        <a href="javascript:;" @click="autoClick()"
+                           class="layui-btn  layui-btn-sm layui-btn-normal">刷新</a>
                         <table class="layui-table">
                             <colgroup>
                                 <col width="300">
@@ -455,6 +463,13 @@
 <script>
     var serviceArray;
 
+    function autoClick () {
+        layui.use('form', function () {
+            var form = layui.form;
+            //根据的type类型修改
+            form.render();
+        });
+    }
     function onInput (e,flag) {
         let lastId
         let checkId
@@ -838,6 +853,39 @@
                     })
                 })
 
+            },
+            importJson (flag) {
+                let _this = this
+                layui.use(['form', 'layer'], function () {
+                    var form = layui.form
+                        , layer = layui.layer
+                    layer.prompt({
+                        formType: 2,
+                        maxlength: 50000,
+                        value: '',
+                        title: '请输入JSON转换参数',
+                        area: ['500px', '200px'] //自定义文本域宽高
+                    }, function (value, index, elem) {
+                        let tempArray = JSON.parse(value)
+                        let array
+                        let myId
+                        let tempKeyArray = new Array()
+                        if (flag === 1) {
+                            array = _this.requestParamList
+                            myId = _this.nextId
+                        } else {
+                            array = _this.responseParamList
+                            myId = _this.respNextId
+                        }
+                        let tempParam = array[array.length - 1]
+                        array.splice(array.length - 1, 1)
+                        importIntoArray(myId, array, tempArray, tempKeyArray, '')
+                        tempParam.myId = myId
+                        array.push(tempParam)
+                        myId++
+                        layer.close(index);
+                    })
+                })
             }
         }
     })

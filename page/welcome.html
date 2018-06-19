@@ -85,7 +85,8 @@
                                                         </p>
                                                     </a>
                                                 </li>
-                                                <li class="layui-col-xs3">
+                                                <li class="layui-col-xs3"
+                                                    @click="openMenu('#log-menu')">
                                                     <a href="javascript:;"
                                                        class="x-admin-backlog-body">
                                                         <h3>24小时内项目动态</h3>
@@ -130,7 +131,8 @@
                                                         </p>
                                                     </a>
                                                 </li>
-                                                <li class="layui-col-xs3">
+                                                <li class="layui-col-xs3"
+                                                    @click="openMenu('#status-code-menu')">
                                                     <a href="javascript:;"
                                                        class="x-admin-backlog-body">
                                                         <h3>状态码总数</h3>
@@ -139,7 +141,8 @@
                                                         </p>
                                                     </a>
                                                 </li>
-                                                <li class="layui-col-xs3">
+                                                <li class="layui-col-xs3"
+                                                    @click="openMenu('#partner-menu')">
                                                     <a href="javascript:;"
                                                        class="x-admin-backlog-body">
                                                         <h3>项目成员</h3>
@@ -179,7 +182,7 @@
                 <li class="layui-timeline-item">
                     <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                     <div class="layui-timeline-content layui-text">
-                        <div class="layui-timeline-title">更多</div>
+                        <div class="layui-timeline-title"><a href="javasrcipt:;" @click="openMenu('#log-menu')">更多</a></div>
                     </div>
                 </li>
             </ul>
@@ -204,6 +207,9 @@
             openApiCount(projectId, projectName){
                 x_admin_show('接口统计', './api-group-data.html?projectId='
                     + projectId+'&projectName='+ projectName, 800, 400, true)
+            },
+            openMenu(btn){
+                $(btn, parent.document).click();
             }
         },
         //过滤器
