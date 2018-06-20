@@ -211,6 +211,14 @@
                                     lay-submit
                                     lay-filter="executeTest">执行测试
                             </button>
+                            <div>
+                                <br>
+                            <button class="layui-btn layui-btn-danger layui-btn-fluid"
+                                    @click="testHistory($event)"
+                                    lay-submit
+                                    lay-filter="testHistory">历史记录
+                            </button>
+                            </div>
                         </form>
                     </div>
                     <div class="layui-col-md5">
@@ -283,7 +291,7 @@
                     field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
                         let n = d.paramKey.split('>>').length - 1
                         let space = '<a>'
-                        let icon = '&#xe6fe;'
+                        let icon = '-&nbsp;'
                         if(d.paramType === 13 || d.paramType === 14){
                             icon = '&#xe6a6;'
                         }
@@ -349,7 +357,7 @@
                     field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
                         let n = d.paramKey.split('>>').length - 1
                         let space = '<a>'
-                        let icon = '&#xe6fe;'
+                        let icon = '-'
                         if (d.paramType === 13 || d.paramType === 14) {
                             icon = '&#xe6a6;'
                         }
@@ -400,11 +408,6 @@
             parent.layer.close(index)
             parent.x_admin_show('复制新增', 'api-add.html?copy=1', 500, 500, true)
         })
-        // form.on('submit(executeTest)',function (data) {
-        //     // 获得frame索引
-        //     layer.msg(111)
-        //     return false
-        // })
         form.on('select(checkStatus)', function (data) {
             $.putForm(_hostUrl + '/api/check', {
                 id: vm.apiId,
@@ -690,10 +693,55 @@
                     //mock测试
                     this.responseParamJson = JSON.stringify(JSON.parse(arrayToJson(responseParamData)), null, '\t')
                     $('#responseParamArea').val(this.responseParamJson)
+                }else if($('#L_envSelect').val() !== ''){
+                    $.post(_hostUrl + '/test/caseSingle/invoke', {
+                        envId:parseInt($('#L_envSelect').val()),
+                        requestParam:this.requestParamJson,
+                        serviceCode: this.apiInfo.serviceCode,
+                        projectId: this.apiInfo.projectId,
+                        groupId: this.apiInfo.groupId,
+                        apiId: this.apiInfo.id,
+                        versionNo: this.apiInfo.versionNo,
+                        groupCode: this.apiInfo.groupCode
+                    }, function (res) {
+                        let data = res.data
+                        if (res.responseCode === 200) {
+                            $('#responseParamArea').val(JSON.stringify(JSON.parse(data.body), null, '\t'))
+                            layer.msg('测试成功', {
+                                icon: 1,
+                                time: 2000
+                            })
+                        } else if(res.responseCode === 400){
+                            $('#responseParamArea').val(JSON.stringify(JSON.parse(data.body), null, '\t'))
+                            layer.msg('测试失败', {
+                                icon: 2,
+                                time: 2000
+                            })
+                        }else{
+                            $('#responseParamArea').val(res.responseMsg)
+                            layer.msg('测试出现异常', {
+                                icon: 2,
+                                time: 2000
+                            })
+                        }
+                    })
                 }
                 //请求参数有可能修改，需要临时保存
                 this.requestParamJson = $('#requestParamArea').val()
                 this.convertFlag = 0
+            },
+            testHistory (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                if($('#L_envSelect').val() === '0' || $('#L_envSelect').val() === ''){
+                    layer.msg('请先选择测试环境!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                }else{
+                    //TODO 查看历史测试记录
+
+                }
             },
             clearParamArea(e,flag){
                 e.stopPropagation()
