@@ -30,7 +30,7 @@
 
         #timeCount, #successCount{
             width: 45%;
-            height: 70%;
+            height: 400px;
             border:1px solid gainsboro;
             float: left;
             margin-left: 20px;
@@ -38,176 +38,34 @@
     </style>
 </head>
 <body>
-<div style="width: 150px;margin-left: 20px;margin-top: 10px;margin-bottom: 5px;">
-    <form class="layui-form">
-        <select name="timeCount" id="timeCountKey">
-            <option value="">统计周期</option>
-            <option value="0">近七天</option>
-            <option value="1">近一月</option>
-            <option value="2">近三月</option>
-        </select>
+<div style="width: 350px;margin-left: 20px;margin-top: 10px;margin-bottom: 5px;">
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">统计周期</label>
+            <div class="layui-input-block">
+                <select name="timeCount" lay-filter="timeCountKey">
+                    <option value="">全部</option>
+                    <option value="0">近七天</option>
+                    <option value="1">近一月</option>
+                    <option value="2">近三月</option>
+                </select>
+            </div>
+        </div>
+
     </form>
 </div>
-<div id="test-analysis" style=""></div>
-<div id="timeCount" style=""></div>
-<div id="successCount" style=""></div>
-<script type="text/javascript">
-    let timeCount = document.getElementById('timeCount')
-    let successCount = document.getElementById('successCount')
-    let charts=[]
-    var mycharts = echarts.init(timeCount, 'macarons')
-    var option = {
-        color: ['#4cabce', '#e5323e'],
-        title: {
-            text: '接口测试成功/失败统计',
-            x: 'center'
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            type: 'scroll',
-            orient: 'vertical',
-            left: 10,
-            top: 20,
-            bottom: 20,
-            data: ['成功','失败']
-        },
-        series: [
-            {
-                name: '请求总数',
-                type: 'pie',
-                radius: '55%',
-                center: ['40%', '50%'],
-                label: {            //饼图图形上的文本标签
-                    normal: {
-                        show: true,
-                        position: 'inner', //标签的位置
-                        textStyle: {
-                            fontWeight: 300,
-                            fontSize: 16    //文字的字体大小
-                        },
-                        formatter: '{c}'
+<div id="test-analysis" style="">
+    <div id="successCount" style=""></div>
+    <div id="timeCount" style=""></div>
+</div>
 
-                    }
-                },
-                data: [{name: '成功', value: 10},
-                    {name: '失败', value: 20}],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        ]
-    };
-    // 使用刚指定的配置项和数据显示图表。
-    mycharts.setOption(option)
-    // mycharts.showLoading();
-    // $.get(_hostUrl + '/api/count/' + getUrlKey('projectId'), function (res) {
-    //     if (res.responseCode == 200) {
-    //         mycharts.hideLoading();
-    //         mycharts.setOption({
-    //             legend: {
-    //                 data: res.data.legendData
-    //             },//加载数据图表
-    //             series: [{
-    //                 // 根据名字对应到相应的系列
-    //                 data: res.data.seriesData
-    //             }]
-    //         });
-    //     }
-    // })
-    charts.push(timeCount)
-    mycharts = echarts.init(successCount, 'macarons')
-    var labelOption = {
-        normal: {
-            show:true,
-            position:'top'
-        }
-    };
-    option = {
-        color: ['#006699', '#4cabce', '#e5323e'],
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        legend: {
-            data: ['最大耗时', '平均耗时', '最小耗时']
-        },
-        toolbox: {
-            show: true,
-            orient: 'vertical',
-            left: 'right',
-            top: 'center',
-            feature: {
-                mark: {show: true},
-                dataView: {show: true, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
-                restore: {show: true},
-                saveAsImage: {show: true}
-            }
-        },
-        calculable: true,
-        xAxis: [
-            {
-                type: 'category',
-                axisTick: {show: false},
-                data: ['执行耗时（ms）']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '最大耗时',
-                type: 'bar',
-                label: labelOption,
-                barWidth: 40,
-                data: [320]
-            },
-            {
-                name: '平均耗时',
-                type: 'bar',
-                label: labelOption,
-                barWidth: 40,
-                data: [220]
-            },
-            {
-                name: '最小耗时',
-                type: 'bar',
-                label: labelOption,
-                barWidth:40,
-                data: [40]
-            }
-        ]
-    };
-    // 使用刚指定的配置项和数据显示图表。
-    mycharts.setOption(option)
-    charts.push(successCount)
-    // mycharts.showLoading();
-    // $.get(_hostUrl + '/api/count/' + getUrlKey('projectId'), function (res) {
-    //     if (res.responseCode == 200) {
-    //         mycharts.hideLoading();
-    //         mycharts.setOption({
-    //             legend: {
-    //                 data: res.data.legendData
-    //             },//加载数据图表
-    //             series: [{
-    //                 // 根据名字对应到相应的系列
-    //                 data: res.data.seriesData
-    //             }]
-    //         });
-    //     }
-    // })
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+        let form = layui.form
+        form.on('select(timeCountKey)', function (data) {
+            vm.getData(data.value)
+        })
+    })
 
 </script>
 <script>
@@ -216,10 +74,13 @@
         data () {
             return {
                 successData:[],
-                maxTime:0,
-                avgTime:0,
-                minTime:0,
-                testInfo:{}
+                timeData:{
+                    maxTime: 0,
+                    avgTime: 0,
+                    minTime: 0
+                },
+                testInfo:{},
+                mycharts:{}
             }
         },
         beforeMount () {
@@ -228,24 +89,161 @@
             this.testInfo.envId = parseInt(getUrlKey('envId'))
             this.testInfo.apiId = parseInt(getUrlKey('apiId'))
             this.testInfo.projectId = parseInt(getCookie('projectId'))
-            let url= _hostUrl + '/test/caseSingle/analysis?caseGroupId='+ this.testInfo.caseGroupId
-                +'&groupId='+ this.testInfo.groupId + '&envId=' + this.testInfo.envId
-                + '&apiId=' + this.testInfo.apiId
-                + '&projectId=' + this.testInfo.projectId
-            //获取统计数据
-            axios.get(url).then(response => {
-                if (response.data.responseCode == 200) {
-                    this.successData = response.data.data.successData
-                    this.maxTime = response.data.data.maxTime
-                    this.avgTime = response.data.data.avgTime
-                    this.minTime = response.data.data.minTime
-
-                }
-            })
+            this.getData('')
+        },
+        watch:{
+            successData(){
+                this.mycharts = echarts.init(document.getElementById('successCount'));  //初始化echarts实例
+                this.drawSuccess();
+            },
+            timeData(){
+                this.mycharts = echarts.init(document.getElementById('timeCount'));  //初始化echarts实例
+                this.drawTime();
+            }
         },
         methods: {
-            editApi (id) {
+            getData (countType) {
+                let url = _hostUrl + '/test/caseSingle/analysis?caseGroupId=' + this.testInfo.caseGroupId
+                    + '&groupId=' + this.testInfo.groupId + '&envId=' + this.testInfo.envId
+                    + '&apiId=' + this.testInfo.apiId
+                    + '&projectId=' + this.testInfo.projectId+'&countType='+ countType
+                //获取统计数据
+                axios.get(url).then(response => {
+                    if (response.data.responseCode == 200) {
+                        this.successData = response.data.data.successData
+                        this.timeData = response.data.data.timeData
+                    }
+                })
+            },
+            drawSuccess(){
+                let option = {
+                    color: ['#4cabce', '#e5323e'],
+                    title: {
+                        text: '接口测试成功/失败统计',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        type: 'scroll',
+                        orient: 'vertical',
+                        left: 10,
+                        top: 20,
+                        bottom: 20,
+                        data: ['成功', '失败']
+                    },
+                    series: [
+                        {
+                            name: '请求总数',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['40%', '50%'],
+                            label: {            //饼图图形上的文本标签
+                                normal: {
+                                    show: true,
+                                    position: 'inner', //标签的位置
+                                    textStyle: {
+                                        fontWeight: 300,
+                                        fontSize: 16    //文字的字体大小
+                                    },
+                                    formatter: '{c}'
+
+                                }
+                            },
+                            data: this.successData,
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                this.mycharts.setOption(option);
+            },
+            drawTime () {
+                let labelOption = {
+                    normal: {
+                        show: true,
+                        position: 'top'
+                    }
+                };
+               let option = {
+                    color: ['#006699', '#4cabce', '#e5323e'],
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    legend: {
+                        data: ['最大耗时', '平均耗时', '最小耗时']
+                    },
+                    toolbox: {
+                        show: true,
+                        orient: 'vertical',
+                        left: 'right',
+                        top: 'center',
+                        feature: {
+                            mark: {show: true},
+                            dataView: {show: true, readOnly: false},
+                            magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    calculable: true,
+                    xAxis: [
+                        {
+                            type: 'category',
+                            axisTick: {show: false},
+                            data: ['执行耗时（ms）']
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '最大耗时',
+                            type: 'bar',
+                            label: labelOption,
+                            barWidth: 40,
+                            data: [this.timeData.maxTime]
+                        },
+                        {
+                            name: '平均耗时',
+                            type: 'bar',
+                            label: labelOption,
+                            barWidth: 40,
+                            data: [this.timeData.avgTime]
+                        },
+                        {
+                            name: '最小耗时',
+                            type: 'bar',
+                            label: labelOption,
+                            barWidth: 40,
+                            data: [this.timeData.minTime]
+                        }
+                    ]
+                };
+                // 使用刚指定的配置项和数据显示图表。
+                this.mycharts.setOption(option);
             }
+        },
+        mounted () {
+            this.$nextTick(function () {
+                this.mycharts = echarts.init(document.getElementById('successCount'));  //初始化echarts实例
+                this.drawSuccess();
+                this.mycharts = echarts.init(document.getElementById('timeCount'));  //初始化echarts实例
+                this.drawTime();
+            })
         }
     })
 </script>

@@ -216,7 +216,7 @@
                             <button class="layui-btn layui-btn-danger layui-btn-fluid"
                                     @click="testHistory($event)"
                                     lay-submit
-                                    lay-filter="testHistory">历史记录
+                                    lay-filter="testHistory">测试历史
                             </button>
                             </div>
                         </form>
@@ -689,6 +689,9 @@
             executeTest (e) {
                 e.stopPropagation()
                 e.preventDefault()
+                //请求参数有可能修改，需要临时保存
+                this.requestParamJson = $('#requestParamArea').val()
+                this.convertFlag = 0
                 if($('#L_envSelect').val() === '0'){
                     //mock测试
                     this.responseParamJson = JSON.stringify(JSON.parse(arrayToJson(responseParamData)), null, '\t')
@@ -696,7 +699,7 @@
                 }else if($('#L_envSelect').val() !== ''){
                     $.post(_hostUrl + '/test/caseSingle/invoke', {
                         envId:parseInt($('#L_envSelect').val()),
-                        requestParam:this.requestParamJson,
+                        requestParam: this.requestParamJson,
                         serviceCode: this.apiInfo.serviceCode,
                         projectId: this.apiInfo.projectId,
                         groupId: this.apiInfo.groupId,
@@ -726,9 +729,6 @@
                         }
                     })
                 }
-                //请求参数有可能修改，需要临时保存
-                this.requestParamJson = $('#requestParamArea').val()
-                this.convertFlag = 0
             },
             testHistory (e) {
                 e.stopPropagation()
