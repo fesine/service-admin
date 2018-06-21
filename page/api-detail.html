@@ -740,7 +740,13 @@
                     })
                 }else{
                     //TODO 查看历史测试记录
-
+                    // $('#test-history', parent.parent.document).click();
+                    parent.parent.layui.element.tabDelete("xbs_tab", 999)
+                    let url = './page/test-list.html?caseGroupId=0&groupId='
+                        +this.apiInfo.groupId+'&envId='+parseInt($('#L_envSelect').val())
+                        +'&apiId='+ this.apiInfo.id+ '&projectId=' + this.apiInfo.projectId
+                    parent.parent.tab.tabAdd('测试记录',url,999)
+                    parent.parent.tab.tabChange(999)
                 }
             },
             clearParamArea(e,flag){

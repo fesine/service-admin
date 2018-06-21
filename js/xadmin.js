@@ -1,3 +1,4 @@
+var tab
 $(function () {
     //加载弹出层
     let layer, element, util
@@ -9,7 +10,7 @@ $(function () {
         })
 
     //触发事件
-    var tab = {
+    tab = {
         tabAdd: function (title, url, id) {
             //新增一个Tab项
             element.tabAdd('xbs_tab', {
@@ -184,7 +185,6 @@ function x_admin_show (title, url, w, h) {
 
 function x_admin_show (title, url, w, h,max) {
     x_admin_show(title,url,w,h,max,function () {
-        
     })
 }
 
