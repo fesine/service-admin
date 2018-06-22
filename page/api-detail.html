@@ -709,13 +709,16 @@
                     }, function (res) {
                         let data = res.data
                         if (res.responseCode === 200) {
-                            $('#responseParamArea').val(JSON.stringify(JSON.parse(data.body), null, '\t'))
+                            if(data.body.length>1){
+                                data.body = JSON.parse(data.body)
+                            }
+                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
                             layer.msg('测试成功', {
                                 icon: 1,
                                 time: 2000
                             })
                         } else if(res.responseCode === 400){
-                            $('#responseParamArea').val(JSON.stringify(JSON.parse(data.body), null, '\t'))
+                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
                             layer.msg('测试失败', {
                                 icon: 2,
                                 time: 2000

@@ -17,6 +17,11 @@
     <script type="text/javascript" src="../js/cookies.js"></script>
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        .layui-table-cell{
+            padding: 0px;
+        }
+    </style>
 </head>
 
 <body class="layui-anim layui-anim-up" onload="checkLogin ()">
@@ -105,7 +110,7 @@
                 , {
                     field: 'successFlag',
                     title: '执行结果',
-                    width: 150,
+                    width: 130,
                     event: 'detail',
                     align: 'center',
                     templet: function (d) {
@@ -116,7 +121,10 @@
                         }
                     }
                 }
-                , {field: 'exceptionType', title: '异常类型',  align: 'center'}
+                , {field: 'exceptionType', title: '异常类型',  align: 'center', templet: function (d) {
+                    return exceptionTypeArray[d.exceptionType]
+                }
+                }
             ]], request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit

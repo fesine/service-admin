@@ -70,6 +70,19 @@ userTypeArray[2] = '开发者(读写)'
 userTypeArray[3] = '开发者(只读)'
 
 /**
+ * 用户类型 0:创建者 1:管理员 2:开发者(读写) 3:开发者(只读)
+ * @type {any[]}
+ */
+exceptionTypeArray = new Array()
+exceptionTypeArray[0] = ''
+exceptionTypeArray[1] = '获取IService失败'
+exceptionTypeArray[2] = '获取提供者失败'
+exceptionTypeArray[3] = '系统异常'
+exceptionTypeArray[4] = '方法执行异常'
+exceptionTypeArray[5] = '调用方法异常'
+exceptionTypeArray[6] = '其他未知异常'
+
+/**
  * 数据类型 1:string 2:int 3:float 4:double 5:byte 6:short
  * 7:long 8:boolean 9:decimal 10:date 11:datetime
  * 12:json 13:object 14:array 15:file
