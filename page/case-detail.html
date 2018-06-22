@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="../lib/vue/jquery.min.js"></script>
+    <script src="../lib/vue/jquery-ui.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        tr {
+            cursor: pointer;
+        }
+
+        .layui-table-cell {
+            padding: 0 2px;
+        }
+
+        .req-checkbox {
+            width: 45px;
+            height: 36px;
+            text-align: center;
+            border: solid 1px #e6e6e6;
+        }
+        .lastRow{
+            padding-left: 2px;
+        }
+
+        .req-manager {
+            width: 135px;
+            height: 36px;
+            text-align: center;
+            border: solid 1px #e6e6e6;
+
+        }
+
+        .req-manager-button a{
+            font-size: 14px;
+            margin-left:10px;
+            margin-right:10px;
+        }
+        .req-manager-button a:hover{
+            color: red;
+        }
+
+        .req-checkbox-sub {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .req-ul li {
+            margin-top: 1px;
+        }
+    </style>
+    <script>
+        // updateRequestIndex = function (e, ui) {
+        //     let requestArray = vm.requestParamList
+        //     let tempArray = new Array()
+        //     let temp
+        //     //更新后的列表
+        //     let eachArray
+        //     if(!ui){
+        //         eachArray = $('#requestParamTable').find('li')
+        //     }else{
+        //         eachArray = $('li.index', ui.item.parent())
+        //     }
+        //     eachArray.each(function (i, item) {
+        //         var id = item.firstElementChild.firstElementChild.innerText
+        //         temp = requestArray[i]
+        //         if (temp.myId === parseInt(id)) {
+        //             tempArray[i] = requestArray[i]
+        //         } else {
+        //             for (var j = 0; j < requestArray.length; j++) {
+        //                 if (requestArray[j].myId === parseInt(id)) {
+        //                     tempArray[i] = requestArray[j]
+        //                     break
+        //                 }
+        //             }
+        //         }
+        //     });
+        //     vm.requestListUpdate = tempArray
+        // };
+        
+
+        $(document).ready(function () {
+            // var fixHelperModified = function (e, tr) {
+            //     var $originals = tr.children();
+            //     var $helper = tr.clone();
+            //     $helper.children().each(function (index) {
+            //         $(this).width($originals.eq(index).width())
+            //     });
+            //     return $helper;
+            // }
+            // $("#requestParamTable").sortable({
+            //     helper: fixHelperModified,
+            //     stop: updateRequestIndex
+            // }).disableSelection();
+            var fixHelperModified = function (e, tr) {
+                    var $originals = tr.children();
+                    var $helper = tr.clone();
+                    $helper.children().each(function (index) {
+                        $(this).width($originals.eq(index).width())
+                    });
+                    return $helper;
+                },
+                updateIndex = function (e, ui) {
+                    $('td.index', ui.item.parent()).each(function (i) {
+                        $(this).html(i + 1);
+                    });
+                };
+            $("#sort tbody").sortable({
+                helper: fixHelperModified,
+                stop: updateIndex
+            }).disableSelection();
+        });
+    </script>
+</head>
+
+<body>
+<div id="case-detail">
+    <div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
+        <div style="margin-top: 5px;">
+            <a href="javascript:;" @click="addApi"
+               class="layui-btn  layui-btn-sm layui-btn-normal">添加接口</a>
+            <a href="javascript:;" @click="save"
+               class="layui-btn  layui-btn-sm layui-btn-normal">保存</a>
+            <a href="javascript:;" @click="executeTestGroup"
+               class="layui-btn  layui-btn-sm layui-btn-danger">执行测试</a>
+        </div>
+        <table class="layui-table" id="sort">
+            <colgroup>
+                <col width="280">
+                <col width="280">
+                <col width="105">
+                <col width="180">
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>接口编号</th>
+                <th>接口名称</th>
+                <th>版本号</th>
+                <th>取参方式</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in tableData">
+                <td>{{item.serviceCode}}</td>
+                <td>{{item.serviceName}}</td>
+                <td>{{item.versionNo}}</td>
+                <td>{{item.requestParamFlag | convertParamType}}</td>
+                <td>
+                    <div class="req-manager-button">
+                        <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
+                        <a href="javascript:;"
+                           @click='removeRequestParam(index,$event)'><i
+                                class="iconfont">&#xe69e;</i>修改</a>
+                        <a href="javascript:;"
+                           @click='removeRequestParam(index,$event)'><i
+                                class="iconfont">&#xe69d;</i>删除</a>
+                    </div></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <input hidden id="groupArray" type="text">
+    <input hidden id="apiData" type="text" v-model="apiData">
+</div>
+<script>
+    function addApiData () {
+        let apiData = JSON.parse($('#apiData').val())
+        vm.tableData.push(apiData)
+    }
+</script>
+<script>
+    let vm = new Vue({
+        el: '#case-detail',
+        data () {
+            return {
+                caseId:0,
+                groupId:0,
+                projectId:0,
+                apiData:'',
+                groupArray:[],
+                tableData:[
+                    {serviceCode:'AS_TEST_CCL',serviceName:'测试契约改合约',versionNo:'1.0.1',requestParamFlag:0},
+                    {serviceCode:'AS_CIF_CONTACTS_MAT',serviceName:'通讯录用户匹配',versionNo:'1.0.1',requestParamFlag:1}
+                ],
+                tableDataUpdate:[]
+            }
+        },
+        filters:{
+            convertParamType(data){
+                return getrequestParamTypeArray[data]
+            }
+        },
+        watch:{
+            apiData(){
+                alert(this.apiData)
+            }
+        },
+        beforeMount(){
+            this.caseId = getUrlKey('id')
+            this.groupId = getUrlKey('groupId')
+            this.projectId = getUrlKey('projectId')
+            axios.get(_hostUrl+'/test/configApis/'+this.caseId).then(response =>{
+                if (response.data.responseCode == 200) {
+                    // this.tableData = response.data.data
+                }
+            })
+            axios.get(_hostUrl + '/groups/' + this.projectId).then(response => {
+                if (response.data.responseCode == 200) {
+                    this.groupArray = response.data.data.resultList
+                    $('#groupArray').val(JSON.stringify(this.groupArray))
+                }
+
+            })
+        },
+        methods:{
+            addApi(){
+                x_admin_show('添加接口', './case-api-add.html', 600, 400)
+            },
+            save(){
+
+            },
+            executeTestGroup(){
+
+            }
+        }
+    })
+</script>
+</body>
+
+</html>

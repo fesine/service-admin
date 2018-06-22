@@ -70,7 +70,7 @@ userTypeArray[2] = '开发者(读写)'
 userTypeArray[3] = '开发者(只读)'
 
 /**
- * 用户类型 0:创建者 1:管理员 2:开发者(读写) 3:开发者(只读)
+ * 异常类型 0:正常 1:获取IService失败 2:获取提供者失败 3:系统异常
  * @type {any[]}
  */
 exceptionTypeArray = new Array()
@@ -81,6 +81,15 @@ exceptionTypeArray[3] = '系统异常'
 exceptionTypeArray[4] = '方法执行异常'
 exceptionTypeArray[5] = '调用方法异常'
 exceptionTypeArray[6] = '其他未知异常'
+
+/**
+ * 测试取参方式
+ * @type {any[]}
+ */
+getrequestParamTypeArray = new Array()
+getrequestParamTypeArray[0] = '取前台传值'
+getrequestParamTypeArray[1] = '取前置接口值'
+getrequestParamTypeArray[2] = '取示例值'
 
 /**
  * 数据类型 1:string 2:int 3:float 4:double 5:byte 6:short

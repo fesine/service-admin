@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+</head>
+
+<body>
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label for="L_groupId" class="layui-form-label">
+                <span class="x-red">*</span>所属分组
+            </label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <select id="L_groupId" name="groupId" lay-filter="groupId">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_apiId" class="layui-form-label">
+                <span class="x-red">*</span>接口编号
+            </label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <select id="L_apiId" name="apiId" lay-filter="apiId">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_serviceName" class="layui-form-label">
+                <span class="x-red">*</span>接口名称
+            </label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" id="L_serviceName" name="serviceName" required=""
+                       lay-verify="serviceName"
+                       autocomplete="off" class="layui-input">
+                <input hidden type="text" id="L_serviceCode" name="serviceCode" required=""
+                       lay-verify="serviceCode"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_versionNo" class="layui-form-label">
+                <span class="x-red">*</span>版本号
+            </label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" id="L_versionNo" name="versionNo" required=""
+                       lay-verify="versionNo"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="x-red">*</span>取值方式
+            </label>
+            <div class="layui-input-inline" style="width: 400px;">
+                <input type="radio" name="requestParamFlag" value="0" title="取前台值" checked>
+                <input type="radio" name="requestParamFlag" value="1" title="取前置接口值" >
+                <input type="radio" name="requestParamFlag" value="2" title="取示例值">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="add" lay-submit="" style="width: 300px;margin-left: 80px;">
+                添加
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery
+        let form = layui.form
+            , layer = layui.layer
+            ,tempApiArray
+        //获取所有分组
+        let groupArray = JSON.parse(parent.$("#groupArray").val())
+        for (var i = 0; i < groupArray.length; i++) {
+            $('#L_groupId').append(new Option(groupArray[i].groupName, groupArray[i].id))// 下拉菜单里添加元素
+        }
+        $('#L_groupId').val(groupArray[0].id)
+        getApiInfoByGroupId(parseInt(getCookie('projectId')), groupArray[0].id)
+        form.render()
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            parent.$('#apiData').val(JSON.stringify(data.field))
+            parent.addApiData()
+            var index = parent.layer.getFrameIndex(window.name)
+            //关闭当前frame
+            parent.layer.close(index)
+
+            return false
+        })
+        form.on('select(groupId)',function (data) {
+            getApiInfoByGroupId(parseInt(getCookie('projectId')), parseInt(data.value))
+        })
+
+        form.on('select(apiId)',function (data) {
+
+            for (var i = 0; i < tempApiArray.length; i++) {
+                if(tempApiArray[i].id === parseInt(data.value)){
+                    $('#L_serviceName').val(tempApiArray[i].serviceName)
+                    $('#L_serviceCode').val(tempApiArray[i].serviceCode)
+                    $('#L_versionNo').val(tempApiArray[i].versionNo)
+                    return
+                }
+            }
+            return false
+        })
+
+        function getApiInfoByGroupId (projectId, groupId) {
+            $.get(_hostUrl + '/apis/' + projectId + '/' + groupId, function (res) {
+                $("#L_apiId").find("option").remove();
+                if (res.responseCode === 200) {
+                    tempApiArray = res.data
+                    for (var i = 0; i < tempApiArray.length; i++) {
+                        $('#L_apiId').append(new Option(tempApiArray[i].serviceCode, tempApiArray[i].id))// 下拉菜单里添加元素
+                    }
+                    $('#L_apiId').val(tempApiArray[0].id)
+                    $('#L_serviceName').val(tempApiArray[0].serviceName)
+                    $('#L_serviceCode').val(tempApiArray[0].serviceCode)
+                    $('#L_versionNo').val(tempApiArray[0].versionNo)
+                    form.render()
+                }
+            })
+        }
+
+    })
+</script>
+</body>
+
+</html>
