@@ -103,10 +103,10 @@
             , page: true //开启分页
             , cols: [[ //表头
                 {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
-                , {field: 'serviceCode', title: '接口编号', width: 240, align: 'center'}
-                , {field: 'startTime', title: '测试时间', width: 180, align: 'center'}
-                , {field: 'endTime', title: '结束时间', width: 180, align: 'center'}
-                , {field: 'costTime', title: '耗时(ms)', width: 100, align: 'center'}
+                , {field: 'serviceCode', event: 'detail', title: '接口编号', width: 240, align: 'center'}
+                , {field: 'startTime', event: 'detail', title: '测试时间', width: 180, align: 'center'}
+                , {field: 'endTime', event: 'detail', title: '结束时间', width: 180, align: 'center'}
+                , {field: 'costTime', event: 'detail', title: '耗时(ms)', width: 100, align: 'center'}
                 , {
                     field: 'successFlag',
                     title: '执行结果',
@@ -173,6 +173,7 @@
             $('#testDetail').val(JSON.stringify(data))
             if (obj.event === 'detail') {
                 //测试详情展示
+                x_admin_show('测试详情', './test-detail.html', 800, 550)
             }
         })
         form.on('submit(testAnalysis)',function () {
