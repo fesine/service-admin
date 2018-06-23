@@ -28,25 +28,6 @@
         .layui-table-cell {
             padding: 0 2px;
         }
-
-        .req-checkbox {
-            width: 45px;
-            height: 36px;
-            text-align: center;
-            border: solid 1px #e6e6e6;
-        }
-        .lastRow{
-            padding-left: 2px;
-        }
-
-        .req-manager {
-            width: 135px;
-            height: 36px;
-            text-align: center;
-            border: solid 1px #e6e6e6;
-
-        }
-
         .req-manager-button a{
             font-size: 14px;
             margin-left:10px;
@@ -56,61 +37,37 @@
             color: red;
         }
 
-        .req-checkbox-sub {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
         .req-ul li {
             margin-top: 1px;
         }
     </style>
     <script>
-        // updateRequestIndex = function (e, ui) {
-        //     let requestArray = vm.requestParamList
-        //     let tempArray = new Array()
-        //     let temp
-        //     //更新后的列表
-        //     let eachArray
-        //     if(!ui){
-        //         eachArray = $('#requestParamTable').find('li')
-        //     }else{
-        //         eachArray = $('li.index', ui.item.parent())
-        //     }
-        //     eachArray.each(function (i, item) {
-        //         var id = item.firstElementChild.firstElementChild.innerText
-        //         temp = requestArray[i]
-        //         if (temp.myId === parseInt(id)) {
-        //             tempArray[i] = requestArray[i]
-        //         } else {
-        //             for (var j = 0; j < requestArray.length; j++) {
-        //                 if (requestArray[j].myId === parseInt(id)) {
-        //                     tempArray[i] = requestArray[j]
-        //                     break
-        //                 }
-        //             }
-        //         }
-        //     });
-        //     vm.requestListUpdate = tempArray
-        // };
+        updateApiIndex = function (e, ui) {
+            let apiDataArray = vm.apiDataList
+            let tempArray = new Array()
+            let temp
+            //更新后的列表
+            let eachArray = $('td.index', ui.item.parent())
+            eachArray.each(function (i, item) {
+                $(this).html(i + 1)
+                var id = item.parentElement.lastElementChild.firstElementChild.firstElementChild.innerText
+                temp = apiDataArray[i]
+                if (temp.myId === parseInt(id)) {
+                    tempArray[i] = apiDataArray[i]
+                } else {
+                    for (var j = 0; j < apiDataArray.length; j++) {
+                        if (apiDataArray[j].myId === parseInt(id)) {
+                            tempArray[i] = apiDataArray[j]
+                            break
+                        }
+                    }
+                }
+            });
+            vm.apiDataListUpdate = tempArray
+        };
         
 
         $(document).ready(function () {
-            // var fixHelperModified = function (e, tr) {
-            //     var $originals = tr.children();
-            //     var $helper = tr.clone();
-            //     $helper.children().each(function (index) {
-            //         $(this).width($originals.eq(index).width())
-            //     });
-            //     return $helper;
-            // }
-            // $("#requestParamTable").sortable({
-            //     helper: fixHelperModified,
-            //     stop: updateRequestIndex
-            // }).disableSelection();
             var fixHelperModified = function (e, tr) {
                     var $originals = tr.children();
                     var $helper = tr.clone();
@@ -126,7 +83,7 @@
                 };
             $("#sort tbody").sortable({
                 helper: fixHelperModified,
-                stop: updateIndex
+                stop: updateApiIndex
             }).disableSelection();
         });
     </script>
@@ -138,13 +95,14 @@
         <div style="margin-top: 5px;">
             <a href="javascript:;" @click="addApi"
                class="layui-btn  layui-btn-sm layui-btn-normal">添加接口</a>
-            <a href="javascript:;" @click="save"
+            <a href="javascript:;" @click="save($event)"
                class="layui-btn  layui-btn-sm layui-btn-normal">保存</a>
             <a href="javascript:;" @click="executeTestGroup"
                class="layui-btn  layui-btn-sm layui-btn-danger">执行测试</a>
         </div>
         <table class="layui-table" id="sort">
             <colgroup>
+                <col width="60">
                 <col width="280">
                 <col width="280">
                 <col width="105">
@@ -153,6 +111,7 @@
             </colgroup>
             <thead>
             <tr>
+                <th>序号</th>
                 <th>接口编号</th>
                 <th>接口名称</th>
                 <th>版本号</th>
@@ -161,33 +120,50 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="item in tableData">
+            <tr v-for="(item,index) in apiDataList">
+                <td class="index">{{index+1}}</td>
                 <td>{{item.serviceCode}}</td>
                 <td>{{item.serviceName}}</td>
                 <td>{{item.versionNo}}</td>
                 <td>{{item.requestParamFlag | convertParamType}}</td>
                 <td>
                     <div class="req-manager-button">
+                        <div style="display: none">{{item.myId}}</div>
                         <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
                         <a href="javascript:;"
-                           @click='removeRequestParam(index,$event)'><i
+                           @click='editApi(index,$event)'><i
                                 class="iconfont">&#xe69e;</i>修改</a>
                         <a href="javascript:;"
-                           @click='removeRequestParam(index,$event)'><i
+                           @click='removeApi(index,$event)'><i
                                 class="iconfont">&#xe69d;</i>删除</a>
                     </div></td>
             </tr>
             </tbody>
         </table>
+        <table id="logList"></table>
     </div>
     <input hidden id="groupArray" type="text">
-    <input hidden id="apiData" type="text" v-model="apiData">
+    <input hidden id="apiData" type="text">
 </div>
 <script>
-    function addApiData () {
+    function addApiData (index) {
         let apiData = JSON.parse($('#apiData').val())
-        vm.tableData.push(apiData)
+        apiData.projectId=vm.projectId
+        apiData.caseConfId=vm.caseId
+        apiData.myId = parseInt(apiData.myId)
+        if(index !== -1){
+            vm.apiDataList.push(apiData)
+            vm.apiDataList[index] = vm.apiDataList[vm.apiDataList.length-1]
+            vm.apiDataList.splice(vm.apiDataList.length - 1,1)
+        }else {
+            apiData.myId =vm.nextId
+            vm.apiDataList.push(apiData)
+            vm.nextId++
+        }
+        //用完清空数据
+        $('#apiData').val('')
     }
+
 </script>
 <script>
     let vm = new Vue({
@@ -199,21 +175,14 @@
                 projectId:0,
                 apiData:'',
                 groupArray:[],
-                tableData:[
-                    {serviceCode:'AS_TEST_CCL',serviceName:'测试契约改合约',versionNo:'1.0.1',requestParamFlag:0},
-                    {serviceCode:'AS_CIF_CONTACTS_MAT',serviceName:'通讯录用户匹配',versionNo:'1.0.1',requestParamFlag:1}
-                ],
-                tableDataUpdate:[]
+                nextId: 0,
+                apiDataList:[],
+                apiDataListUpdate:[]
             }
         },
         filters:{
             convertParamType(data){
                 return getrequestParamTypeArray[data]
-            }
-        },
-        watch:{
-            apiData(){
-                alert(this.apiData)
             }
         },
         beforeMount(){
@@ -222,7 +191,12 @@
             this.projectId = getUrlKey('projectId')
             axios.get(_hostUrl+'/test/configApis/'+this.caseId).then(response =>{
                 if (response.data.responseCode == 200) {
-                    // this.tableData = response.data.data
+                    this.apiDataList = response.data.data
+                    for (var i = 0; i < this.apiDataList.length; i++) {
+                        this.apiDataList[i].myId = this.nextId
+                        this.apiDataList[i].id = null
+                        this.nextId++
+                    }
                 }
             })
             axios.get(_hostUrl + '/groups/' + this.projectId).then(response => {
@@ -237,11 +211,59 @@
             addApi(){
                 x_admin_show('添加接口', './case-api-add.html', 600, 400)
             },
-            save(){
+            save(e){
+                e.stopPropagation()
+                e.preventDefault()
+                let layer
+                layui.use(['layer'],function () {
+                    layer = layui.layer
+                })
+                //为空说明没有进行过移动，直接用原列表
+                if(this.apiDataListUpdate.length === 0){
+                    this.apiDataListUpdate = this.apiDataList
+                }
+                axios({
+                    method: "post",
+                    url: _hostUrl + '/test/configApi',
+                    data: {
+                        caseConfId :this.caseId,
+                        apiDataList: JSON.stringify(this.apiDataListUpdate)
+                    }
+                }).then((res) => {
+                    if(res.data.responseCode === 201){
+                        //登记成功
+                        layer.msg('操作成功',{
+                            icon:1,
+                            timeout:2000
+                        })
+                    }else{
+                        layer.msg(res.data.responseMsg, {
+                            icon: 2,
+                            timeout: 2000
+                        })
+                    }
+                })
+
 
             },
             executeTestGroup(){
 
+            },
+            removeApi (index, e){
+                e.stopPropagation()
+                e.preventDefault()
+                this.apiDataList.splice(index,1)
+                this.nextId--
+                //重新排序
+                for (var i = 0; i < this.apiDataList.length; i++) {
+                    this.apiDataList[i].myId = i
+                }
+            },
+            editApi (index, e){
+                e.stopPropagation()
+                e.preventDefault()
+                $('#apiData').val(JSON.stringify(this.apiDataList[index]))
+                x_admin_show('修改接口', './case-api-edit.html?index='+index, 600, 400)
             }
         }
     })

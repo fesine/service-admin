@@ -62,6 +62,7 @@
                 <input type="text" id="L_versionNo" name="versionNo" required=""
                        lay-verify="versionNo"
                        autocomplete="off" class="layui-input">
+                <input type="text"  name="myId" hidden>
             </div>
         </div>
         <div class="layui-form-item">
@@ -90,17 +91,19 @@
             ,tempApiArray
         //获取所有分组
         let groupArray = JSON.parse(parent.$("#groupArray").val())
+        let apiData = JSON.parse(parent.$("#apiData").val())
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupId').append(new Option(groupArray[i].groupName, groupArray[i].id))// 下拉菜单里添加元素
         }
-        $('#L_groupId').val(groupArray[0].id)
-        getApiInfoByGroupId(parseInt(getCookie('projectId')), groupArray[0].id)
+        $('#L_groupId').val(apiData.groupId)
+        getApiInfoByGroupId(parseInt(getCookie('projectId')), apiData.groupId)
+        loadJsonDataToForm(apiData)
         form.render()
 
         //监听提交
         form.on('submit(add)', function (data) {
             parent.$('#apiData').val(JSON.stringify(data.field))
-            parent.addApiData(-1)
+            parent.addApiData(parseInt(getUrlKey('index')))
             var index = parent.layer.getFrameIndex(window.name)
             //关闭当前frame
             parent.layer.close(index)
@@ -112,7 +115,6 @@
         })
 
         form.on('select(apiId)',function (data) {
-
             for (var i = 0; i < tempApiArray.length; i++) {
                 if(tempApiArray[i].id === parseInt(data.value)){
                     $('#L_serviceName').val(tempApiArray[i].serviceName)
