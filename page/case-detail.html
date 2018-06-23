@@ -28,12 +28,14 @@
         .layui-table-cell {
             padding: 0 2px;
         }
-        .req-manager-button a{
+
+        .req-manager-button a {
             font-size: 14px;
-            margin-left:10px;
-            margin-right:10px;
+            margin-left: 10px;
+            margin-right: 10px;
         }
-        .req-manager-button a:hover{
+
+        .req-manager-button a:hover {
             color: red;
         }
 
@@ -43,6 +45,7 @@
     </style>
     <script>
         updateApiIndex = function (e, ui) {
+            vm.saveFlag = false
             let apiDataArray = vm.apiDataList
             let tempArray = new Array()
             let temp
@@ -62,101 +65,153 @@
                         }
                     }
                 }
-            });
+            })
             vm.apiDataListUpdate = tempArray
-        };
-        
+        }
 
         $(document).ready(function () {
             var fixHelperModified = function (e, tr) {
-                    var $originals = tr.children();
-                    var $helper = tr.clone();
+                    var $originals = tr.children()
+                    var $helper = tr.clone()
                     $helper.children().each(function (index) {
                         $(this).width($originals.eq(index).width())
-                    });
-                    return $helper;
+                    })
+                    return $helper
                 },
                 updateIndex = function (e, ui) {
                     $('td.index', ui.item.parent()).each(function (i) {
-                        $(this).html(i + 1);
-                    });
-                };
-            $("#sort tbody").sortable({
+                        $(this).html(i + 1)
+                    })
+                }
+            $('#sort tbody').sortable({
                 helper: fixHelperModified,
                 stop: updateApiIndex
-            }).disableSelection();
-        });
+            }).disableSelection()
+        })
     </script>
 </head>
 
 <body>
 <div id="case-detail">
-    <div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
-        <div style="margin-top: 5px;">
-            <a href="javascript:;" @click="addApi"
-               class="layui-btn  layui-btn-sm layui-btn-normal">添加接口</a>
-            <a href="javascript:;" @click="save($event)"
-               class="layui-btn  layui-btn-sm layui-btn-normal">保存</a>
-            <a href="javascript:;" @click="executeTestGroup"
-               class="layui-btn  layui-btn-sm layui-btn-danger">执行测试</a>
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>测试</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div style="margin-top: 5px;">
+                    <a href="javascript:;" @click="addApi"
+                       class="layui-btn  layui-btn-sm layui-btn-normal">添加接口</a>
+                    <a href="javascript:;" @click="save($event)"
+                       class="layui-btn  layui-btn-sm layui-btn-normal">保存</a>
+                </div>
+                <table class="layui-table" id="sort">
+                    <colgroup>
+                        <col width="60">
+                        <col width="280">
+                        <col width="280">
+                        <col width="105">
+                        <col width="160">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>接口编号</th>
+                        <th>接口名称</th>
+                        <th>版本号</th>
+                        <th>取参方式</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(item,index) in apiDataList">
+                        <td class="index">{{index+1}}</td>
+                        <td>{{item.serviceCode}}</td>
+                        <td>{{item.serviceName}}</td>
+                        <td>{{item.versionNo}}</td>
+                        <td>{{item.requestParamFlag | convertParamType}}</td>
+                        <td>
+                            <div class="req-manager-button">
+                                <div style="display: none">{{item.myId}}</div>
+                                <div style="display: none">{{item.apiId}}</div>
+                                <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
+                                <a href="javascript:;"
+                                   @click='editApi(index,$event)'><i
+                                        class="iconfont">&#xe69e;</i>修改</a>
+                                <a href="javascript:;"
+                                   @click='removeApi(index,$event)'><i
+                                        class="iconfont">&#xe69d;</i>删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <input hidden id="groupArray" type="text">
+                <input hidden id="apiData" type="text">
+            </div>
+            <div class="layui-tab-item">
+                <div class="layui-row  layui-col-space10">
+                    <div class="layui-col-md2">
+                        <form class="layui-form">
+                            <select id="L_envSelect" name="test-env" lay-filter="testEnv">
+                                <option value="">选择测试环境</option>
+                            </select>
+                            <br>
+                            <button class="layui-btn layui-btn-normal layui-btn-fluid"
+                                    @click="executeTest($event)"
+                                    lay-submit v-if="saveFlag"
+                                    lay-filter="executeTest">执行测试
+                            </button>
+                            <a class="layui-btn layui-btn-normal layui-btn-fluid layui-btn-disabled"
+                                    v-else>先保存再测试
+                            </a>
+                            <div>
+                                <br>
+                                <button class="layui-btn layui-btn-danger layui-btn-fluid"
+                                        @click="testHistory($event)"
+                                        lay-submit
+                                        lay-filter="testHistory">测试历史
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="layui-col-md5">
+                        <button class="layui-btn layui-btn-warm"
+                                @click="clearParamArea($event,1)">清空请求参数
+                        </button>
+                        <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
+                                  class="layui-textarea"
+                                  style="height: 410px;"></textarea>
+                    </div>
+                    <div class="layui-col-md5">
+                        <button class="layui-btn layui-btn-danger"
+                                @click="clearParamArea($event,2)">清空响应参数
+                        </button>
+                        <textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
+                                  class="layui-textarea"
+                                  style="height: 410px;"></textarea></div>
+                </div>
+            </div>
         </div>
-        <table class="layui-table" id="sort">
-            <colgroup>
-                <col width="60">
-                <col width="280">
-                <col width="280">
-                <col width="105">
-                <col width="180">
-                <col>
-            </colgroup>
-            <thead>
-            <tr>
-                <th>序号</th>
-                <th>接口编号</th>
-                <th>接口名称</th>
-                <th>版本号</th>
-                <th>取参方式</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(item,index) in apiDataList">
-                <td class="index">{{index+1}}</td>
-                <td>{{item.serviceCode}}</td>
-                <td>{{item.serviceName}}</td>
-                <td>{{item.versionNo}}</td>
-                <td>{{item.requestParamFlag | convertParamType}}</td>
-                <td>
-                    <div class="req-manager-button">
-                        <div style="display: none">{{item.myId}}</div>
-                        <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
-                        <a href="javascript:;"
-                           @click='editApi(index,$event)'><i
-                                class="iconfont">&#xe69e;</i>修改</a>
-                        <a href="javascript:;"
-                           @click='removeApi(index,$event)'><i
-                                class="iconfont">&#xe69d;</i>删除</a>
-                    </div></td>
-            </tr>
-            </tbody>
-        </table>
-        <table id="logList"></table>
+
     </div>
-    <input hidden id="groupArray" type="text">
-    <input hidden id="apiData" type="text">
 </div>
 <script>
+    let requestParamData
     function addApiData (index) {
+        vm.saveFlag = false
         let apiData = JSON.parse($('#apiData').val())
-        apiData.projectId=vm.projectId
-        apiData.caseConfId=vm.caseId
+        apiData.projectId = vm.projectId
+        apiData.caseConfId = vm.caseConfId
         apiData.myId = parseInt(apiData.myId)
-        if(index !== -1){
+        if (index !== -1) {
             vm.apiDataList.push(apiData)
-            vm.apiDataList[index] = vm.apiDataList[vm.apiDataList.length-1]
-            vm.apiDataList.splice(vm.apiDataList.length - 1,1)
-        }else {
-            apiData.myId =vm.nextId
+            vm.apiDataList[index] = vm.apiDataList[vm.apiDataList.length - 1]
+            vm.apiDataList.splice(vm.apiDataList.length - 1, 1)
+        } else {
+            apiData.myId = vm.nextId
             vm.apiDataList.push(apiData)
             vm.nextId++
         }
@@ -164,32 +219,57 @@
         $('#apiData').val('')
     }
 
+    layui.use(['layer', 'element'], function () {
+        $ = layui.jquery
+        let layer = layui.layer
+        $("ul li:eq(1)").click(function () {
+            //测试tab
+            //加载第一个执行的接口请求参数
+            let apiId = $($('#sort tbody tr')[0].lastElementChild.firstElementChild
+                .firstElementChild).next()[0].innerText;
+            //通过id获取请求参数
+            $.get(_hostUrl+'/api/requestParam/'+parseInt(apiId),function (res) {
+                if(res.responseCode === 200){
+                    requestParamData = res.data
+                    if (vm.convertFlag === 1) {
+                        let str = arrayToJson(requestParamData)
+                        vm.requestParamJson = JSON.stringify(JSON.parse(str), null, '\t')
+                    }
+                    $('#requestParamArea').val(vm.requestParamJson)
+                }
+            })
+        })
+    })
+
 </script>
 <script>
     let vm = new Vue({
         el: '#case-detail',
         data () {
             return {
-                caseId:0,
-                groupId:0,
-                projectId:0,
-                apiData:'',
-                groupArray:[],
+                caseConfId: 0,
+                groupId: 0,
+                projectId: 0,
+                apiData: '',
+                groupArray: [],
                 nextId: 0,
-                apiDataList:[],
-                apiDataListUpdate:[]
+                apiDataList: [],
+                apiDataListUpdate: [],
+                convertFlag:1,
+                requestParamJson:{},
+                saveFlag:true
             }
         },
-        filters:{
-            convertParamType(data){
+        filters: {
+            convertParamType (data) {
                 return getrequestParamTypeArray[data]
             }
         },
-        beforeMount(){
-            this.caseId = getUrlKey('id')
+        beforeMount () {
+            this.caseConfId = getUrlKey('id')
             this.groupId = getUrlKey('groupId')
             this.projectId = getUrlKey('projectId')
-            axios.get(_hostUrl+'/test/configApis/'+this.caseId).then(response =>{
+            axios.get(_hostUrl + '/test/configApis/' + this.caseConfId).then(response => {
                 if (response.data.responseCode == 200) {
                     this.apiDataList = response.data.data
                     for (var i = 0; i < this.apiDataList.length; i++) {
@@ -206,37 +286,51 @@
                 }
 
             })
+            axios.get(_hostUrl + '/envs').then(response => {
+                if (response.data.responseCode == 200) {
+                    let envArray = response.data.data
+                    layui.use(['form', 'table'], function () {
+                        $ = layui.jquery
+                        var form = layui.form
+                        for (var i = 0; i < envArray.length; i++) {
+                            $('#L_envSelect').append(new Option(envArray[i].envName, envArray[i].id))// 下拉菜单里添加元素
+                        }
+                        form.render()
+                    })
+                }
+            })
         },
-        methods:{
-            addApi(){
+        methods: {
+            addApi () {
                 x_admin_show('添加接口', './case-api-add.html', 600, 400)
             },
-            save(e){
+            save (e) {
                 e.stopPropagation()
                 e.preventDefault()
                 let layer
-                layui.use(['layer'],function () {
+                layui.use(['layer'], function () {
                     layer = layui.layer
                 })
                 //为空说明没有进行过移动，直接用原列表
-                if(this.apiDataListUpdate.length === 0){
+                if (this.apiDataListUpdate.length === 0) {
                     this.apiDataListUpdate = this.apiDataList
                 }
                 axios({
-                    method: "post",
+                    method: 'post',
                     url: _hostUrl + '/test/configApi',
                     data: {
-                        caseConfId :this.caseId,
+                        caseConfId: this.caseConfId,
                         apiDataList: JSON.stringify(this.apiDataListUpdate)
                     }
                 }).then((res) => {
-                    if(res.data.responseCode === 201){
+                    if (res.data.responseCode === 201) {
+                        this.saveFlag = true
                         //登记成功
-                        layer.msg('操作成功',{
-                            icon:1,
-                            timeout:2000
+                        layer.msg('操作成功', {
+                            icon: 1,
+                            timeout: 2000
                         })
-                    }else{
+                    } else {
                         layer.msg(res.data.responseMsg, {
                             icon: 2,
                             timeout: 2000
@@ -244,26 +338,91 @@
                     }
                 })
 
-
             },
-            executeTestGroup(){
-
-            },
-            removeApi (index, e){
+            removeApi (index, e) {
                 e.stopPropagation()
                 e.preventDefault()
-                this.apiDataList.splice(index,1)
+                this.saveFlag = false
+                this.apiDataList.splice(index, 1)
                 this.nextId--
                 //重新排序
                 for (var i = 0; i < this.apiDataList.length; i++) {
                     this.apiDataList[i].myId = i
                 }
             },
-            editApi (index, e){
+            editApi (index, e) {
                 e.stopPropagation()
                 e.preventDefault()
                 $('#apiData').val(JSON.stringify(this.apiDataList[index]))
-                x_admin_show('修改接口', './case-api-edit.html?index='+index, 600, 400)
+                x_admin_show('修改接口', './case-api-edit.html?index=' + index, 600, 400)
+            },
+            executeTest (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                //请求参数有可能修改，需要临时保存
+                this.requestParamJson = $('#requestParamArea').val()
+                this.convertFlag = 0
+                if ($('#L_envSelect').val() !== '') {
+                    $.post(_hostUrl + '/test/caseGroup/invoke', {
+                        projectId: this.projectId,
+                        caseConfId: this.caseConfId,
+                        groupId: this.groupId,
+                        envId: parseInt($('#L_envSelect').val()),
+                        requestParam: this.requestParamJson
+                    }, function (res) {
+                        let data = res.data
+                        if (res.responseCode === 200) {
+                            if (data.body.length > 1) {
+                                data.body = JSON.parse(data.body)
+                            }
+                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
+                            layer.msg('测试成功', {
+                                icon: 1,
+                                time: 2000
+                            })
+                        } else if (res.responseCode === 400) {
+                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
+                            layer.msg('测试失败', {
+                                icon: 2,
+                                time: 2000
+                            })
+                        } else {
+                            $('#responseParamArea').val(res.responseMsg)
+                            layer.msg('测试出现异常', {
+                                icon: 2,
+                                time: 2000
+                            })
+                        }
+                    })
+                }
+            },
+            testHistory (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                if ($('#L_envSelect').val() === '') {
+                    layer.msg('请先选择测试环境!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                } else {
+                    //TODO 查看历史测试记录
+                    // parent.parent.layui.element.tabDelete("xbs_tab", 999)
+                    // let url = './page/test-list.html?caseGroupId=0&groupId='
+                    //     + this.apiInfo.groupId + '&envId=' + parseInt($('#L_envSelect').val())
+                    //     + '&apiId=' + this.apiInfo.id + '&projectId=' + this.apiInfo.projectId
+                    // parent.parent.tab.tabAdd('测试记录', url, 999)
+                    // parent.parent.tab.tabChange(999)
+                }
+            },
+            clearParamArea (e, flag) {
+                e.stopPropagation()
+                e.preventDefault()
+                if (flag === 2) {
+                    $('#responseParamArea').val(null)
+                } else {
+                    $('#requestParamArea').val(null)
+                    this.convertFlag = 1
+                }
             }
         }
     })
