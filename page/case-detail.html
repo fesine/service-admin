@@ -387,7 +387,11 @@
                                 time: 2000
                             })
                         } else {
-                            $('#responseParamArea').val(res.responseMsg)
+                            try{
+                                $('#responseParamArea').val(JSON.stringify(JSON.parse(res.responseMsg), null, '\t'))
+                            }catch (e){
+                                $('#responseParamArea').val(res.responseMsg)
+                            }
                             layer.msg('测试出现异常', {
                                 icon: 2,
                                 time: 2000
