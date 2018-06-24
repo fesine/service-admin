@@ -10,6 +10,7 @@
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
+    <link rel="stylesheet" href="../lib/load/jquery.mloading.css">
     <script type="text/javascript"
             src="../lib/vue/jquery.min.js"></script>
     <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
@@ -19,6 +20,7 @@
     <script type="text/javascript" src="../js/cookies.js"></script>
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
+    <script src="../lib/load/jquery.mloading.js"></script>
     <style>
         body {
             background-color: #f2f3f0;
@@ -697,6 +699,13 @@
                     this.responseParamJson = JSON.stringify(JSON.parse(arrayToJson(responseParamData)), null, '\t')
                     $('#responseParamArea').val(this.responseParamJson)
                 }else if($('#L_envSelect').val() !== ''){
+                    $("body").mLoading({
+                        text: "测试中...",//加载文字，默认值：加载中...
+                        icon: "",//加载图标，默认值：一个小型的base64的gif图片
+                        html: false,//设置加载内容是否是html格式，默认值是false
+                        content: "",//忽略icon和text的值，直接在加载框中显示此值
+                        mask: true//是否显示遮罩效果，默认显示
+                    });
                     $.post(_hostUrl + '/test/caseSingle/invoke', {
                         envId:parseInt($('#L_envSelect').val()),
                         requestParam: this.requestParamJson,
@@ -707,6 +716,7 @@
                         versionNo: this.apiInfo.versionNo,
                         groupCode: this.apiInfo.groupCode
                     }, function (res) {
+                        $("body").mLoading("hide");//显示loading组件
                         let data = res.data
                         if (res.responseCode === 200) {
                             if(data.body.length>1){
