@@ -287,10 +287,10 @@
                     if (editArray.idempotentFlag == 1) {
                         $('#L_idempotentFlag').attr("checked", "")
                         $('#L_id').val('')
-                        operateTypeValue = getCheckboxValue('operateType')
-                        consumerGroupValue = getCheckboxValue('consumerGroup')
-                        relyGroupValue = getCheckboxValue('relyGroup')
                     }
+                    operateTypeValue = getCheckboxValue('operateType')
+                    consumerGroupValue = getCheckboxValue('consumerGroup')
+                    relyGroupValue = getCheckboxValue('relyGroup')
                 } else {
                     $('#L_groupCode').val(groupArray[0].groupCode)
                     $('#L_groupId').val(groupArray[0].id)
@@ -363,6 +363,8 @@
         })
         //监听提交
         form.on('submit(add)', function (data) {
+            event.stopPropagation()
+            event.preventDefault()
             if(consumerGroupValue == ''){
                 layer.msg('服务消费方不能为空!', {icon: 5, shift: 6});
                 return

@@ -97,7 +97,7 @@
         }
         $('#L_groupId').val(apiData.groupId)
         getApiInfoByGroupId(parseInt(getCookie('projectId')), apiData.groupId)
-        loadJsonDataToForm(apiData)
+
         form.render()
 
         //监听提交
@@ -134,10 +134,7 @@
                     for (var i = 0; i < tempApiArray.length; i++) {
                         $('#L_apiId').append(new Option(tempApiArray[i].serviceCode, tempApiArray[i].id))// 下拉菜单里添加元素
                     }
-                    $('#L_apiId').val(tempApiArray[0].id)
-                    $('#L_serviceName').val(tempApiArray[0].serviceName)
-                    $('#L_serviceCode').val(tempApiArray[0].serviceCode)
-                    $('#L_versionNo').val(tempApiArray[0].versionNo)
+                    loadJsonDataToForm(apiData)
                     form.render()
                 }
             })

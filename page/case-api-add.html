@@ -93,8 +93,8 @@
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupId').append(new Option(groupArray[i].groupName, groupArray[i].id))// 下拉菜单里添加元素
         }
-        $('#L_groupId').val(groupArray[0].id)
-        getApiInfoByGroupId(parseInt(getCookie('projectId')), groupArray[0].id)
+        $('#L_groupId').val(parseInt(getUrlKey('groupId')))
+        getApiInfoByGroupId(parseInt(getCookie('projectId')), parseInt(getUrlKey('groupId')))
         form.render()
 
         //监听提交

@@ -50,7 +50,13 @@
             let tempArray = new Array()
             let temp
             //更新后的列表
-            let eachArray = $('td.index', ui.item.parent())
+            let eachArray
+            if(!ui){
+                eachArray = $('#apiListTable td.index')
+            }else{
+                eachArray = $('td.index', ui.item.parent())
+            }
+
             eachArray.each(function (i, item) {
                 $(this).html(i + 1)
                 var id = item.parentElement.lastElementChild.firstElementChild.firstElementChild.innerText
@@ -83,7 +89,7 @@
                         $(this).html(i + 1)
                     })
                 }
-            $('#sort tbody').sortable({
+            $('#apiListTable tbody').sortable({
                 helper: fixHelperModified,
                 stop: updateApiIndex
             }).disableSelection()
@@ -106,7 +112,7 @@
                     <a href="javascript:;" @click="save($event)"
                        class="layui-btn  layui-btn-sm layui-btn-normal">保存</a>
                 </div>
-                <table class="layui-table" id="sort">
+                <table class="layui-table" id="apiListTable">
                     <colgroup>
                         <col width="60">
                         <col width="280">
@@ -225,7 +231,7 @@
         $("ul li:eq(1)").click(function () {
             //测试tab
             //加载第一个执行的接口请求参数
-            let apiId = $($('#sort tbody tr')[0].lastElementChild.firstElementChild
+            let apiId = $($('#apiListTable tbody tr')[0].lastElementChild.firstElementChild
                 .firstElementChild).next()[0].innerText;
             //通过id获取请求参数
             $.get(_hostUrl+'/api/requestParam/'+parseInt(apiId),function (res) {
@@ -302,7 +308,7 @@
         },
         methods: {
             addApi () {
-                x_admin_show('添加接口', './case-api-add.html', 600, 400)
+                x_admin_show('添加接口', './case-api-add.html?groupId='+this.groupId, 600, 400)
             },
             save (e) {
                 e.stopPropagation()
@@ -312,9 +318,7 @@
                     layer = layui.layer
                 })
                 //为空说明没有进行过移动，直接用原列表
-                if (this.apiDataListUpdate.length === 0) {
-                    this.apiDataListUpdate = this.apiDataList
-                }
+                updateApiIndex(e,null)
                 axios({
                     method: 'post',
                     url: _hostUrl + '/test/configApi',
