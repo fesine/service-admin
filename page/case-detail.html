@@ -156,8 +156,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <input hidden id="groupArray" type="text">
-                <input hidden id="apiData" type="text">
             </div>
             <div class="layui-tab-item">
                 <div class="layui-row  layui-col-space10" style="margin-top: 5px;">
@@ -206,8 +204,9 @@
                 </div>
             </div>
         </div>
-
     </div>
+    <input hidden id="groupArray" type="text">
+    <input hidden id="apiData" type="text">
 </div>
 <script>
     let requestParamData,layer
@@ -259,6 +258,7 @@
         data () {
             return {
                 caseConfId: 0,
+                caseName: '',
                 groupId: 0,
                 projectId: 0,
                 apiData: '',
@@ -280,6 +280,7 @@
             this.caseConfId = getUrlKey('id')
             this.groupId = getUrlKey('groupId')
             this.projectId = getUrlKey('projectId')
+            this.caseName = getUrlKey('caseName')
             axios.get(_hostUrl + '/test/configApis/' + this.caseConfId).then(response => {
                 if (response.data.responseCode == 200) {
                     this.apiDataList = response.data.data
@@ -421,20 +422,10 @@
             testHistory (e) {
                 e.stopPropagation()
                 e.preventDefault()
-                if ($('#L_envSelect').val() === '') {
-                    layer.msg('请先选择测试环境!', {
-                        icon: 2,
-                        time: 2000
-                    })
-                } else {
-                    //TODO 查看历史测试记录
-                    // parent.parent.layui.element.tabDelete("xbs_tab", 999)
-                    // let url = './page/test-list.html?caseGroupId=0&groupId='
-                    //     + this.apiInfo.groupId + '&envId=' + parseInt($('#L_envSelect').val())
-                    //     + '&apiId=' + this.apiInfo.id + '&projectId=' + this.apiInfo.projectId
-                    // parent.parent.tab.tabAdd('测试记录', url, 999)
-                    // parent.parent.tab.tabChange(999)
-                }
+                    parent.parent.layui.element.tabDelete("xbs_tab", 888)
+                    let url = './page/case-test-list.html?id=' + this.caseConfId + "&caseName=" + this.caseName
+                    parent.parent.tab.tabAdd('用例测试记录', url, 888)
+                    parent.parent.tab.tabChange(888)
             },
             clearParamArea (e, flag) {
                 e.stopPropagation()

@@ -238,7 +238,9 @@
             } else if (obj.event === 'detail') {
                 $('#editCase').val(JSON.stringify(data))
                 x_admin_show('用例详情', './case-detail.html?id='
-                    +data.id+'&groupId='+data.groupId+'&projectId='+data.projectId, 800, 600,true)
+                    +data.id+'&groupId='+data.groupId
+                    +'&caseName='+data.caseName
+                    +'&projectId='+data.projectId, 800, 600,true)
             }
         })
         // 获取分组列表
