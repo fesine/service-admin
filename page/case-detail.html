@@ -186,15 +186,18 @@
                         </form>
                     </div>
                     <div class="layui-col-md5">
-                        <button class="layui-btn layui-btn-warm"
+                        <button class="layui-btn layui-btn-warm layui-btn-xs"
                                 @click="clearParamArea($event,1)">清空请求参数
+                        </button>
+                        <button class="layui-btn  layui-btn-xs"
+                                @click="formatParam($event,1)">格式化请求参数
                         </button>
                         <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
                                   class="layui-textarea"
                                   style="height: 410px;"></textarea>
                     </div>
                     <div class="layui-col-md5">
-                        <button class="layui-btn layui-btn-danger"
+                        <button class="layui-btn layui-btn-danger  layui-btn-xs"
                                 @click="clearParamArea($event,2)">清空响应参数
                         </button>
                         <textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
@@ -440,6 +443,16 @@
                     $('#responseParamArea').val(null)
                 } else {
                     $('#requestParamArea').val(null)
+                    this.convertFlag = 1
+                }
+            },
+            formatParam (e, flag) {
+                e.stopPropagation()
+                e.preventDefault()
+                if (flag === 2) {
+                    $('#responseParamArea').val(null)
+                } else {
+                    $('#requestParamArea').val(JSON.stringify(JSON.parse($('#requestParamArea').val()),null,'\t'))
                     this.convertFlag = 1
                 }
             }

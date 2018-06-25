@@ -102,10 +102,8 @@
             }
         },
         beforeMount () {
-            this.testInfo.groupId = parseInt(getUrlKey('groupId'))
-            this.testInfo.caseGroupId = parseInt(getUrlKey('caseGroupId'))
+            this.testInfo.caseConfId = parseInt(getUrlKey('caseConfId'))
             this.testInfo.envId = parseInt(getUrlKey('envId'))
-            this.testInfo.apiId = parseInt(getUrlKey('apiId'))
             this.testInfo.projectId = parseInt(getCookie('projectId'))
             this.getData('',0)
         },
@@ -125,10 +123,9 @@
         },
         methods: {
             getData (dateType,dateValue) {
-                let url = _hostUrl + '/test/caseSingle/analysis?caseGroupId=' + this.testInfo.caseGroupId
-                    + '&groupId=' + this.testInfo.groupId + '&envId=' + this.testInfo.envId
-                    + '&apiId=' + this.testInfo.apiId
-                    + '&projectId=' + this.testInfo.projectId+'&dateType='+ dateType+'&dateValue='+ dateValue
+                let url = _hostUrl + '/test/caseGroup/analysis?caseConfId=' + this.testInfo.caseConfId
+                    + '&envId=' + this.testInfo.envId + '&projectId=' + this.testInfo.projectId
+                    +'&dateType='+ dateType+'&dateValue='+ dateValue
                 //获取统计数据
                 axios.get(url).then(response => {
                     if (response.data.responseCode == 200) {

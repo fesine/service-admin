@@ -115,6 +115,20 @@ paramTypeArray[13] = '[object]'
 paramTypeArray[14] = '[array/list]'
 paramTypeArray[15] = '[file]'
 
+searchDateType = new Array()
+searchDateType[0]={
+    type:'date',
+    value:7
+}
+searchDateType[1]={
+    type:'month',
+    value:1
+}
+searchDateType[2]={
+    type:'month',
+    value:3
+}
+
 /**
  * 日期格式转换
  * @param value

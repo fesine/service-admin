@@ -41,7 +41,7 @@
         <xblock>
             <div class="layui-row">
                 <div class="layui-inline">
-                    <div class="layui-inline" style="width: 100px;">
+                    <div class="layui-inline" style="width: 150px;">
                         <form class="layui-form">
                             <select name="timeCount" id="timeCount">
                                 <option value="">统计周期</option>
@@ -51,7 +51,7 @@
                             </select>
                         </form>
                     </div>
-                    <div class="layui-inline" style="width: 100px;">
+                    <div class="layui-inline" style="width: 150px;">
                         <form class="layui-form">
                             <select name="successKey" id="successKey">
                                 <option value="">执行结果</option>
@@ -141,6 +141,13 @@
         //加入搜索功能
         var $ = layui.$, active = {
             reload: function () {
+                let type
+                let value
+                if($('#timeCount').val() !=''){
+                   let obj =  searchDateType[parseInt($('#timeCount').val())]
+                    type=obj.type
+                    value=obj.value
+                }
                 testTable.reload({
                     where: {
                         projectId: parseInt(getCookie('projectId')),
@@ -149,7 +156,8 @@
                         envId: envId,
                         apiId: apiId,
                         successFlag:$('#successKey').val(),
-                        remark1:$('#timeCount').val() //remark1备用1字段存放统计周期
+                        dateType:type ,
+                        dateValue: value
                     }
                 })
 

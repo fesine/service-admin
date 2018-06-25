@@ -31,6 +31,9 @@
         }
     </style>
     <style type="text/css">
+        .layui-table-cell {
+            padding: 0px;
+        }
         .layui-table-tips-main {
             display: none
         }
@@ -63,13 +66,13 @@
 </head>
 
 <body class="layui-anim layui-anim-up" onload="checkLogin ()">
-<div id="case">
+<div id="caseTest">
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a>首页</a>
         <a>自动化测试</a>
         <a>
-          <cite>用例列表</cite></a>
+          <cite>测试历史</cite></a>
       </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
            href="javascript:location.replace(location.href);" title="刷新">
@@ -77,21 +80,42 @@
     </div>
     <div class="x-body">
         <xblock>
-        <div class="layui-row">
-            <div class="layui-col-xs3">
-                <button class="layui-btn"
-                        onclick="addContract()">
-                    <i class="layui-icon"></i>新增用例
-                </button>
-            </div>
-            <div class="layui-col-xs9">
-                    <div class="layui-inline" style="width: 240px;">
-                        <input id="searchKey" type="text" name="searchKey" placeholder="请输入用例名称模糊查询" autocomplete="off" class="layui-input">
+            <div class="layui-row">
+                <div class="layui-inline">
+                    <div class="layui-inline" style="width: 150px;">
+                        <form class="layui-form">
+                            <select name="timeCount" id="timeCount">
+                                <option value="">统计周期</option>
+                                <option value="0">近七天</option>
+                                <option value="1">近一月</option>
+                                <option value="2">近三月</option>
+                            </select>
+                        </form>
                     </div>
-                    <button class="layui-btn" data-type="reload"><i
+                    <div class="layui-inline" style="width: 150px;">
+                        <form class="layui-form">
+                            <select name="successKey" id="successKey">
+                                <option value="">执行结果</option>
+                                <option value="1">成功</option>
+                                <option value="0">失败</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="layui-btn-group">
+                    <button id="queryBtn" class="layui-btn" data-type="reload"><i
                             class="layui-icon">&#xe615;</i></button>
+                    <button id="restBtn" class="layui-btn layui-btn-warm" data-type="reload"><i
+                            class="iconfont">&#xe6b7;</i></button>
+                </div>
+                <div class="layui-inline" style="width: 100px;">
+                    <button class="layui-btn layui-btn-normal"
+                            lay-submit
+                            lay-filter="testAnalysis">统计分析
+                    </button>
+                </div>
             </div>
-        </div>
+
         </xblock>
 
         <div class="layui-row">
@@ -99,17 +123,17 @@
                 <table class="layui-table nohover">
                     <thead>
                     <tr>
-                        <th style="align-content: center"><h3>分组</h3></th>
+                        <th style="align-content: center"><h3>测试环境</h3></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td style="padding: 0px;">
                             <ul>
-                                <li id="allContract">
+                                <li id="allEnv">
                                     <a class="backup" href="javascript:;">
                                         <i class="iconfont">&#xe699;</i>
-                                        <cite>所有用例</cite></a>
+                                        <cite>所有环境</cite></a>
                                 </li>
                             </ul>
                         </td>
@@ -118,27 +142,21 @@
                     </tr>
                     <tr>
                         <td style="padding: 0px;">
-                            <ul id="groupTree"  style="overflow: auto;overflow-x: hidden; "></ul>
+                            <ul id="envTree"  style="overflow: auto;overflow-x: hidden; "></ul>
                         </td>
                     </tr>
                 </table>
             </div>
             <div class="layui-col-md10">
-                <table id="caseList" lay-filter="caseList"></table>
+                <table id="caseTestList" lay-filter="caseTestList"></table>
             </div>
         </div>
 
     </div>
     <input hidden id="editCase" value=""/>
-    <input hidden id="groupArray" value=""/>
-    <input hidden id="groupId" value=""/>
+    <input hidden id="envArray" value=""/>
+    <input hidden id="envId" value=""/>
 </div>
-<script type="text/html" id="caseBar">
-        <a class="layui-btn layui-btn-warm  layui-btn-xs" lay-event="history">测试历史</a>
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
-
-</script>
 <script type="text/html" id="showName">
     <span title="点击查看详情"><a href="javascript:;">{{d.caseName}}</a></span>
 </script>
@@ -152,28 +170,49 @@
     }
     var myFlag = 0;
     layui.use(['table', 'tree', 'form'], function () {
-        var groupArray
-        var table = layui.table
+        var envArray
+        var table = layui.table,
+            form=layui.form
         //第一个实例
         var caseTable = table.render({
-            elem: '#caseList'
-            , url: _hostUrl + '/test/caseConfigs/page'  //数据接口
+            elem: '#caseTestList'
+            , url: _hostUrl + '/test/caseGroups/page'  //数据接口
             , request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
             , where: {
-                projectId: parseInt(getCookie('projectId'))
+                projectId: parseInt(getCookie('projectId')),
+                caseConfId:parseInt(getUrlKey('id'))
             }
             , page: true //开启分页
             , cols: [[ //表头
-                {field: 'checkbox', title: 'checkbox', width: 38, checkbox: true, align: 'center'}
-                ,{field: 'id', title: 'ID', width: 48,  align: 'center'}
-                , {field: 'caseName', title: '用例名称',  align: 'center',
-                    event: 'detail', templet: '#showName'}
-                , {field: 'lastUpdateTime', title: '更新时间',  align: 'center',
-                    event: 'detail', templet: '#showTime',width:180}
-                , {title: '操作',  align: 'center', toolbar: '#caseBar', width: 230}
+                 {field: 'caseName', event: 'detail', title: '用例名称', width: 200, align: 'center',
+                     templet: function (d) {
+                     return getUrlKey('caseName')
+                 }
+                 }
+                 ,{field: 'startTime', event: 'detail', title: '测试时间', width: 180, align: 'center'}
+                , {field: 'endTime', event: 'detail', title: '结束时间', width: 180, align: 'center'}
+                , {field: 'costTime', event: 'detail', title: '耗时(ms)', width: 100, align: 'center'}
+                , {
+                    field: 'successFlag',
+                    title: '执行结果',
+                    width: 120,
+                    align: 'center',
+                    templet: function (d) {
+                        if (d.successFlag == 1) {
+                            return '<span class="layui-btn layui-btn-normal layui-btn-sm layui-btn-fluid">成功</span>'
+                        } else {
+                            return '<span class="layui-btn layui-btn-danger  layui-btn-sm  layui-btn-fluid">失败</span>'
+                        }
+                    }
+                }
+                , {
+                    field: 'exceptionType', title: '异常类型', align: 'center', templet: function (d) {
+                        return exceptionTypeArray[d.exceptionType]
+                    }
+                }
             ]]
             , response: {
                 statusName: 'responseCode' //数据状态的字段名称，默认：code
@@ -187,20 +226,41 @@
         //加入搜索功能
         var $ = layui.$, active = {
             reload: function () {
+                let type
+                let value
+                if ($('#timeCount').val() != '') {
+                    let obj = searchDateType[parseInt($('#timeCount').val())]
+                    type = obj.type
+                    value = obj.value
+                }
                 caseTable.reload({
                     where: {
                         projectId: parseInt(getCookie('projectId')),
-                        caseName: $("#searchKey").val()
+                        caseConfId: parseInt(getUrlKey('id')),
+                        envId: $('#envId').val(),
+                        successFlag: $('#successKey').val(),
+                        dateType: type,
+                        dateValue: value
                     }
                 })
+
             }
         };
-        $('.layui-col-xs9 .layui-btn').on('click', function () {
+        $('.layui-col-xs8 .layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
+        $('#queryBtn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        $('#restBtn').on('click', function () {
+            $("#timeCount").val('')
+            $("#successKey").val('')
+            layui.form.render('select')
+        });
         //监听工具条
-        table.on('tool(caseList)', function (obj) {
+        table.on('tool(caseTestList)', function (obj) {
             if (getCookie('projectStatus') === '2') {
                 layer.msg('项目已归档，无法操作', {
                     icon: 2,
@@ -209,71 +269,51 @@
                 return
             }
             var data = obj.data
-            if (obj.event === 'delete') {
-                layer.confirm('[<span style="color: red">' + data.caseName + '</span>]将被彻底删除，无法恢复!', {
-                    icon: 3,
-                    title: '彻底删除用例'
-                }, function (index) {
-                    $.deleteForm(_hostUrl + '/test/caseConfig/'+ data.id, null, function (res) {
-                        if (res.responseCode == 204) {
-                            layer.msg('彻底删除成功!', {
-                                icon: 1,
-                                time: 2000
-                            })
-                            table.reload('caseList')
-                        } else {
-                            layer.msg(res.responseMsg)
-                        }
-                    })
-                })
-            } else if (obj.event === 'edit') {
-                $('#editCase').val(JSON.stringify(data))
-                x_admin_show('修改用例', './case-edit.html?id='+data.id, 500, 250)
-            } else if (obj.event === 'history') {
-                // x_admin_show('历史列表', './case-test-list.html?id='+data.id, 800, 600, true)
-                parent.layui.element.tabDelete("xbs_tab", 888)
-                let url = './page/case-test-list.html?id=' + data.id+"&caseName="+ data.caseName
-                parent.tab.tabAdd('用例测试记录', url, 888)
-                parent.tab.tabChange(888)
-            } else if (obj.event === 'detail') {
+            if (obj.event === 'detail') {
                 $('#editCase').val(JSON.stringify(data))
                 x_admin_show('用例详情', './case-detail.html?id='
-                    +data.id+'&groupId='+data.groupId+'&projectId='+data.projectId, 800, 600,true)
+                    +data.id+'&envId='+data.envId+'&projectId='+data.projectId, 800, 600,true)
             }
         })
+        form.on('submit(testAnalysis)', function () {
+            if($('#envId').val() === ''){
+                layer.msg('请选择环境!',{
+                    icon:2,
+                    timeout:2000
+                })
+                return false
+            }
+            //分析视图
+            x_admin_show('数据统计', './case-test-analysis.html?caseConfId='
+                + parseInt(getUrlKey('id')) + '&envId=' + parseInt($('#envId').val()) +
+                + '&projectId=' + parseInt(getCookie('projectId')), 800, 600, true)
+            return false
+        })
         // 获取分组列表
-        $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
-            //如果不存在分组怎么办？
+        $.get(_hostUrl + '/envs/tree/' + parseInt(getCookie('projectId')), function (res) {
             if(res.responseCode != 200){
                 layer.msg(res.responseMsg)
                 checkLogin()
                 return
             }
-            groupArray = res.data
-            if(!groupArray ||groupArray.length == 0){
-                layer.msg("分组不存在，请先创建分组!")
+            envArray = res.data
+            if(!envArray ||envArray.length == 0){
+                layer.msg("环境不存在，请先创建测试环境!")
                 return
             }else{
-                $('#groupArray').val(JSON.stringify(groupArray))
+                $('#envArray').val(JSON.stringify(envArray))
                 layui.tree({
-                    elem: '#groupTree' //传入元素选择器
-                    , nodes: groupArray
+                    elem: '#envTree' //传入元素选择器
+                    , nodes: envArray
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
-                        $('#groupId').val(item.id)
-                        //查询自己所在分组身份
-                        if (vm.superFlag != 1) {
-                            $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
-                                if (res.responseCode == 200) {
-                                    myFlag = res.data
-                                }
-                            })
-                        }
+                        $('#envId').val(item.id)
                         // 查询点击分组的用例数据
                         caseTable.reload({
                             where: {
-                                projectId: parseInt(getCookie('projectId'))
-                                , groupId: item.id
+                                projectId: parseInt(getCookie('projectId')),
+                                caseConfId: parseInt(getUrlKey('id'))
+                                , envId: item.id
                             }
                         })
                     }
@@ -281,13 +321,14 @@
             }
         })
 
-        $('#allContract').click(function (d) {
-            $('#groupId').val('')
+        $('#allEnv').click(function (d) {
+            $('#envId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的用例数据
             caseTable.reload({
                 where: {
-                    projectId: parseInt(getCookie('projectId'))
+                    projectId: parseInt(getCookie('projectId')),
+                    caseConfId: parseInt(getUrlKey('id'))
                 }
             })
         })
@@ -296,7 +337,7 @@
 </script>
 <script>
     let vm = new Vue({
-        el: '#case',
+        el: '#caseTest',
         data () {
             return {
                 superFlag: 0,
