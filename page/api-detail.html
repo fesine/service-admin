@@ -207,12 +207,13 @@
                                 <option value="">选择测试环境</option>
                                 <option value="0">mock测试</option>
                             </select>
+                            <div>
                             <br>
                             <button class="layui-btn layui-btn-normal layui-btn-fluid"
                                     @click="executeTest($event)"
                                     lay-submit
                                     lay-filter="executeTest">执行测试
-                            </button>
+                            </button></div>
                             <div>
                                 <br>
                             <button class="layui-btn layui-btn-danger layui-btn-fluid"
@@ -220,6 +221,14 @@
                                     lay-submit
                                     lay-filter="testHistory">测试历史
                             </button>
+                            </div>
+                            <div>
+                                <br>
+                                <button class="layui-btn layui-btn-fluid"
+                                        @click="zkList($event)"
+                                        lay-submit
+                                        lay-filter="zkList">查看消费者提供者
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -763,6 +772,18 @@
                         +'&apiId='+ this.apiInfo.id+ '&projectId=' + this.apiInfo.projectId
                     parent.parent.tab.tabAdd('接口测试记录',url,999)
                     parent.parent.tab.tabChange(999)
+                }
+            },
+            zkList (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                if($('#L_envSelect').val() === '0' || $('#L_envSelect').val() === ''){
+                    layer.msg('请先选择测试环境!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                }else{
+                    //TODO 查看提供者和消费者信息
                 }
             },
             clearParamArea(e,flag){
