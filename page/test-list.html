@@ -18,8 +18,38 @@
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
     <style>
-        .layui-table-cell{
+        .layui-table-cell {
             padding: 0px;
+        }
+
+        .layui-table-tips-main {
+            display: none
+        }
+
+        .layui-table-tips-c {
+            display: none
+        }
+
+        .nohover tbody tr:hover {
+            background-color: #ffffff
+        }
+
+        .nohover tbody tr td ul li:hover {
+            background-color: #E2F2E4;
+        }
+
+        .nohover tbody tr td ul li {
+            height: 35px;
+            padding: 5px 0px 1px 30px;
+        }
+
+        .backup {
+            display: block;
+            padding: 5px 0px 5px 5px;
+        }
+
+        .margin-0 {
+            margin: 0 !important;
         }
     </style>
 </head>
@@ -76,19 +106,43 @@
             </div>
 
         </xblock>
-        <table id="testList" lay-filter="testList"></table>
+        <div class="layui-row">
+            <div class="layui-col-md2">
+                <table class="layui-table nohover">
+                    <thead>
+                    <tr>
+                        <th style="align-content: center"><h3>测试环境</h3></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px;">
+                            <ul id="envTree" style="overflow: auto;overflow-x: hidden; "></ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="layui-col-md10">
+                <table id="testList" lay-filter="testList"></table>
+            </div>
+        </div>
+
     </div>
     <input hidden id="testDetail" value=""/>
+    <input hidden id="envArray" value=""/>
+    <input hidden id="envId" value=""/>
 </div>
 <script>
     let groupId=parseInt(getUrlKey('groupId'))
         ,caseGroupId=parseInt(getUrlKey('caseGroupId'))
-        ,envId=parseInt(getUrlKey('envId'))
         ,apiId=parseInt(getUrlKey('apiId'))
+    $('#envId').val(parseInt(getUrlKey('envId')))
 
-    layui.use(['table','form'], function () {
+    layui.use(['table','form','tree'], function () {
         var table = layui.table
-            ,form = layui.form
+            ,form = layui.form,envArray
         //第一个实例
         var testTable = table.render({
             elem: '#testList'
@@ -102,15 +156,14 @@
             }
             , page: true //开启分页
             , cols: [[ //表头
-                {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
-                , {field: 'serviceCode', event: 'detail', title: '接口编号', width: 240, align: 'center'}
+                {field: 'serviceCode', event: 'detail', title: '接口编号', width: 240, align: 'center'}
                 , {field: 'startTime', event: 'detail', title: '测试时间', width: 180, align: 'center'}
                 , {field: 'endTime', event: 'detail', title: '结束时间', width: 180, align: 'center'}
-                , {field: 'costTime', event: 'detail', title: '耗时(ms)', width: 100, align: 'center'}
+                , {field: 'costTime', event: 'detail', title: '耗时(ms)', width: 80, align: 'center'}
                 , {
                     field: 'successFlag',
                     title: '执行结果',
-                    width: 130,
+                    width: 110,
                     event: 'detail',
                     align: 'center',
                     templet: function (d) {
@@ -153,7 +206,7 @@
                         projectId: parseInt(getCookie('projectId')),
                         groupId: groupId,
                         caseGroupId: caseGroupId,
-                        envId: envId,
+                        envId: parseInt($('#envId').val()),
                         apiId: apiId,
                         successFlag:$('#successKey').val(),
                         dateType:type ,
@@ -181,15 +234,63 @@
             $('#testDetail').val(JSON.stringify(data))
             if (obj.event === 'detail') {
                 //测试详情展示
-                x_admin_show('测试详情', './test-detail.html', 800, 550)
+                x_admin_show('接口测试详情', './test-detail.html', 800, 550)
             }
         })
         form.on('submit(testAnalysis)',function () {
             //分析视图
-            x_admin_show('数据统计' ,'./test-analysis.html?caseGroupId=0&groupId='
-                + groupId + '&envId=' + envId + '&apiId=' + apiId
+            x_admin_show('接口测试数据统计' ,'./test-analysis.html?caseGroupId=0&groupId='
+                + groupId + '&envId=' + $('#envId').val() + '&apiId=' + apiId
                 +'&projectId='+parseInt(getCookie('projectId')), 800, 600, true)
             return false
+        })
+        $.get(_hostUrl + '/envs/tree/' + parseInt(getCookie('projectId')), function (res) {
+            if (res.responseCode != 200) {
+                layer.msg(res.responseMsg)
+                checkLogin()
+                return
+            }
+            envArray = res.data
+            if (!envArray || envArray.length == 0) {
+                layer.msg("环境不存在，请先创建测试环境!")
+                return
+            } else {
+                $('#envArray').val(JSON.stringify(envArray))
+                layui.tree({
+                    elem: '#envTree' //传入元素选择器
+                    , nodes: envArray
+                    , click: function (item) { //点击节点回调
+                        changeBackground(item.name)
+                        $('#envId').val(item.id)
+                        // 查询点击分组的用例数据
+                        let type
+                        let value
+                        if ($('#timeCount').val() != '') {
+                            let obj = searchDateType[parseInt($('#timeCount').val())]
+                            type = obj.type
+                            value = obj.value
+                        }
+                        testTable.reload({
+                            where: {
+                                projectId: parseInt(getCookie('projectId')),
+                                groupId: groupId,
+                                caseGroupId: caseGroupId,
+                                envId: item.id,
+                                apiId: apiId,
+                                successFlag: $('#successKey').val(),
+                                dateType: type,
+                                dateValue: value
+                            }
+                        })
+                    }
+                })
+                $.each(envArray, function (index, item) {
+                    if (item.id === parseInt(getUrlKey('envId'))) {
+                        changeBackground(item.name)
+                        return false
+                    }
+                })
+            }
         })
     })
 </script>

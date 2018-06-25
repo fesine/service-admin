@@ -284,12 +284,12 @@
                 return false
             }
             //分析视图
-            x_admin_show('数据统计', './case-test-analysis.html?caseConfId='
+            x_admin_show('用例测试数据统计', './case-test-analysis.html?caseConfId='
                 + parseInt(getUrlKey('id')) + '&envId=' + parseInt($('#envId').val()) +
                 + '&projectId=' + parseInt(getCookie('projectId')), 800, 600, true)
             return false
         })
-        // 获取分组列表
+        // 获取环境列表
         $.get(_hostUrl + '/envs/tree/' + parseInt(getCookie('projectId')), function (res) {
             if(res.responseCode != 200){
                 layer.msg(res.responseMsg)
@@ -309,11 +309,21 @@
                         changeBackground(item.name)
                         $('#envId').val(item.id)
                         // 查询点击分组的用例数据
+                        let type
+                        let value
+                        if ($('#timeCount').val() != '') {
+                            let obj = searchDateType[parseInt($('#timeCount').val())]
+                            type = obj.type
+                            value = obj.value
+                        }
                         caseTable.reload({
                             where: {
                                 projectId: parseInt(getCookie('projectId')),
-                                caseConfId: parseInt(getUrlKey('id'))
-                                , envId: item.id
+                                caseConfId: parseInt(getUrlKey('id')),
+                                envId: item.id,
+                                successFlag: $('#successKey').val(),
+                                dateType: type,
+                                dateValue: value
                             }
                         })
                     }

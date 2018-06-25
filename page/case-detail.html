@@ -205,7 +205,6 @@
             </div>
         </div>
     </div>
-    <input hidden id="groupArray" type="text">
     <input hidden id="apiData" type="text">
 </div>
 <script>
@@ -262,7 +261,6 @@
                 groupId: 0,
                 projectId: 0,
                 apiData: '',
-                groupArray: [],
                 nextId: 0,
                 apiDataList: [],
                 apiDataListUpdate: [],
@@ -290,13 +288,6 @@
                         this.nextId++
                     }
                 }
-            })
-            axios.get(_hostUrl + '/groups/' + this.projectId).then(response => {
-                if (response.data.responseCode == 200) {
-                    this.groupArray = response.data.data.resultList
-                    $('#groupArray').val(JSON.stringify(this.groupArray))
-                }
-
             })
             axios.get(_hostUrl + '/envs').then(response => {
                 if (response.data.responseCode == 200) {

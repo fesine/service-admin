@@ -87,13 +87,12 @@
     layui.use(['form', 'layer'], function () {
         $ = layui.jquery
         let form = layui.form
-            , layer = layui.layer
             ,tempApiArray
         //获取所有分组
-        let groupArray = JSON.parse(parent.$("#groupArray").val())
+        let groupArray = JSON.parse(parent.parent.$("#groupArray").val())
         let apiData = JSON.parse(parent.$("#apiData").val())
         for (var i = 0; i < groupArray.length; i++) {
-            $('#L_groupId').append(new Option(groupArray[i].groupName, groupArray[i].id))// 下拉菜单里添加元素
+            $('#L_groupId').append(new Option(groupArray[i].name, groupArray[i].id))// 下拉菜单里添加元素
         }
         $('#L_groupId').val(apiData.groupId)
         getApiInfoByGroupId(parseInt(getCookie('projectId')), apiData.groupId)
