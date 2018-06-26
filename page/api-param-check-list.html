@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>服务接口管理系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" href="../css/font.css">
+  <link rel="stylesheet" href="../css/xadmin.css">
+  <script type="text/javascript"
+          src="../lib/vue/jquery.min.js"></script>
+  <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/global.js"></script>
+  <script type="text/javascript" src="../js/store.js"></script>
+  <script type="text/javascript" src="../js/cookies.js"></script>
+  <script src="../lib/vue/vue.min.js"></script>
+  <script src="../lib/vue/axios.min.js"></script>
+</head>
+
+<body class="layui-anim layui-anim-up" onload="checkLogin ()">
+<div id="project">
+    <table id="checkParamList" lay-filter="checkParamList"></table>
+  </div>
+</div>
+<script>
+    layui.use(['table','form','layer'], function () {
+        var table = layui.table
+        //第一个实例
+        table.render({
+            elem: '#checkParamList'
+            , data: JSON.parse(parent.$("#checkParamResult").val())
+            , page: false //不开启分页
+            ,limit:1000
+            , cols: [[ //表头
+                {field: 'paramKey', title: '检查参数', width: 300, align: 'center',
+                    templet: function (d) {
+                        if (d.paramKey === null) {
+                            return '缺失'
+                        } else {
+                            return `<a style="color:dodgerblue;font-weight: bolder">`+ d.paramKey+`</a>`
+                        }
+                    }
+                    }
+                , {field: 'apiKey', title: '接口定义参数', align: 'center',
+                    templet: function (d) {
+                        if (d.apiKey === null) {
+                            return '多余'
+                        } else {
+                            return `<a style="color:darkred;font-weight: bolder">` + d.apiKey + `</a>`
+                        }
+                    }
+                    }
+                , {field: 'nullFlag', title: '是否非空', width: 180, align: 'center'
+                    , templet: function (d) {
+                        if (d.nullFlag === 0) {
+                            return '接口定义此字段可空'
+                        } else if(d.nullFlag === 1 && d.apiKey != null)
+                        {
+                            return '此字段不可缺少'
+                        }else{
+                            return ''
+                        }
+                    }}
+            ]]
+        })
+    })
+</script>
+</body>
+
+</html>

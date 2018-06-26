@@ -887,3 +887,43 @@ function checkParam(array, paramData,flag){
     return flag
 
 }
+
+/**
+ * 比较两个数组中的key是否相等
+ * @param array
+ * @param paramData
+ * @param resultArray
+ */
+function checkParamAddResult(array, paramData){
+    let resultArray = new Array()
+    let uselessArray = new Array()
+    for(let i = 0;i<array.length;i++){
+        let checkParamKey = array[i].paramKey
+        let innerFlag = false
+        for(let j = 0;j<paramData.length;j++){
+            if(checkParamKey === paramData[j].paramKey){
+                innerFlag = true
+                //将校验通过的对象移除
+                paramData.splice(j,1)
+                break
+            }
+        }
+        if(!innerFlag){
+            //checkParamKey不在已经定义的接口参数中
+            uselessArray.push({
+                paramKey: checkParamKey,
+                apiKey:null,
+                nullFlag:1//非空字段属性，1表示非空，0表示可空
+            })
+        }
+    }
+    //校验完成之后，收尾paramData里的字段
+    for(let k = 0;k<paramData.length;k++){
+        resultArray.push({
+            apiKey: paramData[k].paramKey,
+            paramKey:null,
+            nullFlag: paramData[k].paramNullFlag//非空字段属性，1表示非空，0表示可空
+        })
+    }
+    return resultArray.concat(uselessArray)
+}
