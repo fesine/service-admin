@@ -734,3 +734,156 @@ function checkParent (key,array) {
         throw new Error('字段解析错误')
     }
 }
+
+/**
+ * 判断两个json的key是否相等方法组
+ * @param object
+ * @returns {*|boolean}
+ */
+function isObj (object) {
+    return object && typeof(object) == 'object' && Object.prototype.toString.call(object).toLowerCase() == "[object object]";
+}
+
+function isArray (object) {
+    return object && typeof(object) == 'object' && object.constructor == Array;
+}
+
+function getLength (object) {
+    var count = 0;
+    for (var i in object) count++;
+    return count;
+}
+
+/**
+ * json对比入口方法
+ * @param objA
+ * @param objB
+ * @returns {boolean}
+ * @constructor
+ */
+function compareJson (objA, objB) {
+    if (!isObj(objA) || !isObj(objB)) return false; //判断类型是否正确
+    if (getLength(objA) != getLength(objB)) return false; //判断长度是否一致
+    return compareJson(objA, objB, false); //默认为flag=true,值比较默认false
+}
+
+function compareJson (objA, objB, valueCompare) {
+    if (!isObj(objA) || !isObj(objB)) return false; //判断类型是否正确
+    if (getLength(objA) != getLength(objB)) return false; //判断长度是否一致
+    return compareObj(objA, objB, true, valueCompare); //默认为flag=true,值比较默认false
+}
+
+/**
+ * 判断核心工具方法
+ * @param objA
+ * @param objB
+ * @param flag
+ * @param valueCompare
+ * @returns {*}
+ */
+function compareObj (objA, objB, flag,valueCompare) {
+    for (var key in objA) {
+        if (!flag) //跳出整个循环
+            break;
+        if (!objB.hasOwnProperty(key)) {
+            flag = false;
+            break;
+        }
+        if (!isArray(objA[key]) && !isObj(objA[key]) && valueCompare) { //子级不是数组或对象时,比较属性值
+            if (objB[key] != objA[key]) {
+                flag = false;
+                break;
+            }
+        } else {
+            if (isArray(objA[key])) {//数组处理
+                if (!isArray(objB[key])) {
+                    flag = false;
+                    break;
+                }
+                var oA = objA[key],
+                    oB = objB[key];
+                if (oA.length != oB.length) {
+                    flag = false;
+                    break;
+                }
+                for (var k in oA) {
+                    if (!flag) //这里跳出循环是为了不让递归继续
+                        break;
+                    flag = compareObj(oA[k], oB[k],flag, valueCompare);
+                }
+            }
+            if (isObj(objA[key])) { //对象处理
+                if (!isObj(objB[key])) {
+                    flag = false;
+                    break;
+                }
+                var oA = objA[key],
+                    oB = objB[key];
+                if (oA.length != oB.length) {
+                    flag = false;
+                    break;
+                }
+                for (var k in oA) {
+                    if (!flag) //这里跳出循环是为了不让递归继续
+                        break;
+                    flag = compareObj(oA[k], oB[k], flag,valueCompare);
+                }
+            }
+        }
+    }
+    return flag;
+}
+
+/**
+ * 比较响应参数是否相等，即key值是否包含在已经定义的参数列表中
+ * array.length <= paramData.length
+ * @param array
+ * @param paramData
+ * @param flag
+ */
+function checkParam(array, paramData,flag){
+    if(!flag){
+        return flag
+    }
+    if(array.length > paramData.length){
+        flag = false
+        return flag
+    }
+
+    //校验后两个数组均无数据，完全匹配
+    if(array.length === 0 && paramData.length === 0){
+        flag = true
+        return flag
+    }else if (array.length === 0 && paramData.length > 0){
+        //遍历paramData，判断是否都是非必输字段
+        for (let i = 0; i < paramData.length; i++) {
+            if (paramData[i].paramNullFlag === 1) {
+                flag = false
+                return flag
+            }
+        }
+        flag = true
+        return flag
+    }else{
+        //取出array中的第一个字段，和paramData元素进行比较
+        let tempKey = array[0].paramKey
+        let innerFlag = false
+        for (let i = 0; i < paramData.length; i++) {
+            if (tempKey === paramData[i].paramKey) {
+                array.splice(0,1)
+                paramData.splice(i,1)
+                innerFlag = true
+                break
+            }
+        }
+        if (!innerFlag) {
+            flag = false
+            return flag
+        }else {
+            flag = checkParam(array, paramData,flag)
+        }
+    }
+
+    return flag
+
+}

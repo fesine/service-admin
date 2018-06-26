@@ -233,10 +233,13 @@
                         </form>
                     </div>
                     <div class="layui-col-md5">
-                        <button class="layui-btn layui-btn-warm layui-btn-xs"
+                        <button class="layui-btn layui-btn-danger layui-btn-xs"
                                 @click="clearParamArea($event,1)">清空请求参数
                         </button>
-                        <button class="layui-btn  layui-btn-xs"
+                        <button class="layui-btn layui-btn-xs"
+                                @click="checkParam($event,1)">请求参数校验
+                        </button>
+                        <button class="layui-btn layui-btn-normal  layui-btn-xs"
                                 @click="formatParam($event,1)">格式化请求参数
                         </button>
                         <textarea id="requestParamArea" name="requestParam" placeholder="请输入请求参数数据"
@@ -246,6 +249,12 @@
                     <div class="layui-col-md5">
                         <button class="layui-btn layui-btn-danger  layui-btn-xs"
                                 @click="clearParamArea($event,2)">清空响应参数
+                        </button>
+                        <button class="layui-btn layui-btn-xs"
+                                @click="checkParam($event,2)">响应参数校验
+                        </button>
+                        <button class="layui-btn layui-btn-normal  layui-btn-xs"
+                                @click="formatParam($event,2)">格式化响应参数
                         </button>
                         <textarea id="responseParamArea" name="requestParam" placeholder="获取响应参数数据"
                                   class="layui-textarea"
@@ -314,13 +323,17 @@
                         }
                         space += '</a>'
                         if (n === 1) {
-                            space = space + '<a style="color: #3af;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #3af;font-weight: bolder;">' +
+                                '<span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         } else if (n === 2) {
-                            space = space + '<a style="color: #09b51b;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #09b51b;font-weight: bolder;">' +
+                                '<span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         } else if (n === 3) {
-                            space = space + '<a style="color: #9a28ff;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #9a28ff;font-weight: bolder;">' +
+                                '<span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         } else {
-                            space = space + '<a style="color: #ff232d;font-weight: bolder;"><span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
+                            space = space + '<a style="color: #ff232d;font-weight: bolder;">' +
+                                '<span class="iconfont">'+icon+'</span></a><a style="font-weight: bolder;">'
                         }
                         return space + d.paramKey.split('>>')[n] + '</a>'
                     }
@@ -734,7 +747,7 @@
                             if(data.body.length>1){
                                 data.body = JSON.parse(data.body)
                             }
-                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
+                            $('#responseParamArea').val(JSON.stringify(data.body, null, '\t'))
                             layer.msg('测试成功', {
                                 icon: 1,
                                 time: 2000
@@ -784,6 +797,7 @@
                     })
                 }else{
                     //TODO 查看提供者和消费者信息
+
                 }
             },
             clearParamArea(e,flag){
@@ -796,11 +810,59 @@
                     this.convertFlag =1
                 }
             },
+            checkParam(e,flag){
+                e.stopPropagation()
+                e.preventDefault()
+                let tempData
+                    ,tempArray,msg
+                if(flag === 1){
+                    //请求参数
+                    tempData = requestParamData
+                    tempArray = JSON.parse($('#requestParamArea').val())
+                    msg='请求参数'
+                }else{
+                    //响应参数
+                    tempData = responseParamData
+                    tempArray = JSON.parse($('#responseParamArea').val())
+                    msg = '响应参数'
+                }
+                if(!tempArray || tempArray===''){
+                    layer.msg('没有需要检查的参数!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                    return
+                }
+                if(!isObj(tempArray)){
+                    layer.msg('检查参数数据格式不正确!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                    return
+                }
+                let tempKeyArray = new Array()
+                let array = new Array()
+                importIntoArray(0, array, tempArray, tempKeyArray, '')
+                //比较array和responseParamData
+                let result = checkParam([].concat(array), [].concat(tempData),true)
+                if(result){
+                    layer.msg('恭喜您，'+ msg+'与接口定义参数完全匹配!', {
+                        icon: 1,
+                        time: 2000
+                    })
+                }else{
+                    layer.msg('对不起，'+ msg+'与接口定义参数不相符，请确认接口参数定义!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                }
+
+            },
             formatParam (e, flag) {
                 e.stopPropagation()
                 e.preventDefault()
                 if (flag === 2) {
-                    $('#responseParamArea').val(null)
+                    $('#responseParamArea').val(JSON.stringify(JSON.parse($('#responseParamArea').val()), null, '\t'))
                 } else {
                     $('#requestParamArea').val(JSON.stringify(JSON.parse($('#requestParamArea').val()), null, '\t'))
                     this.convertFlag = 1
