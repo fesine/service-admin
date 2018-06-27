@@ -69,7 +69,7 @@
     </div>
     <div class="x-body">
         <xblock>
-            <div class="layui-row">
+            <div class="layui-row x-box">
                 <div class="layui-inline">
                     <div class="layui-inline" style="width: 150px;">
                         <form class="layui-form">
@@ -107,7 +107,7 @@
 
         </xblock>
         <div class="layui-row">
-            <div class="layui-col-md2">
+            <div class="layui-col-md2  x-box">
                 <table class="layui-table nohover">
                     <thead>
                     <tr>
@@ -124,7 +124,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="layui-col-md10">
+            <div class="layui-col-md10 x-table">
                 <table id="testList" lay-filter="testList"></table>
             </div>
         </div>
@@ -139,7 +139,10 @@
         ,caseGroupId=parseInt(getUrlKey('caseGroupId'))
         ,apiId=parseInt(getUrlKey('apiId'))
     $('#envId').val(parseInt(getUrlKey('envId')))
-
+    if(apiId === 0){
+        $('.x-box').addClass('layui-hide')
+        $('.x-table').removeClass('layui-col-md10')
+    }
     layui.use(['table','form','tree'], function () {
         var table = layui.table
             ,form = layui.form,envArray

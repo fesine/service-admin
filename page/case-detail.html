@@ -365,7 +365,7 @@
                 this.convertFlag = 0
                 if ($('#L_envSelect').val() !== '') {
                     $("body").mLoading({
-                        text: "测试中...",//加载文字，默认值：加载中...
+                        text: "测试启动中...",//加载文字，默认值：加载中...
                         icon: "",//加载图标，默认值：一个小型的base64的gif图片
                         html: false,//设置加载内容是否是html格式，默认值是false
                         content: "",//忽略icon和text的值，直接在加载框中显示此值
@@ -378,34 +378,45 @@
                         envId: parseInt($('#L_envSelect').val()),
                         requestParam: this.requestParamJson
                     }, function (res) {
-                        let data = res.data
+                        // let data = res.data
                         $("body").mLoading("hide");//显示loading组件
                         if (res.responseCode === 200) {
-                            if (data.body.length > 1) {
-                                data.body = JSON.parse(data.body)
-                            }
-                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
-                            layer.msg('测试成功', {
-                                icon: 1,
-                                time: 2000
-                            })
-                        } else if (res.responseCode === 400) {
-                            $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
-                            layer.msg('测试失败', {
-                                icon: 2,
-                                time: 2000
-                            })
-                        } else {
-                            try{
-                                $('#responseParamArea').val(JSON.stringify(JSON.parse(res.responseMsg), null, '\t'))
-                            }catch (e){
-                                $('#responseParamArea').val(res.responseMsg)
-                            }
-                            layer.msg('测试出现异常', {
+                                layer.msg('测试启动成功', {
+                                    icon: 1,
+                                    time: 2000
+                                })
+                        }else{
+                            layer.msg(res.responseMsg, {
                                 icon: 2,
                                 time: 2000
                             })
                         }
+                        // if (res.responseCode === 200) {
+                        //     if (data.body.length > 1) {
+                        //         data.body = JSON.parse(data.body)
+                        //     }
+                        //     $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
+                        //     layer.msg('测试成功', {
+                        //         icon: 1,
+                        //         time: 2000
+                        //     })
+                        // } else if (res.responseCode === 400) {
+                        //     $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
+                        //     layer.msg('测试失败', {
+                        //         icon: 2,
+                        //         time: 2000
+                        //     })
+                        // } else {
+                        //     try{
+                        //         $('#responseParamArea').val(JSON.stringify(JSON.parse(res.responseMsg), null, '\t'))
+                        //     }catch (e){
+                        //         $('#responseParamArea').val(res.responseMsg)
+                        //     }
+                        //     layer.msg('测试出现异常', {
+                        //         icon: 2,
+                        //         time: 2000
+                        //     })
+                        // }
                     })
 
                 }

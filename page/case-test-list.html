@@ -199,12 +199,15 @@
                     field: 'successFlag',
                     title: '执行结果',
                     width: 120,
+                    event: 'detail',
                     align: 'center',
                     templet: function (d) {
                         if (d.successFlag == 1) {
                             return '<span class="layui-btn layui-btn-normal layui-btn-sm layui-btn-fluid">成功</span>'
-                        } else {
+                        } else if(d.successFlag == 0){
                             return '<span class="layui-btn layui-btn-danger  layui-btn-sm  layui-btn-fluid">失败</span>'
+                        }else{
+                            return '<span class="layui-btn layui-btn-warm  layui-btn-sm  layui-btn-fluid">测试中</span>'
                         }
                     }
                 }
@@ -270,9 +273,14 @@
             }
             var data = obj.data
             if (obj.event === 'detail') {
-                $('#editCase').val(JSON.stringify(data))
-                x_admin_show('用例详情', './case-detail.html?id='
-                    +data.id+'&envId='+data.envId+'&projectId='+data.projectId, 800, 600,true)
+                parent.parent.layui.element.tabDelete("xbs_tab", 999)
+                let url = './page/test-list.html?caseGroupId='
+                    + data.id + '&envId=' + data.envId
+                    + '&projectId=' + data.projectId
+                    + '&groupId=' + 0
+                    + '&apiId=' + 0
+                parent.parent.tab.tabAdd('接口测试记录', url, 999)
+                parent.parent.tab.tabChange(999)
             }
         })
         form.on('submit(testAnalysis)', function () {
