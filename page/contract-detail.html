@@ -98,7 +98,7 @@
                                     <span v-if="contract.checkStatus == 3"
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
-                                    <a href="javascript:;" title="编辑契约" @click="editApi(apiInfo.id)"
+                                    <a href="javascript:;" title="编辑契约" @click="editContract(contract.id)"
                                        v-if="userType < 3">
                                         <i class="iconfont">&#xe69e;</i>
                                     </a>
@@ -495,6 +495,12 @@
             },
             openApi:function (apiId) {
                 x_admin_show('接口详情', './api-detail.html?id='+apiId)
+            },
+            editContract(contractId){
+                var index = parent.layer.getFrameIndex(window.name)
+                //关闭当前frame
+                parent.layer.close(index)
+                parent.x_admin_show('修改契约', './contract-edit.html?id=' + contractId, 600, 550, true)
             }
         }
     })

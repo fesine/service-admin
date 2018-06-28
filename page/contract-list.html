@@ -300,6 +300,7 @@
                             table.reload('contractList', {
                                 where: {
                                     projectId: parseInt(getCookie('projectId'))
+                                    , groupId: ''
                                     , removeFlag: 1
                                 }
                             })
