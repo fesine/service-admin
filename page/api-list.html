@@ -269,7 +269,12 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('apiList')
+                            table.reload('apiList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , groupId: $('#groupId').val()
+                                }
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -286,7 +291,12 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('apiList')
+                            table.reload('apiList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , removeFlag:1
+                                }
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -308,7 +318,12 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('apiList')
+                            table.reload('apiList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , removeFlag: 1
+                                }
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }

@@ -274,7 +274,13 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('contractList')
+                            table.reload('contractList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , groupId: $('#groupId').val()
+                                    , removeFlag: 0
+                                }
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -291,7 +297,12 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('contractList')
+                            table.reload('contractList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , removeFlag: 1
+                                }
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -313,7 +324,12 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('contractList')
+                            table.reload('contractList', {
+                                where: {
+                                    projectId: parseInt(getCookie('projectId'))
+                                    , removeFlag:1
+                                }
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }
