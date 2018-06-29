@@ -165,6 +165,12 @@
                                 <option value="">选择测试环境</option>
                             </select>
                             <br>
+                            <div style="margin-bottom: 10px;">
+                                <label class="layui-form-label" style="padding: 0px;text-align: left;margin-right: 5px;width: 100px;">遇异常中断测试</label>
+                                <input type="checkbox"  lay-skin="switch" lay-filter="exceptionType"
+                                       lay-text="开启|关闭">
+                                <br>
+                            </div>
                             <button class="layui-btn layui-btn-normal layui-btn-fluid"
                                     @click="executeTest($event)"
                                     lay-submit v-if="saveFlag"
@@ -228,9 +234,18 @@
         $('#apiData').val('')
     }
 
-    layui.use(['layer', 'element'], function () {
+    layui.use(['layer', 'element','form'], function () {
         $ = layui.jquery
         layer = layui.layer
+        let form = layui.form
+        form.on('switch(exceptionType)', function (data) {
+            //记住用户名
+            if (data.elem.checked) {
+                vm.exceptionType = 1
+            } else {
+                vm.exceptionType = 0
+            }
+        });
         $("ul li:eq(1)").click(function () {
             //测试tab
             //加载第一个执行的接口请求参数
@@ -266,7 +281,8 @@
                 apiDataListUpdate: [],
                 convertFlag:1,
                 requestParamJson:{},
-                saveFlag:true
+                saveFlag:true,
+                exceptionType:0
             }
         },
         filters: {
@@ -372,6 +388,7 @@
                         mask: true//是否显示遮罩效果，默认显示
                     });
                     $.post(_hostUrl + '/test/caseGroup/invoke', {
+                        exceptionType: this.exceptionType,
                         projectId: this.projectId,
                         caseConfId: this.caseConfId,
                         groupId: this.groupId,
