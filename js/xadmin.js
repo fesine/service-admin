@@ -400,6 +400,7 @@ function clearCookies () {
     setCookie('projectStatus', '')
     setCookie('nickName', '')
     setCookie('superFlag', '')
+    setCookie('userList', '')
 }
 
 

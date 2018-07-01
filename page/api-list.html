@@ -78,7 +78,7 @@
     <div class="x-body">
         <xblock>
         <div class="layui-row">
-            <div class="layui-col-xs3">
+            <div class="layui-col-xs3 admin-permission">
                 <button class="layui-btn"
                         onclick="addApi()">
                     <i class="layui-icon"></i>新增接口
@@ -142,13 +142,20 @@
     <input hidden id="groupId" value=""/>
 </div>
 <script type="text/html" id="apiBar">
-        {{#  if(d.removeFlag == 0){ }}
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
-        {{#  } else  { }}
-        <a class="layui-btn layui-btn-warm layui-btn-xs" ay-even lay-event="recover">恢复</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs margin-0" lay-even lay-event="delete">彻底删除</a>
-        {{#  } }}
+    {{#  if (JSON.parse(getCookie('userList'))[0].userType < 2){ }}
+    {{#  let permissionArray = JSON.parse(getCookie('userList')) }}
+    {{#  for(let i = 0 ;i< permissionArray.length;i++){ }}
+    {{#  if(d.groupId === permissionArray[i].groupId && permissionArray[i].userType < 3){ }}
+    {{#  if(d.removeFlag == 0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="remove">删除</a>
+    {{#  } else  { }}
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-even lay-event="recover">恢复</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs margin-0" lay-even lay-event="delete">彻底删除</a>
+    {{#  } }}
+    {{#  break } }}
+    {{#  } }}
+    {{#  } }}
 
     <!--<a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>-->
 </script>
@@ -183,9 +190,28 @@
     <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
 </script>
 <script>
-    function  addApi () {
+    if (JSON.parse(getCookie('userList'))[0].userType > 1) {
+        $('.admin-permission').addClass('layui-hide')
+    }
+    function  addApi() {
         //清空缓存数据
         $('#editApi').val('')
+        if(JSON.parse(getCookie('userList')).length>0){
+            if(JSON.parse(getCookie('userList'))[0].userType > 1){
+                layer.msg('您没有权限添加接口!', {
+                    icon: 2,
+                    timeout: 2000
+                })
+                return false
+            }
+
+        }else {
+            layer.msg('您没有权限添加接口!',{
+                icon:2,
+                timeout:2000
+            })
+            return false
+        }
         x_admin_show('添加接口', './api-add.html', 600, 550, true)
     }
     var myFlag = 0;
@@ -335,7 +361,7 @@
                 x_admin_show('修改接口', './api-edit.html?id='+data.id, 600, 550, true)
             } else if (obj.event === 'detail') {
                 $('#editApi').val(JSON.stringify(data))
-                x_admin_show('接口详情', './api-detail.html?id='+data.id, 600, 550, true)
+                x_admin_show('接口详情', './api-detail.html?id='+data.id+'&groupId='+data.groupId, 600, 550, true)
             } else if (obj.event === 'changeStar') {
                 var params = {
                     id: data.id,

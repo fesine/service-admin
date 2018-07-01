@@ -284,9 +284,9 @@
                     success: function (layero) {
                         let url
                         if (data.msgType === 3) {
-                            url = "./contract-detail.html?id=" + parseInt(data.otherMsg)
+                            url = "./contract-detail.html?id=" + parseInt(data.otherMsg) + '&groupId=-1'
                         } else if (data.msgType === 4) {
-                            url = "./api-detail.html?id=" + parseInt(data.otherMsg)
+                            url = "./api-detail.html?id=" + parseInt(data.otherMsg)+'&groupId=-1'
                         } else {
                             return false
                         }

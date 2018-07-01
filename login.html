@@ -82,6 +82,7 @@
                       setCookie('username',res.data.user.username)
                       setCookie('nickName',res.data.user.nickName)
                       setCookie('superFlag',res.data.user.superFlag)
+                      setCookie('userList',res.data.userList)
                       layer.msg('登录成功', {icon:1,time: 1000}, function () {
                           location.href = 'index.html'
                       });

@@ -35,7 +35,7 @@
     <div class="x-body">
         <xblock>
             <div class="layui-row">
-                <div class="layui-col-xs4">
+                <div class="layui-col-xs4 admin-permission">
                     <button class="layui-btn" onclick="x_admin_show('添加环境','./environment-add.html',600,400)"><i
                             class="layui-icon"></i>添加环境
                     </button>
@@ -58,10 +58,15 @@
     <input hidden id="editEnv" value=""/>
 </div>
 <script type="text/html" id="environmentBar">
+    {{#  if(JSON.parse(getCookie('userList'))[0].userType <= 1){ }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
+    {{#  } }}
 </script>
 <script>
+    if(JSON.parse(getCookie('userList'))[0].userType > 1){
+        $('.admin-permission').addClass('layui-hide')
+    }
     layui.use(['table', 'upload'], function () {
         var table = layui.table
         var upload = layui.upload;
@@ -92,7 +97,7 @@
                                 protocol = "DAP";
                                 break;
                             case 4:
-                                protocol = "ZOOKPER";
+                                protocol = "ZOOKEEPER";
                                 break;
                             default:
                                 protocol = "未定义";
