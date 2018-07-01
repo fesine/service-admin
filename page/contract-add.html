@@ -268,6 +268,17 @@
         //获取选中的数据 进行格式转换，并加载到form表单中
         var groupString = parent.$('#groupArray').val()
         var groupArray = JSON.parse(groupString)
+        //移除只读权限的分组
+        let permissionList = JSON.parse(getCookie('userList'))
+        for (let i = 0; i < permissionList.length; i++) {
+            let groupId = permissionList[i].groupId
+            let userType = permissionList[i].userType
+            for (let j = 0; j < groupArray.length; j++) {
+                if (parseInt(groupId) === groupArray[j].id && userType > 2) {
+                    groupArray.splice(j, 1)
+                }
+            }
+        }
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
         }

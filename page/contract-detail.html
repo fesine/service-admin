@@ -465,11 +465,13 @@
                 })
             },
             userType () {
-                historyTable.reload({
-                    where: {
-                        id: this.contractId //查询当前用户所在所有组的数据
-                    }
-                })
+                if(historyTable){
+                    historyTable.reload({
+                        where: {
+                            id: this.contractId //查询当前用户所在所有组的数据
+                        }
+                    })
+                }
             },
             historyId () {
                 axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {

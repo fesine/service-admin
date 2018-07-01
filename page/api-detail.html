@@ -661,11 +661,13 @@
                 })
             },
             userType () {
-                historyTable.reload({
-                    where: {
-                        id: this.apiId //查询当前用户所在所有组的数据
-                    }
-                })
+                if(historyTable){
+                    historyTable.reload({
+                        where: {
+                            id: this.apiId //查询当前用户所在所有组的数据
+                        }
+                    })
+                }
             },
             historyId () {
                 if (!this.apiId || this.apiId === '') {
