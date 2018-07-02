@@ -280,9 +280,9 @@
                             })
                         let url
                         if (data.msgType === 3) {
-                            url = "./contract-detail.html?id=" + parseInt(data.otherMsg) + '&groupId=-1'
+                            url = "./contract-detail.html?id=" + parseInt(data.otherMsg)
                         } else if (data.msgType === 4) {
-                            url = "./api-detail.html?id=" + parseInt(data.otherMsg)+'&groupId=-1'
+                            url = "./api-detail.html?id=" + parseInt(data.otherMsg)
                         } else {
                             return false
                         }
