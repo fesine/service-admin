@@ -433,6 +433,9 @@
             this.superFlag = parseInt(getCookie('superFlag'))
             this.contractId = getUrlKey('id')
             this.groupId = getUrlKey('groupId')
+            if (!this.groupId) {
+                this.groupId = '-1'
+            }
         },
         mounted () {
             $('.contract_rely .layui-elem-quote').css('height', $('.contract_content .layui-elem-quote').height())
@@ -456,7 +459,7 @@
                             $('#L_checkStatus').val(vm.contract.checkStatus)
                             form.render()//下拉菜单渲染 把内容加载进去
                         })
-                        if (this.superFlag != 1) {
+                        if (this.superFlag !== 1 || this.groupId === '-1') {
                             updateClass()
                         } else {
                             $('#show-form').removeClass('layui-hide')
@@ -501,7 +504,7 @@
                 }
             },
             openApi:function (apiId) {
-                x_admin_show('接口详情', './api-detail.html?id='+apiId)
+                x_admin_show('接口详情', './api-detail.html?id='+apiId+'&groupId='+ this.groupId)
             },
             editContract(contractId){
                 var index = parent.layer.getFrameIndex(window.name)

@@ -140,7 +140,7 @@
                                     <i class="iconfont">&#xe69e;</i>
                                     </a>
                                     <a class="change-rely-service" href="javascript:;"
-                                       @click="openContract(apiInfo.contractId,apiInfo.groupId)"
+                                       @click="openContract(apiInfo.contractId)"
                                        title="点击查看接口信息">[契约]</a>
 
                                 </h1>
@@ -211,7 +211,7 @@
                             <br>
                             <button class="layui-btn layui-btn-normal layui-btn-fluid"
                                     @click="executeTest($event)"
-                                    lay-submit
+                                    lay-submit v-if="groupId !=-1"
                                     lay-filter="executeTest">执行测试
                             </button></div>
                             <div>
@@ -390,7 +390,7 @@
                     field: 'paramKey', title: '参数名', align: 'left', templet: function (d) {
                         let n = d.paramKey.split('>>').length - 1
                         let space = '<a>'
-                        let icon = '-'
+                        let icon = '-&nbsp;'
                         if (d.paramType === 13 || d.paramType === 14) {
                             icon = '&#xe6a6;'
                         }
@@ -615,6 +615,9 @@
             this.superFlag = parseInt(getCookie('superFlag'))
             this.apiId = getUrlKey('id')
             this.groupId = getUrlKey('groupId')
+            if(!this.groupId){
+                this.groupId = '-1'
+            }
             axios.get(_hostUrl + '/envs').then(response => {
                 if (response.data.responseCode == 200) {
                     let envArray = response.data.data
@@ -651,7 +654,7 @@
                             $('#L_checkStatus').val(vm.apiInfo.checkStatus)
                             form.render()//下拉菜单渲染 把内容加载进去
                         })
-                        if (this.superFlag != 1) {
+                        if (this.superFlag !== 1 || this.groupId === '-1') {
                             updateClass()
                         } else {
                             $('#show-form').removeClass('layui-hide')
@@ -718,8 +721,8 @@
                     })
                 }
             },
-            openContract: function (contractId, groupId) {
-                x_admin_show('契约详情', './contract-detail.html?id=' + contractId + '&groupId=' + groupId)
+            openContract: function (contractId) {
+                x_admin_show('契约详情', './contract-detail.html?id=' + contractId + '&groupId=' + this.groupId)
             },
             executeTest (e) {
                 e.stopPropagation()
