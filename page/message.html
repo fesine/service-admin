@@ -218,6 +218,12 @@
                     ,moveType: 1 //拖拽模式，0或者1
                     ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">'+data.msg+'</div>'
                     ,success: function (layero) {
+                        $.putJSON(_hostUrl + "/msgs/" + data.id
+                            , null, function (res) {
+                                table.reload('newMessageList');
+                                //重新渲染历史消息表
+                                allMessageTable.reload();
+                            })
                         let url
                         if(data.msgType ===3 ){
                             url = "./contract-detail.html?id="+parseInt(data.otherMsg)
@@ -231,12 +237,6 @@
                             href: url
                             , target: '_blank'
                         });
-                        $.putJSON(_hostUrl + "/msgs/" + data.id
-                            , null, function (res) {
-                                table.reload('newMessageList');
-                                //重新渲染历史消息表
-                                allMessageTable.reload();
-                            })
                         return false;
                     }
                 });
@@ -262,26 +262,22 @@
             if (obj.event === 'detail') {
                 layer.open({
                     type: 1
-                    ,
-                    title: false //不显示标题栏
-                    ,
-                    closeBtn: false
-                    ,
-                    area: '500px;'
-                    ,
-                    shade: 0.8
-                    ,
-                    id: 'message_layer' //设定一个id，防止重复弹出
-                    ,
-                    btn: ['查看详情', '关闭当前']
-                    ,
-                    btnAlign: 'c'
-                    ,
-                    moveType: 1 //拖拽模式，0或者1
-                    ,
-                    content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' + data.msg + '</div>'
-                    ,
-                    success: function (layero) {
+                    ,title: false //不显示标题栏
+                    ,closeBtn: false
+                    ,area: '500px;'
+                    ,shade: 0.8
+                    ,id: 'message_layer' //设定一个id，防止重复弹出
+                    ,btn: ['查看详情', '关闭当前']
+                    ,btnAlign: 'c'
+                    ,moveType: 1 //拖拽模式，0或者1
+                    ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' + data.msg + '</div>'
+                    ,success: function (layero) {
+                        $.putJSON(_hostUrl + "/msgs/" + data.id
+                            , null, function (res) {
+                                table.reload('newMessageList');
+                                //重新渲染历史消息表
+                                allMessageTable.reload();
+                            })
                         let url
                         if (data.msgType === 3) {
                             url = "./contract-detail.html?id=" + parseInt(data.otherMsg)
@@ -295,12 +291,6 @@
                             href: url
                             , target: '_blank'
                         });
-                        $.putJSON(_hostUrl + "/msgs/" + data.id
-                            , null, function (res) {
-                                table.reload('newMessageList');
-                                //重新渲染历史消息表
-                                allMessageTable.reload();
-                            })
                         return false;
                     }
                 });
