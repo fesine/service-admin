@@ -490,9 +490,9 @@
                     field: 'updateTime', title: '修改时间', width: 180, align: 'center'
                     , templet: function (d) {
                         if (d.currentFlag === 1) {
-                            return '<span class="layui-badge-dot" style="margin-right: 8px;"></span>' + dateFormat(d.updateTime) + '</a></span>'
+                            return '<span class="layui-badge-dot" style="margin-right: 8px;"></span>' + d.updateTime + '</a></span>'
                         } else {
-                            return dateFormat(d.updateTime)
+                            return d.updateTime
                         }
 
                     }

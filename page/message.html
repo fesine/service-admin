@@ -98,9 +98,6 @@
                 templet:"#showMsg"}
                 , {
                     field: 'sendTime', title: '发送时间', width: 180, align: 'center'
-                    , templet: function (d) {
-                        return dateFormat(d.sendTime);
-                    }
                 }
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#newMessageBar'}
             ]]
@@ -158,9 +155,6 @@
 
                 , {
                     field: 'sendTime', title: '发送时间', width: 250, align: 'center'
-                    , templet: function (d) {
-                        return dateFormat(d.sendTime);
-                    }
                 }
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#allMessageBar'}
             ]]

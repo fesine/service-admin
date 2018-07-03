@@ -64,9 +64,6 @@
                 , {field: 'groupCode', title: '分组编号', width: 150, align: 'center'}
                 , {
                     field: 'lastUpdateTime', title: '最后修改时间', width: 180, align: 'center'
-                    , templet: function (d) {
-                        return dateFormat(d.lastUpdateTime)
-                    }
                 }
                 , {title:'操作', align: 'center', toolbar: '#groupBar'}
             ]]
