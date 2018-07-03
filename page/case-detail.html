@@ -435,7 +435,11 @@
                         //     })
                         // }
                     })
-
+                }else{
+                        layer.msg('请先选择环境再执行测试!', {
+                            icon: 2,
+                            time: 2000
+                        })
                 }
             },
             testHistory (e) {

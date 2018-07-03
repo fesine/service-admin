@@ -130,7 +130,7 @@
             form.on('submit(edit)', function (data) {
                 let permissionList = JSON.parse(getCookie('userList'))
                 if (permissionList[0].userType > 1) {
-                    layer.msg('只有管理员才权限新增环境', {icon: 2, time: 1500})
+                    layer.msg('只有管理员才有权限新增环境', {icon: 2, time: 1500})
                     return false
                 }
                 $.putForm(_hostUrl + "/env", data.field, function (res) {
