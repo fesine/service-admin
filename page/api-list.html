@@ -214,7 +214,6 @@
         }
         x_admin_show('添加接口', './api-add.html', 600, 550, true)
     }
-    var myFlag = 0;
     layui.use(['table', 'tree', 'form'], function () {
         var groupArray
         var table = layui.table
@@ -402,14 +401,6 @@
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
                         $('#groupId').val(item.id)
-                        //查询自己所在分组身份
-                        if (vm.superFlag != 1) {
-                            $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
-                                if (res.responseCode == 200) {
-                                    myFlag = res.data
-                                }
-                            })
-                        }
                         // 查询点击分组的接口数据
                         apiTable.reload({
                             where: {

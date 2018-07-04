@@ -20,6 +20,29 @@
     <script type="text/javascript" src="../js/cookies.js"></script>
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        .nohover tbody tr:hover {
+            background-color: #ffffff
+        }
+
+        .nohover tbody tr td ul li:hover {
+            background-color: #E2F2E4;
+        }
+
+        .nohover tbody tr td ul li {
+            height: 35px;
+            padding: 5px 0px 1px 30px;
+        }
+
+        .backup {
+            display: block;
+            padding: 5px 0px 5px 5px;
+        }
+
+        .margin-0 {
+            margin: 0 !important;
+        }
+    </style>
 </head>
 
 <body class="layui-anim layui-anim-up">
@@ -59,23 +82,74 @@
                 </div>
             </div>
         </xblock>
-        <table id="statusCodeList" lay-filter="statusCodeList"></table>
+        <div class="layui-row">
+            <div class="layui-col-md2">
+                <table class="layui-table nohover">
+                    <thead>
+                    <tr>
+                        <th style="align-content: center"><h3>分组</h3></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="padding: 0px;">
+                            <ul>
+                                <li id="allCode">
+                                    <a class="backup" href="javascript:;">
+                                        <i class="iconfont">&#xe699;</i>
+                                        <cite>所有状态码</cite></a>
+                                </li>
+                                <li id="systemCode">
+                                    <a class="backup" href="javascript:;" lay-filter="backup">
+                                        <i class="iconfont">&#xe6ae;</i>
+                                        <cite>系统状态码</cite></a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px;">
+                            <ul id="groupTree" style="overflow: auto;overflow-x: hidden; "></ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="layui-col-md10">
+                <table id="statusCodeList" lay-filter="statusCodeList"></table>
+            </div>
+        </div>
+
     </div>
     <input hidden id="editCode" value=""/>
+    <input hidden id="groupArray" value=""/>
+    <input hidden id="groupId" value=""/>
 </div>
 <script type="text/html" id="statusCodeBar">
-    {{#  if(JSON.parse(getCookie('userList'))[0].userType <= 1){ }}
+    {{#  if (JSON.parse(getCookie('userList'))[0].userType < 2){ }}
+    {{#  let permissionArray = JSON.parse(getCookie('userList')) }}
+    {{#  for(let i = 0 ;i< permissionArray.length;i++){ }}
+    {{#  if(d.groupId === permissionArray[i].groupId && permissionArray[i].userType < 3){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
+    {{#  break } }}
+    {{#  } }}
+    {{#  } }}
+    {{#  if(d.groupId === 0 && parseInt(getCookie('superFlag')) === 1)  { }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
     {{#  } }}
 </script>
 <script>
-    if (JSON.parse(getCookie('userList'))[0].userType > 1) {
+    if (JSON.parse(getCookie('userList'))[0].userType > 2) {
         $('.admin-permission').addClass('layui-hide')
     }
-    layui.use(['table', 'upload'], function () {
+    layui.use(['table', 'upload','tree'], function () {
         var table = layui.table
-        var upload = layui.upload;
+            , upload = layui.upload
+            , tree = layui.tree
+        var groupArray
         //第一个实例
         var statusCodeTable = table.render({
             elem: '#statusCodeList'
@@ -88,7 +162,7 @@
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
                 , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
                 , {field: 'code', title: '状态码', width: 240, align: 'center'}
-                , {field: 'codeDesc', title: '描述', width: 600, align: 'center'}
+                , {field: 'codeDesc', title: '描述', width: 400, align: 'center'}
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#statusCodeBar'}
             ]], request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
@@ -129,7 +203,12 @@
                                     icon: 1,
                                     time: 2000
                                 })
-                                table.reload('statusCodeList')
+                                statusCodeTable.reload({
+                                    where: {
+                                        projectId: parseInt(getCookie('projectId'))
+                                        , groupId: parseInt($('#groupId').val())
+                                    }
+                                })
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
                             }
@@ -159,7 +238,12 @@
                                     icon: 1,
                                     time: 2000
                                 })
-                                table.reload('statusCodeList')
+                                statusCodeTable.reload({
+                                    where: {
+                                        projectId: parseInt(getCookie('projectId'))
+                                        , groupId: parseInt($('#groupId').val())
+                                    }
+                                })
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
                             }
@@ -186,13 +270,71 @@
                         icon: 1,
                         time: 2000
                     }, function () {
-                        table.reload('statusCodeList');
+                        statusCodeTable.reload({
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: parseInt($('#groupId').val())
+                            }
+                        })
                     })
                 } else {
                     layer.msg(res.responseMsg, {icon: 2, timeout: 1000})
                 }
             }
         });
+        // 获取分组列表
+        $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
+            //如果不存在分组怎么办？
+            if (res.responseCode != 200) {
+                layer.msg(res.responseMsg)
+                checkLogin()
+                return
+            }
+            groupArray = res.data
+            if (!groupArray || groupArray.length == 0) {
+                layer.msg("分组不存在，请先创建分组!")
+                return
+            } else {
+                $('#groupArray').val(JSON.stringify(groupArray))
+                layui.tree({
+                    elem: '#groupTree' //传入元素选择器
+                    , nodes: groupArray
+                    , click: function (item) { //点击节点回调
+                        changeBackground(item.name)
+                        $('#groupId').val(item.id)
+                        // 查询点击分组的接口数据
+                        statusCodeTable.reload({
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: item.id
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        //监听回收站
+        $('#systemCode').click(function (d) {
+            $('#groupId').val(0)
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的接口数据
+            statusCodeTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
+                    , groupId: 0
+                }
+            })
+        })
+        $('#allCode').click(function (d) {
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的接口数据
+            statusCodeTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
+                }
+            })
+        })
     })
 </script>
 </body>

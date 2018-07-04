@@ -99,6 +99,11 @@
                         icon: 1,
                         time: 2000
                     });
+                    for (let j = 0; j < groupArray.length; j++) {
+                        if (parseInt(groupArray[j].id) === parseInt(data.field.groupId)) {
+                            parent.changeBackground(groupArray[j].name)
+                        }
+                    }
                     // 获得frame索引
                     var index = parent.layer.getFrameIndex(window.name)
                     //关闭当前frame
