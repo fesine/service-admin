@@ -87,6 +87,14 @@
                 }
             }
         }
+        if(parseInt(getCookie('superFlag')) === 1){
+            //超级管理员权限，增加平台状态码
+            groupArray = [{
+                id:0,
+                name:'平台状态码',
+                code:'sys'
+            }].concat(groupArray)
+        }
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupId').append(new Option(groupArray[i].name, groupArray[i].id))// 下拉菜单里添加元素
         }
