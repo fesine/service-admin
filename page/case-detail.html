@@ -136,8 +136,8 @@
                     <tbody>
                     <tr v-for="(item,index) in apiDataList">
                         <td class="index">{{index+1}}</td>
-                        <td>{{item.serviceCode}}</td>
-                        <td>{{item.serviceName}}</td>
+                        <td><a href="javascript:;" @click="openApi(item.apiId)">{{item.serviceCode}}</a></td>
+                        <td><a href="javascript:;" @click="openApi(item.apiId)">{{item.serviceName}}</a></td>
                         <td>{{item.versionNo}}</td>
                         <td>{{item.requestParamFlag | convertParamType}}</td>
                         <td>
@@ -470,7 +470,10 @@
                     $('#requestParamArea').val(JSON.stringify(JSON.parse($('#requestParamArea').val()),null,'\t'))
                     this.convertFlag = 1
                 }
-            }
+            },
+            openApi: function (apiId) {
+                x_admin_show('接口详情', './api-detail.html?id=' + apiId)
+            },
         }
     })
 </script>
