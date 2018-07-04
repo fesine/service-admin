@@ -124,7 +124,7 @@
     <input hidden id="groupId" value=""/>
 </div>
 <script type="text/html" id="partnerBar">
-    {{#  if(d.userType != 0 && myFlag < 2){ }}
+    {{#  if(d.userType != 0 && myFlag < 2 && d.userType> myFlag){ }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">修改角色</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">移出分组</a>
     {{#  } }}
