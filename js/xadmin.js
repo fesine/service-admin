@@ -189,6 +189,9 @@ function x_admin_show (title, url, w, h,max) {
 }
 
 function x_admin_show (title, url, w, h,max,cancelFun) {
+    if(max){
+        h = $(window).height()
+    }
     if (title == null || title == '') {
         title = false
     }
