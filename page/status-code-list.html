@@ -127,7 +127,6 @@
     <input hidden id="groupId" value=""/>
 </div>
 <script type="text/html" id="statusCodeBar">
-    {{#  if (JSON.parse(getCookie('userList'))[0].userType < 2){ }}
     {{#  let permissionArray = JSON.parse(getCookie('userList')) }}
     {{#  for(let i = 0 ;i< permissionArray.length;i++){ }}
     {{#  if(d.groupId === permissionArray[i].groupId && permissionArray[i].userType < 3){ }}
@@ -135,16 +134,13 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
     {{#  break } }}
     {{#  } }}
-    {{#  } }}
     {{#  if(d.groupId === 0 && parseInt(getCookie('superFlag')) === 1)  { }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">删除</a>
     {{#  } }}
 </script>
 <script>
-    if (JSON.parse(getCookie('userList'))[0].userType > 2) {
-        $('.admin-permission').addClass('layui-hide')
-    }
+    userTypeRW()
     layui.use(['table', 'upload','tree'], function () {
         var table = layui.table
             , upload = layui.upload

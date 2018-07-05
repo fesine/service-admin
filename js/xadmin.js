@@ -931,3 +931,10 @@ function checkParamAddResult(array, paramData){
     }
     return resultArray.concat(uselessArray)
 }
+
+function userTypeRW() {
+    //有读写权限可操作
+    if (JSON.parse(getCookie('userList'))[0].userType > 2) {
+        $('.admin-permission').addClass('layui-hide')
+    }
+}
