@@ -254,15 +254,59 @@
         upload.render({
             elem: '#importFile' //绑定元素
             , accept: 'file'
-            , exts: 'xls|xlsx'
+            , exts: 'xls|xlsx|config'
             //在选择的时候过滤文件格式
-            , acceptMime: '.xls,.xlsx'
-            , title: '请选择Excel文件'
+            , acceptMime: '.xls,.xlsx,.config'
+            , title: '请选择Excel或配置文件'
             , url: _hostUrl + '/code/import' //上传接口
-            , data: {projectId: parseInt(getCookie('projectId'))}
+            , auto: false
+            ,data: {
+                projectId: parseInt(getCookie('projectId')),
+                groupId: function () {
+                    return parseInt($('#groupId').val())
+                }
+            }
+            , choose: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                obj.preview(function (index, file, result) {
+                    if ($('#groupId').val() === '') {
+                        layer.msg('请点击要上传的分组再选择文件', {
+                            icon: 2,
+                            timeout: 2000
+                        })
+                        return false
+                    }else if($('#groupId').val() !== '0'){
+                        //判断点击分组是否有操作权限
+                        let permissionList = JSON.parse(getCookie('userList'))
+                        for (let i = 0; i < permissionList.length; i++) {
+                            let groupId = permissionList[i].groupId
+                            let userType = permissionList[i].userType
+                            if (parseInt(groupId) === parseInt($('#groupId').val()) && userType > 2) {
+                                layer.msg('您在当前分组没有操作权限', {
+                                    icon: 2,
+                                    timeout: 2000
+                                })
+                                return false
+                            }
+                        }
+                        obj.upload(index, file); //满足条件调用上传方法
+                        return true
+                    }else{
+                        //判断是否是超级管理员
+                        if(getCookie('superFlag') !== '1'){
+                            layer.msg('您不是超级管理员，无法导入系统状态码', {
+                                icon: 2,
+                                timeout: 2000
+                            })
+                            return false
+                        }
+                        obj.upload(index, file); //满足条件调用上传方法
+                        return true
+                    }
+                });
+            }
             , done: function (res) {
                 if (res.responseCode == 201) {
-                    layer.msg('上传成功', {
+                    layer.msg('成功上传了['+ res.data+']条状态码!', {
                         icon: 1,
                         time: 2000
                     }, function () {
