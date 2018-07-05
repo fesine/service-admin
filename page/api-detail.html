@@ -730,11 +730,16 @@
                 //请求参数有可能修改，需要临时保存
                 this.requestParamJson = $('#requestParamArea').val()
                 this.convertFlag = 0
-                if($('#L_envSelect').val() === '0'){
+                if ($('#L_envSelect').val() === '') {
+                    layer.msg('请先选择测试环境!', {
+                        icon: 2,
+                        time: 2000
+                    })
+                }else if($('#L_envSelect').val() === '0'){
                     //mock测试
                     this.responseParamJson = JSON.stringify(JSON.parse(arrayToJson(responseParamData)), null, '\t')
                     $('#responseParamArea').val(this.responseParamJson)
-                }else if($('#L_envSelect').val() !== ''){
+                }else{
                     $("body").mLoading({
                         text: "测试中...",//加载文字，默认值：加载中...
                         icon: "",//加载图标，默认值：一个小型的base64的gif图片
@@ -788,8 +793,6 @@
                         time: 2000
                     })
                 }else{
-                    //TODO 查看历史测试记录
-                    // $('#test-history', parent.parent.document).click();
                     parent.parent.layui.element.tabDelete("xbs_tab", 999)
                     let url = './page/test-list.html?caseGroupId=0&groupId='
                         +this.apiInfo.groupId+'&envId='+parseInt($('#L_envSelect').val())

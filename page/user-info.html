@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>状态码管理</title>
+    <title>用户信息详情页</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -19,12 +19,26 @@
     <script type="text/javascript" src="../js/cookies.js"></script>
     <script src="../lib/vue/vue.min.js"></script>
     <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        h4{
+            font-size: 16px;
+            text-align: center;
+        }
+        h4 a{
+            color: red;
+            font-weight: bolder;
+        }
+    </style>
 </head>
 <body>
 <div class="layui-fluid">
     <div class="layui-table-box">
         <div class="layui-table-header">
             <h3 style="color: #9F9F9F" align="center">用户所属分组及角色</h3>
+        </div>
+        <hr>
+        <div id="userDetail">
+            <h4>用户名:<a>{{username}}</a>，真实姓名:<a>{{nickName}}</a></h4>
         </div>
         <hr>
         <table id="projectGroupList" lay-filter="projectGroupList"></table>
@@ -116,6 +130,21 @@
                 })
             }
         })
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el:'#userDetail',
+        data(){
+            return {
+                username:'',
+                nickName:''
+            }
+        },
+        beforeMount(){
+            this.username = getCookie('username')
+            this.nickName = getCookie('nickName')
+        }
     })
 </script>
 </body>
