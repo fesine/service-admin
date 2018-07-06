@@ -729,6 +729,7 @@
                 e.preventDefault()
                 //请求参数有可能修改，需要临时保存
                 this.requestParamJson = $('#requestParamArea').val()
+                isJSON(this.requestParamJson)
                 this.convertFlag = 0
                 if ($('#L_envSelect').val() === '') {
                     layer.msg('请先选择测试环境!', {
@@ -834,11 +835,13 @@
                 if(flag === 1){
                     //请求参数
                     tempData = requestParamData
+                    isJSON($('#requestParamArea').val())
                     tempArray = JSON.parse($('#requestParamArea').val())
                     msg='请求参数'
                 }else{
                     //响应参数
                     tempData = responseParamData
+                    isJSON($('#responseParamArea').val())
                     tempArray = JSON.parse($('#responseParamArea').val())
                     msg = '响应参数'
                 }
@@ -882,8 +885,10 @@
                 e.stopPropagation()
                 e.preventDefault()
                 if (flag === 2) {
+                    isJSON($('#responseParamArea').val())
                     $('#responseParamArea').val(JSON.stringify(JSON.parse($('#responseParamArea').val()), null, '\t'))
                 } else {
+                    isJSON($('#requestParamArea').val())
                     $('#requestParamArea').val(JSON.stringify(JSON.parse($('#requestParamArea').val()), null, '\t'))
                     this.convertFlag = 1
                 }

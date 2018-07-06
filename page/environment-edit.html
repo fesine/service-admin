@@ -43,26 +43,25 @@
             <label for="L_envName" class="layui-form-label">
                 <span class="x-red">*</span>环境名称
             </label>
-            <div class="layui-input-inline">
+            <div class="layui-input-inline" style="width: 300px;">
                 <input type="text" id="L_envName" name="envName" required=""
                        lay-verify="envName"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>环境名称不可为空且唯一
+                <span class="x-red">*</span>非空且唯一
             </div>
         </div>
         <div class="layui-form-item">
             <label for="L_url" class="layui-form-label">
                 <span class="x-red">*</span>连接地址
             </label>
-            <div class="layui-input-inline">
-                <input type="text" id="L_url" name="url" required=""
-                       lay-verify="url"
-                       autocomplete="off" class="layui-input">
+            <div class="layui-input-inline" style="width: 300px;">
+                <textarea id="L_url" name="url" required=""
+                          lay-verify="url" class="layui-textarea"></textarea>
             </div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>连接地址不可为空
+                <span class="x-red">*</span>非空
             </div>
         </div>
 
@@ -74,10 +73,10 @@
             <!--1:http 2:https 3:dap 4:zookper-->
             <div class="layui-input-inline">
                 <select id="L_protocol" name="protocol" lay-verify="protocol">
-                    <option value='1'>HTTP</option>
-                    <option value='2'>HTTPS</option>
                     <option value='3'>DAP</option>
                     <option value='4'>ZOOKPER</option>
+                    <option value='1'>HTTP</option>
+                    <option value='2'>HTTPS</option>
                 </select>
             </div>
         </div>

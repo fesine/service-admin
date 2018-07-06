@@ -739,6 +739,31 @@ function checkParent (key,array) {
     }
 }
 
+function isJSON (str) {
+    if (typeof str == 'string') {
+        try {
+            var obj = JSON.parse(str);
+            if (typeof obj == 'object' && obj) {
+                return true;
+            } else {
+                throw SyntaxError();
+            }
+
+        } catch (e) {
+            layer.msg('参数不是标准json数据格式，请检查',{
+                icon:2,
+                timeout:2000
+            })
+            throw SyntaxError();
+        }
+    }
+    layer.msg('参数不是标准json数据格式，请检查', {
+        icon: 2,
+        timeout: 2000
+    })
+    throw SyntaxError();
+}
+
 /**
  * 判断两个json的key是否相等方法组
  * @param object

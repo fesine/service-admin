@@ -378,6 +378,7 @@
                 e.preventDefault()
                 //请求参数有可能修改，需要临时保存
                 this.requestParamJson = $('#requestParamArea').val()
+                isJSON(this.requestParamJson)
                 this.convertFlag = 0
                 if ($('#L_envSelect').val() !== '') {
                     $("body").mLoading({
@@ -465,8 +466,10 @@
                 e.stopPropagation()
                 e.preventDefault()
                 if (flag === 2) {
+                    isJSON($('#responseParamArea').val())
                     $('#responseParamArea').val(null)
                 } else {
+                    isJSON($('#requestParamArea').val())
                     $('#requestParamArea').val(JSON.stringify(JSON.parse($('#requestParamArea').val()),null,'\t'))
                     this.convertFlag = 1
                 }
