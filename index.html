@@ -35,6 +35,10 @@
         </div>
         <ul class="layui-nav right" lay-filter="">
             <li class="layui-nav-item" >
+                <a id="system" onclick="x_admin_show('系统更新日志','./page/system-log.html',1230,620,false)">系统更新
+                    <span v-show="systemLogCount > 0" class="layui-badge-dot" style="margin: -10px 0px 0;"></span>&nbsp;&nbsp;
+            </a></li>
+            <li class="layui-nav-item" >
                 <a id="notice" onclick="x_admin_show('消息通知','./page/message.html',1230,620,false,updateMsgCount)">消息
                     <span v-show="msgCount > 0" class="layui-badge" style="margin: -10px 0px 0;">{{msgCount}}</span>&nbsp;&nbsp;
             </a></li>
@@ -222,7 +226,8 @@
                 nickName: '',
                 superFlag: 0,
                 projectInfo: [],
-                msgCount: 0
+                msgCount: 0,
+                systemLogCount: 0
             }
         },
         beforeCreate() {
@@ -236,6 +241,13 @@
                 if (response.data.responseCode === 200) {
                     if(response.data.data){
                         this.msgCount = response.data.data.totalRecord
+                    }
+                }
+            })
+            axios.get(_hostUrl + "/systemLogs/checkUpdate").then(response => {
+                if (response.data.responseCode === 200) {
+                    if(response.data.data){
+                        this.systemLogCount = response.data.data
                     }
                 }
             })

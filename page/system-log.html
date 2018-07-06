@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>系统更新日志</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        #system-log-data {
+            margin-top: 20px;
+            margin-left: 30px;
+        }
+
+        .version{
+            border: solid 1px #8e8e8e;
+            border-radius: 5px;
+            padding: 1px 5px;
+            font-size: 14px;
+        }
+        .detail{
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid" id="systemLog">
+    <div style="margin-top: 20px;">
+        <button class="layui-btn add-button layui-btn-normal layui-hide"
+                onclick="x_admin_show('更新系统','./system-log-add.html',750,500,true)">
+            <i class="layui-icon"></i>更新系统
+        </button>
+    </div>
+    <ul class="layui-timeline" id="system-log-data">
+    </ul>
+</div>
+<script>
+    if (JSON.parse(getCookie('superFlag')) === 1) {
+        $('.add-button').removeClass('layui-hide')
+    }
+    layui.use(['layer', 'flow'], function () {
+        var layer = layui.layer,
+            flow = layui.flow
+        flow.load({
+            elem: '#system-log-data' //指定列表容器
+            , end:'没有更多更新日志了'
+            , done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.get(_hostUrl+'/systemLogs/page?pageIndex=' + page+'&pageSize=5', function (res) {
+                    //假设你的列表返回在data集合中&#xe643;&#xe63f;
+                    layui.each(res.data.resultList, function (index, item) {
+                        let check
+                        if(item.currentFlag === 1){
+                            check = '<i class="layui-icon layui-timeline-axis" style="color: red;">&#xe643;</i>'
+                        }else{
+                            check = '<i class="layui-icon layui-timeline-axis">&#xe63f;</i>'
+                        }
+                        lis.push(
+                            '<li class="layui-timeline-item">'
+                            + check +
+                            '<div class="layui-timeline-content layui-text">'+
+                                '<h3 class="layui-timeline-title"><a style="color: #01AAED;">'+item.updateTime+
+                            '</a>&nbsp;&nbsp;&nbsp;&nbsp;版本:<a class="version" href="javascript:;" title="点击回退到当前版本" onclick="backToCurrent('+item.versionNo+')">' + item.versionNo +'</a>' +
+                            '&nbsp;&nbsp;&nbsp;&nbsp;主题:<a class="version">' + item.updateTopic +'</a>' +
+                            '</h3>'+
+                                '<p class="detail">'+ item.updateDetail+'</p></div>'
+                            +'</li>'
+                        );
+                    });
+
+                    //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                    //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                    next(lis.join(''), page < res.data.totalRecord/5);
+                });
+            }
+        })
+
+    })
+    function backToCurrent (id) {
+        if (JSON.parse(getCookie('superFlag')) !== 1) {
+            return
+        }
+        alert(id)
+    }
+</script>
+</body>
+</html>
