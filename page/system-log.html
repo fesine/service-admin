@@ -74,7 +74,7 @@
                             + check +
                             '<div class="layui-timeline-content layui-text">'+
                                 '<h3 class="layui-timeline-title"><a style="color: #01AAED;">'+item.updateTime+
-                            '</a>&nbsp;&nbsp;&nbsp;&nbsp;版本:<a class="version" href="javascript:;" title="点击回退到当前版本" onclick="backToCurrent('+item.versionNo+')">' + item.versionNo +'</a>' +
+                            '</a>&nbsp;&nbsp;&nbsp;&nbsp;版本:<a class="version" href="javascript:;" title="点击回退到当前版本" onclick="backToCurrent('+ item.id+','+item.currentFlag+')">' + item.versionNo +'</a>' +
                             '&nbsp;&nbsp;&nbsp;&nbsp;主题:<a class="version">' + item.updateTopic +'</a>' +
                             '</h3>'+
                                 '<p class="detail">'+ item.updateDetail+'</p></div>'
@@ -90,11 +90,38 @@
         })
 
     })
-    function backToCurrent (id) {
+    function backToCurrent (id,currentFlag) {
         if (JSON.parse(getCookie('superFlag')) !== 1) {
+            layer.msg('您无权限回退版本', {
+                icon: 2,
+                time: 2000
+            })
             return
         }
-        alert(id)
+        if(currentFlag ===1){
+            layer.msg('当前已是正在使用版本，无法回退', {
+                icon: 2,
+                time: 2000
+            })
+            return
+        }
+        $.post(_hostUrl+'/systemLog/change',{
+            id: id
+        },function (res) {
+            if (res.responseCode === 201) {
+                layer.msg('版本回退成功', {
+                    icon: 1,
+                    time: 2000
+                },function () {
+                    window.location.reload()
+                })
+
+            } else {
+                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+            }
+        }, 'json')
+
+        return false
     }
 </script>
 </body>
