@@ -176,7 +176,7 @@
                     checkedArr[i] = data[i].id;
                 }
                 var ids = checkedArr.join(',');
-                $.putJSON(_hostUrl + "/msg/" + ids
+                $.putJSON(_hostUrl + "/msgs/" + ids
                     , null, function (res) {
                         if (res.responseCode == 201) {
                             layer.msg('您已标记成功！', {
