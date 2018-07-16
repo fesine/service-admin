@@ -141,6 +141,9 @@ $(function () {
         } else {
 
             var url = $(this).children('a').attr('_href')
+            if(!url){
+                return
+            }
             var title = $(this).find('cite').html()
             var index = $('.left-nav #nav li').index($(this))
 
