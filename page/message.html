@@ -172,6 +172,9 @@
             readyAll: function () {
                 var checkedArr = new Array();
                 var data = table.checkStatus('newMessageList').data;
+                if(data.length === 0){
+                    layer.msg('请选择需要标记的消息!', {icon: 2, time: 1500})
+                }
                 for (var i = 0; i < data.length; i++) {
                     checkedArr[i] = data[i].id;
                 }
