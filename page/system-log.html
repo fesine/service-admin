@@ -67,12 +67,12 @@
                         if(item.currentFlag === 1){
                             check = '<i class="layui-icon layui-timeline-axis" style="color: red;">&#xe643;</i>'
                         }else{
-                            check = '<i class="layui-icon layui-timeline-axis">&#xe63f;</i>'
+                            check = '<i class="layui-icon layui-timeline-axis delete-version">&#xe63f;</i>'
                         }
                         lis.push(
-                            '<li class="layui-timeline-item">'
+                            '<li class="layui-timeline-item"><a title="点击删除当前版本" onclick="delVersion('+ item.id+','+item.currentFlag+','+item.versionNo+')">'
                             + check +
-                            '<div class="layui-timeline-content layui-text">'+
+                            '</a><div class="layui-timeline-content layui-text">'+
                                 '<h3 class="layui-timeline-title"><a style="color: #01AAED;">'+item.updateTime+
                             '</a>&nbsp;&nbsp;&nbsp;&nbsp;版本:<a class="version" href="javascript:;" title="点击回退到当前版本" onclick="backToCurrent('+ item.id+','+item.currentFlag+')">' + item.versionNo +'</a>' +
                             '&nbsp;&nbsp;&nbsp;&nbsp;主题:<a class="version">' + item.updateTopic +'</a>' +
@@ -102,7 +102,7 @@
             id: id
         },function (res) {
             if (res.responseCode === 201) {
-                layer.msg(res.responseMsg, {
+                layer.msg(res.data, {
                     icon: 1,
                     time: 2000
                 },function () {
@@ -113,6 +113,42 @@
                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
             }
         }, 'json')
+
+        return false
+    }
+    function delVersion (id,currentFlag,versionNo) {
+        if (JSON.parse(getCookie('superFlag')) !== 1) {
+            layer.msg('您无权限删除版本', {
+                icon: 2,
+                time: 2000
+            })
+            return
+        }
+        if (currentFlag === 1) {
+            layer.msg('当前正在使用版本，无法删除', {
+                icon: 2,
+                time: 2000
+            })
+            return
+        }
+        layer.confirm('[<span style="color: red">' + versionNo + '</span>]版本将被彻底删除，无法恢复!', {
+            icon: 3,
+            title: '彻底删除历史版本'
+        }, function (index) {
+            $.deleteForm(_hostUrl + '/systemLog/' + id + '/' + versionNo, null, function (res) {
+                if (res.responseCode === 204) {
+                    layer.msg(res.responseMsg, {
+                        icon: 1,
+                        time: 2000
+                    }, function () {
+                        window.location.reload()
+                    })
+
+                } else {
+                    layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                }
+            })
+        })
 
         return false
     }
