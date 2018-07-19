@@ -35,15 +35,17 @@
         </div>
         <ul class="layui-nav right" lay-filter="">
             <li class="layui-nav-item" >
-                <a id="system" onclick="x_admin_show('系统更新日志','./page/system-log.html',1230,620,false)">系统更新
+                <a id="system" onclick="x_admin_show('系统更新日志','./page/system-log.html',1230,620,false)"><i
+                        class="iconfont" style="margin-right: 5px;">&#xe6ae;</i>系统更新
                     <span v-show="systemLogCount > 0" class="layui-badge-dot" style="margin: -10px 0px 0;"></span>&nbsp;&nbsp;
             </a></li>
             <li class="layui-nav-item" >
-                <a id="notice" onclick="x_admin_show('消息通知','./page/message.html',1230,620,false,updateMsgCount)">消息
+                <a id="notice" onclick="x_admin_show('消息通知','./page/message.html',1230,620,false,updateMsgCount)">
+                    <i class="iconfont" style="margin-right: 5px;">&#xe69f;</i>消息
                     <span v-show="msgCount > 0" class="layui-badge" style="margin: -10px 0px 0;">{{msgCount}}</span>&nbsp;&nbsp;
             </a></li>
             <li class="layui-nav-item">
-                <a href="javascript:;">{{ nickName }}</a>
+                <a href="javascript:;"><i class="iconfont" style="margin-right: 5px;">&#xe6b8;</i>{{ nickName }}</a>
                 <dl class="layui-nav-child"> <!-- 二级菜单 -->
                     <dd><a onclick="x_admin_show('个人信息','./page/user-info.html')">个人信息</a></dd>
                     <dd><a onclick="x_admin_show('修改密码','./page/password.html',600,400)">修改密码</a></dd>

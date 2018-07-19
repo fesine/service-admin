@@ -98,18 +98,11 @@
             })
             return
         }
-        if(currentFlag ===1){
-            layer.msg('当前已是正在使用版本，无法回退', {
-                icon: 2,
-                time: 2000
-            })
-            return
-        }
         $.post(_hostUrl+'/systemLog/change',{
             id: id
         },function (res) {
             if (res.responseCode === 201) {
-                layer.msg('版本回退成功', {
+                layer.msg(res.responseMsg, {
                     icon: 1,
                     time: 2000
                 },function () {
