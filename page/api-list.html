@@ -114,6 +114,11 @@
                                         <i class="iconfont">&#xe699;</i>
                                         <cite>所有接口</cite></a>
                                 </li>
+                                <li id="myApi">
+                                    <a class="backup" href="javascript:;">
+                                        <i class="iconfont">&#xe6b5;</i>
+                                        <cite>我的接口</cite></a>
+                                </li>
                                 <li id="backupContent">
                                     <a class="backup" href="javascript:;" lay-filter="backup">
                                         <i class="iconfont">&#xe69d;</i>
@@ -426,6 +431,17 @@
             apiTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
+                }
+            })
+        })
+        $('#myApi').click(function (d) {
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的接口数据
+            apiTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
+                    , creator: getCookie('username')
                 }
             })
         })

@@ -75,6 +75,9 @@
         loadJsonDataToForm(editArray)
         //渲染角色
         for(var i=1;i<userTypeArray.length;i++){
+            if (getCookie('superFlag') !== '1' && i === 1) {
+                continue;
+            }
             if(i=== editArray.userType){
                 $('#L_userType').append("<input type='radio' name='userType' value='" + i + "' title='" + userTypeArray[i] + "' lay-skin='primary' checked> ")
             }else {

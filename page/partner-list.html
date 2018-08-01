@@ -83,6 +83,16 @@
                 <i class="layui-icon"></i>新增成员
             </button>
         </xblock>
+        <xblock v-show="projectStatus == 1 && userType == 1 && superFlag != 1">
+            <button class="layui-btn"
+                    onclick="x_admin_show('添加成员','./partner-add.html',650,450)">
+                <i class="layui-icon"></i>添加已有用户
+            </button>
+            <button class="layui-btn layui-btn-warm"
+                    onclick="x_admin_show('添加成员','./partner-add-new.html',650,450)">
+                <i class="layui-icon"></i>添加新成员
+            </button>
+        </xblock>
         <div class="layui-row">
             <div class="layui-col-md2">
                 <table class="layui-table nohover">
@@ -154,6 +164,7 @@
                             $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
                                 if (res.responseCode == 200) {
                                     myFlag = res.data
+                                    vm.userType = res.data
                                 }
                             })
                         } else {
@@ -180,7 +191,6 @@
                 , {
                     field: 'partnerNickName',
                     title: '成员名称',
-                    width: 240,
                     align: 'center',
                     templet: function (d) {
                         if (d.userType == 0) {
@@ -205,9 +215,9 @@
                     }
                 }
                 , {
-                    field: 'lastUpdateTime', title: '最后修改时间', width: 180, align: 'center'
+                    field: 'lastUpdateTime', title: '最后修改时间', width: 200, align: 'center'
                 }
-                , {title: '操作', fixed: 'right', align: 'center', toolbar: '#partnerBar'}
+                , {title: '操作', width: 160,fixed: 'right', align: 'center', toolbar: '#partnerBar'}
             ]]
             , request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
@@ -290,6 +300,7 @@
         data() {
             return {
                 superFlag: 0,
+                userType:2,
                 projectStatus: 1
             }
         },

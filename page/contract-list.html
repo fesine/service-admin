@@ -114,6 +114,11 @@
                                         <i class="iconfont">&#xe699;</i>
                                         <cite>所有契约</cite></a>
                                 </li>
+                                <li id="myContract">
+                                    <a class="backup" href="javascript:;">
+                                        <i class="iconfont">&#xe6b5;</i>
+                                        <cite>我的契约</cite></a>
+                                </li>
                                 <li id="backupContent">
                                     <a class="backup" href="javascript:;" lay-filter="backup">
                                         <i class="iconfont">&#xe69d;</i>
@@ -425,6 +430,17 @@
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                     , removeFlag: 1
+                }
+            })
+        })
+        $('#myContract').click(function (d) {
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的契约数据
+            contractTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
+                    , creator: getCookie('username')
                 }
             })
         })
