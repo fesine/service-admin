@@ -41,6 +41,9 @@
     </div>
 
     <script>
+        if(!getBrowserInfo()){
+            alert("本系统只支持chrome浏览器，请使用chrome浏览器重新打开!")
+        }
         $(function  () {
             var username = getCookie('username')
             var remember = getCookie('remember')

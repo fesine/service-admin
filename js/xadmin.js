@@ -966,3 +966,26 @@ function userTypeRW() {
         $('.admin-permission').addClass('layui-hide')
     }
 }
+
+function getBrowserInfo () {
+    var ua = navigator.userAgent.toLocaleLowerCase();
+    if (ua.match(/chrome/) != null) {
+        var is360 = _mime("type", "application/vnd.chromium.remoting-viewer");
+
+        function _mime (option, value) {
+            var mimeTypes = navigator.mimeTypes;
+            for (var mt in mimeTypes) {
+                if (mimeTypes[mt][option] == value) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (is360) {
+            return false
+        } else {
+           return true
+        }
+    }
+    return false
+}
