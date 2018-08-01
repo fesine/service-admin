@@ -171,6 +171,13 @@
                                        lay-text="开启|关闭">
                                 <br>
                             </div>
+                            <div>
+                                <button class="layui-btn layui-btn-warm layui-btn-fluid"
+                                        @click="addTestHeader($event)"
+                                        lay-filter="executeTest">添加报文头
+                                </button>
+                            </div>
+                            <br>
                             <button class="layui-btn layui-btn-normal layui-btn-fluid"
                                     @click="executeTest($event)"
                                     lay-submit v-if="saveFlag"
@@ -372,6 +379,12 @@
                 e.preventDefault()
                 $('#apiData').val(JSON.stringify(this.apiDataList[index]))
                 x_admin_show('修改接口', './case-api-edit.html?index=' + index, 600, 400)
+            },
+            addTestHeader (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                //根据apiId加载后台报文头数据
+                x_admin_show('添加报文头', './test-header-add.html?apiId=0' + '&caseGroupId=' + this.caseConfId, 600, 550, true)
             },
             executeTest (e) {
                 e.stopPropagation()

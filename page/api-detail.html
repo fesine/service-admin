@@ -209,6 +209,12 @@
                             </select>
                             <div>
                             <br>
+                            <button class="layui-btn layui-btn-warm layui-btn-fluid"
+                                    @click="addTestHeader($event)"
+                                    lay-filter="executeTest">添加报文头
+                            </button></div>
+                            <div>
+                            <br>
                             <button class="layui-btn layui-btn-normal layui-btn-fluid"
                                     @click="executeTest($event)"
                                     lay-submit v-if="groupId !=-1"
@@ -784,6 +790,12 @@
                         }
                     })
                 }
+            },
+            addTestHeader (e) {
+                e.stopPropagation()
+                e.preventDefault()
+                //根据apiId加载后台报文头数据
+                x_admin_show('添加报文头', './test-header-add.html?caseGroupId=0' + '&apiId=' + this.apiInfo.id, 600, 550, true)
             },
             testHistory (e) {
                 e.stopPropagation()

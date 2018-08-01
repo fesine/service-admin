@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        tr {
+            cursor: pointer;
+        }
+
+        .layui-table-cell {
+            padding: 0 2px;
+        }
+
+        .req-checkbox {
+            width: 45px;
+            height: 36px;
+            text-align: center;
+            border: solid 1px #e6e6e6;
+        }
+        .lastRow{
+            padding-left: 2px;
+        }
+
+        .req-manager {
+            width: 135px;
+            height: 36px;
+            text-align: center;
+            border: solid 1px #e6e6e6;
+
+        }
+
+        .req-manager-button{
+            margin: 10px;
+        }
+        .req-manager-button a{
+            font-size: 16px;
+            margin-left:10px;
+        }
+        .req-manager-button a:hover{
+            color: red;
+        }
+
+        .req-checkbox-sub {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .req-ul li {
+            margin-top: 1px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="test-header">
+    <div class="x-body layui-anim layui-anim-up" style="padding-top: 0px">
+        <form class="layui-form">
+            <div>
+                <button class="layui-btn  layui-btn-normal" lay-filter="edit"
+                        lay-submit="">
+                    保存
+                </button>
+                <ul class="req-ul">
+                    <li class="index" v-for='(list,index) in testHeaderList'>
+                        <form>
+                            <div class="layui-inline">
+                                <div class="layui-input-inline"
+                                     style="width: 298px;">
+                                    <input type="text" name="paramKey" placeholder="参数名"
+                                           v-model="list.paramKey" readonly=""
+                                           autocomplete="off" class="layui-input lastRow">
+                                    <!--绑定list id-->
+                                </div>
+                                <div class="layui-input-inline"
+                                     style="width: 198px;margin: 0;!important;">
+                                    <input type="text" name="paramName" placeholder="参数说明"
+                                           v-model="list.paramName" readonly=""
+                                           autocomplete="off" class="layui-input lastRow">
+                                </div>
+                                <div class="layui-input-inline" style="width: 237px;">
+                                    <input type="text" name="paramValue" placeholder="可选，非必输"
+                                           v-model="list.paramValue"
+                                           autocomplete="off" class="layui-input lastRow">
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'layer', 'table'], function () {
+        $ = layui.jquery
+        var form = layui.form
+            , layer = layui.layer
+            , table = layui.table
+        form.render()
+        //自定义验证规则
+        //监听提交
+        form.on('submit(edit)', function (data) {
+            event.stopPropagation()
+            event.preventDefault()
+            let params = {
+                caseGroupId:vm.caseGroupId,
+                apiId:vm.apiId,
+                headerParams:JSON.stringify(vm.testHeaderList)
+            }
+            $.post(_hostUrl + '/testHeader', params, function (res) {
+                if (res.responseCode == 201) {
+                    layer.msg('添加报文头成功!', {
+                        icon: 1,
+                        time: 2000
+                    }, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name)
+                        //关闭当前frame
+                        parent.layer.close(index)
+                    })
+                } else {
+                    layer.msg(res.responseMsg)
+                }
+            })
+            return false
+        })
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#test-header',
+        data () {
+            return {
+                caseGroupId: 0,
+                apiId: 0,
+                testHeaderList: []
+            }
+        },
+        beforeCreate () {
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            let _this = this
+            this.caseGroupId = getUrlKey('caseGroupId')
+            this.apiId = getUrlKey('apiId')
+            $.get(_hostUrl + '/testHeaders?caseGroupId='+ this.caseGroupId+'&apiId='+ this.apiId, function (res){
+                if (res.responseCode === 200 && res.data.length > 0) {
+                    _this.testHeaderList = new Array()
+                    let array = res.data
+                    for(var i = 0;i < array.length;i++){
+                        _this.testHeaderList.push(
+                            {
+                                paramKey: array[i].paramKey,
+                                paramName: array[i].paramName,
+                                paramValue: array[i].paramValue
+                            }
+                        )
+                    }
+                }else{
+                    _this.testHeaderList = [
+                        {
+                            paramKey: 'transBranch',
+                            paramName: '交易机构',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'transMedium',
+                            paramName: '渠道号',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'transSeqNo',
+                            paramName: '渠道流水号',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'sysIndicator',
+                            paramName: '系统编号',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'servcScn',
+                            paramName: '服务场景码',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'userId',
+                            paramName: '用户id',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'transTeller',
+                            paramName: '柜员号',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'tellerSeqNo',
+                            paramName: '柜员流水号',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'termId',
+                            paramName: '终端设备编号',
+                            paramValue: ''
+                        },
+
+                        {
+                            paramKey: 'bizTrackNo',
+                            paramName: '业务跟踪号',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'authTransSuccFlag',
+                            paramName: '交易授权是否通过标志',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'authTransAmtSuccFlag',
+                            paramName: '额度授权是否通过标志',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'pageSize',
+                            paramName: '本页记录数',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'pageIndex',
+                            paramName: '页码,从1开始',
+                            paramValue: ''
+                        },
+                        {
+                            paramKey: 'appPushId',
+                            paramName: 'app推送ID',
+                            paramValue: ''
+                        }
+                    ]
+                }
+            })
+        }
+    })
+</script>
+</body>
+
+</html>
