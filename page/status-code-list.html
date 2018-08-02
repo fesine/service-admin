@@ -46,7 +46,7 @@
 </head>
 
 <body class="layui-anim layui-anim-up">
-<div id="project">
+<div id="status-code">
     <div class="x-nav">
       <span class="layui-breadcrumb">
         <a href='javascript:parent.location.href="../index.html"'>首页</a>
@@ -61,12 +61,16 @@
     <div class="x-body">
         <xblock>
             <div class="layui-row">
-                <div class="layui-col-xs6 admin-permission">
+                <div class="layui-col-xs6 admin-permission"
+                     v-show="projectStatus == 1 && (superFlag == 1 || userType < 3)">
                     <button class="layui-btn" onclick="x_admin_show('添加状态码','./status-code-add.html',600,400)"><i
                             class="layui-icon"></i>添加状态码
                     </button>
-                    <button class="layui-btn layui-btn-warm" id="importFile">
+                    <button class="layui-btn layui-btn-normal" id="importFile">
                         <i class="layui-icon">&#xe67c;</i>导入状态码表
+                    </button>
+                    <button class="layui-btn layui-btn-warm  layui-btn-sm" data-type="downloadFile">
+                        <i class="iconfont">&#xe714;</i>下载模板
                     </button>
                     <button class="layui-btn layui-btn-danger" data-type="deleteBatch" style="margin-left:10px;"><i
                             class="layui-icon">&#xe640;</i>批量删除
@@ -180,8 +184,16 @@
                     where: {
                         projectId: parseInt(getCookie('projectId')),
                         codeDesc: $("#searchKey").val()
-                    }
+                    }, page: {curr: 1}
                 })
+            },
+            downloadFile:function () {
+                var $eleForm = $("<form method='get'></form>");
+                $eleForm.attr("action", "../assets/zip/template.zip");
+                $(document.body).append($eleForm);
+
+                //提交表单，实现下载
+                $eleForm.submit();
             },
             //加入批量删除功能
             deleteBatch: function () {
@@ -203,7 +215,7 @@
                                     where: {
                                         projectId: parseInt(getCookie('projectId'))
                                         , groupId: parseInt($('#groupId').val())
-                                    }
+                                    }, page: {curr: 1}
                                 })
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
@@ -238,7 +250,7 @@
                                     where: {
                                         projectId: parseInt(getCookie('projectId'))
                                         , groupId: parseInt($('#groupId').val())
-                                    }
+                                    }, page: {curr: 1}
                                 })
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
@@ -314,7 +326,7 @@
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
                                 , groupId: parseInt($('#groupId').val())
-                            }
+                            }, page: {curr: 1}
                         })
                     })
                 } else {
@@ -347,8 +359,17 @@
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
                                 , groupId: item.id
-                            }
+                            },page:{curr:1}
                         })
+                        let permissionList = JSON.parse(getCookie('userList'))
+                        for (let i = 0; i < permissionList.length; i++) {
+                            let groupId = permissionList[i].groupId
+                            let userType = permissionList[i].userType
+                            if (parseInt(groupId) === parseInt($('#groupId').val())) {
+                                vm.userType = userType
+                                return false
+                            }
+                        }
                     }
                 })
             }
@@ -362,7 +383,7 @@
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                     , groupId: 0
-                }
+                }, page: {curr: 1}
             })
         })
         $('#allCode').click(function (d) {
@@ -372,9 +393,27 @@
             statusCodeTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                }
+                }, page: {curr: 1}
             })
         })
+
+    })
+</script>
+<script>
+    let vm = new Vue({
+        el: '#status-code',
+        data () {
+            return {
+                superFlag: 0,
+                userType: 3,
+                projectStatus: 1
+            }
+        },
+        //渲染之前加载cookie数据
+        beforeMount () {
+            this.superFlag = getCookie('superFlag')
+            this.projectStatus = getCookie('projectStatus')
+        }
     })
 </script>
 </body>

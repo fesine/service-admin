@@ -78,7 +78,8 @@
     <div class="x-body">
         <xblock>
         <div class="layui-row">
-            <div class="layui-col-xs3 admin-permission">
+            <div class="layui-col-xs3 admin-permission"
+                 v-show="projectStatus == 1 && (superFlag == 1 || userType < 3)">
                 <button class="layui-btn"
                         onclick="addApi()">
                     <i class="layui-icon"></i>新增接口
@@ -259,7 +260,7 @@
                         projectId: parseInt(getCookie('projectId')),
                         userId: parseInt(getCookie('userId')), //查询当前用户所在所有组的数据
                         serviceCode: $("#searchKey").val()
-                    }
+                    }, page: {curr: 1}
                 })
             }
         };
@@ -405,8 +406,17 @@
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
                                 , groupId: item.id
-                            }
+                            }, page: {curr: 1}
                         })
+                        let permissionList = JSON.parse(getCookie('userList'))
+                        for (let i = 0; i < permissionList.length; i++) {
+                            let groupId = permissionList[i].groupId
+                            let userType = permissionList[i].userType
+                            if (parseInt(groupId) === parseInt($('#groupId').val())) {
+                                vm.userType = userType
+                                return false
+                            }
+                        }
                     }
                 })
             }
@@ -421,7 +431,7 @@
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                     , removeFlag: 1
-                }
+                }, page: {curr: 1}
             })
         })
         $('#allApi').click(function (d) {
@@ -431,7 +441,7 @@
             apiTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                }
+                }, page: {curr: 1}
             })
         })
         $('#myApi').click(function (d) {
@@ -442,7 +452,7 @@
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                     , creator: getCookie('username')
-                }
+                }, page: {curr: 1}
             })
         })
     })
@@ -462,6 +472,7 @@
         data () {
             return {
                 superFlag: 0,
+                userType:3,
                 projectStatus: 1
             }
         },

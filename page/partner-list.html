@@ -173,6 +173,7 @@
                         // 查询点击分组的成员数据
                         partnerTable.reload({
                             url: _hostUrl + '/partner/' + item.id
+                            , page: {curr: 1}
                         })
                     }
                 })

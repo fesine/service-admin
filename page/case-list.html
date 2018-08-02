@@ -191,7 +191,7 @@
                     where: {
                         projectId: parseInt(getCookie('projectId')),
                         caseName: $("#searchKey").val()
-                    }
+                    }, page: {curr: 1}
                 })
             }
         };
@@ -276,7 +276,7 @@
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
                                 , groupId: item.id
-                            }
+                            }, page: {curr: 1}
                         })
                     }
                 })
@@ -290,7 +290,7 @@
             caseTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                }
+                }, page: {curr: 1}
             })
         })
     })
