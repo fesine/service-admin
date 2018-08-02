@@ -102,17 +102,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!--<tr>-->
-                    <!--<td style="padding: 0px;">-->
-                    <!--<ul>-->
-                    <!--<li id="allPartner">-->
-                    <!--<a class="backup" href="javascript:;">-->
-                    <!--<i class="iconfont">&#xe699;</i>-->
-                    <!--<cite>所有成员</cite></a>-->
-                    <!--</li>-->
-                    <!--</ul>-->
-                    <!--</td>-->
-                    <!--</tr>-->
                     <tr>
                     </tr>
                     <tr>
@@ -137,6 +126,9 @@
     {{#  if(d.userType != 0 && myFlag < 2 && d.userType> myFlag){ }}
     <a class="layui-btn layui-btn-xs" lay-event="edit">修改角色</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even lay-event="delete">移出分组</a>
+    {{#  } }}
+    {{#  if(getCookie('superFlag') === '1' && d.userType != 0){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="reset">重置密码</a>
     {{#  } }}
 
 </script>
@@ -206,7 +198,7 @@
                     }
                 }
                 , {
-                    field: 'userType', title: '角色', width: 180, align: 'center'
+                    field: 'userType', title: '角色', width: 160, align: 'center'
                     , templet: function (d) {
                         if (d.userType == 0 || d.userType == 1) {
                             return '<a style="color: red">' + userTypeArray[d.userType] + '</a>'
@@ -218,7 +210,7 @@
                 , {
                     field: 'lastUpdateTime', title: '最后修改时间', width: 200, align: 'center'
                 }
-                , {title: '操作', width: 160,fixed: 'right', align: 'center', toolbar: '#partnerBar'}
+                , {title: '操作', width: 220,fixed: 'right', align: 'center', toolbar: '#partnerBar'}
             ]]
             , request: {
                 pageName: 'pageIndex' //页码的参数名称，默认：page
@@ -273,6 +265,25 @@
             } else if (obj.event === 'edit') {
                 $("#editPartner").val(JSON.stringify(data))
                 x_admin_show('修改角色', './partner-edit.html', 600, 350)
+            } else if (obj.event === 'reset') {
+                layer.confirm('确定重置[<span style="color: red">' + data.partnerNickName + '</span>]的密码吗?', {
+                    icon: 3,
+                    title: '重置密码'
+                }, function (index) {
+                    //重置密码
+                    $.post(_hostUrl + "/user/resetPassword", {
+                        id: data.userId
+                    }, function (res) {
+                        if (res.responseCode == 201) {
+                            layer.msg('重置成功，密码为123456', {
+                                icon: 1,
+                                time: 2000
+                            })
+                        } else {
+                            layer.msg(res.responseMsg)
+                        }
+                    })
+                })
             }
         })
 

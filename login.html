@@ -38,6 +38,9 @@
             <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
             <hr class="hr20" >
         </form>
+        <div>
+            <a style="display:inline-block;float: right;" href="javascript:;" onclick="forgetPassword()">忘记密码？</a>
+        </div>
     </div>
 
     <script>
@@ -95,7 +98,9 @@
             });
         })
 
-
+        function forgetPassword () {
+            layer.confirm("请联系通过RTX联系系统管理员：李永伟，进行重置密码！" , {icon:1,title:'忘记密码'})
+        }
     </script>
 </body>
 </html>
