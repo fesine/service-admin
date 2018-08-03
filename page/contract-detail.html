@@ -103,6 +103,8 @@
                                         <i class="iconfont">&#xe69e;</i>
                                     </a>
                                     <a class="change-rely-service" href="javascript:;" v-if="contract.apiId" @click="openApi(contract.apiId)" title="点击查看接口信息">[接口]</a>
+                                    <a class="change-rely-service" href="javascript:;" v-else-if="userType < 3" @click="addApi()" title="为当前契约添加接口">[<i
+                                            class="iconfont">&#xe6b9;</i>]</a>
                                 </h1>
                                 <p class="contract_info">创建者：{{contract.creator}}
                                     发布时间：{{contract.createTime|convertDate}}</p>
@@ -505,6 +507,12 @@
             },
             openApi:function (apiId) {
                 x_admin_show('接口详情', './api-detail.html?id='+apiId+'&groupId='+ this.groupId)
+            },
+            addApi:function () {
+                var index = parent.layer.getFrameIndex(window.name)
+                //关闭当前frame
+                parent.layer.close(index)
+                parent.x_admin_show('添加接口', './api-add.html?contractId='+ this.contractId, 600, 550, true)
             },
             editContract(contractId){
                 var index = parent.layer.getFrameIndex(window.name)

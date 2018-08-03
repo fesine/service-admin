@@ -86,11 +86,24 @@
                 </button>
             </div>
             <div class="layui-col-xs9">
+                <div class="layui-inline" style="width: 200px;">
+                    <form class="layui-form">
+                        <select name="apiFlag" id="apiFlag">
+                            <option value="">全部契约</option>
+                            <option value="0">未添加接口的契约</option>
+                            <option value="1">已添加接口的契约</option>
+                        </select>
+                    </form>
+                </div>
                     <div class="layui-inline" style="width: 240px;">
                         <input id="searchKey" type="text" name="searchKey" placeholder="请输入契约名称或编号模糊查询" autocomplete="off" class="layui-input">
                     </div>
-                    <button class="layui-btn" data-type="reload"><i
+                <div class="layui-btn-group">
+                    <button id="queryBtn" class="layui-btn" data-type="reload"><i
                             class="layui-icon">&#xe615;</i></button>
+                    <button id="restBtn" class="layui-btn layui-btn-warm" data-type="reset"><i
+                            class="iconfont">&#xe6b7;</i></button>
+                </div>
             </div>
         </div>
         </xblock>
@@ -176,23 +189,14 @@
     {{#  } }}
 </script>
 <script type="text/html" id="showCode">
-    {{#  if(d.checkStatus == 0){ }}
+    {{#  if(d.apiFlag > 0){ }}
     <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
-    {{# } else if(d.checkStatus == 1){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-green" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
-    {{# } else if(d.checkStatus == 2){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-orange" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
     {{# } else { }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-black"
-                                                      style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>
+    <span title="点击查看详情"><a href="javascript:;" style="margin-left: 16px;">{{d.serviceCode}}</a></span>
     {{#  } }}
 </script>
 <script type="text/html" id="showName">
-    {{#  if(d.apiFlag > 0){ }}
-    <span title="点击查看详情"><a href="javascript:;" style="color: #ff3c0a!important;;">{{d.serviceName}}</a></span>
-    {{# } else { }}
     <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
-    {{#  } }}
 </script>
 <script>
     userTypeRW()
@@ -248,13 +252,30 @@
         //加入搜索功能
         var $ = layui.$, active = {
             reload: function () {
-                contractTable.reload({
-                    where: {
+                let groupId = $('#groupId').val()
+                let whereObj = {}
+                if(groupId === ''){
+                    whereObj = {
                         projectId: parseInt(getCookie('projectId')),
-                        userId: parseInt(getCookie('userId')), //查询当前用户所在所有组的数据
-                        serviceCode: $("#searchKey").val()
-                    }, page: {curr: 1}
+                        serviceCode: $("#searchKey").val(),
+                        apiFlag: $("#apiFlag").val()
+                    }
+                }else{
+                    whereObj = {
+                        projectId: parseInt(getCookie('projectId')),
+                        groupId: groupId, //查询当前选中分组的数据
+                        serviceCode: $("#searchKey").val(),
+                        apiFlag: $("#apiFlag").val()
+                    }
+                }
+                contractTable.reload({
+                    where: whereObj, page: {curr: 1}
                 })
+            },
+            reset:function () {
+                $("#apiFlag").val('')
+                $("#searchKey").val('')
+                layui.form.render('select')
             }
         };
         $('.layui-col-xs9 .layui-btn').on('click', function () {

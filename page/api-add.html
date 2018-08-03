@@ -526,12 +526,27 @@
                     for (var i = 0; i < serviceArray.length; i++) {
                         $('#L_contractId').append(new Option(serviceArray[i].serviceCode, serviceArray[i].id))// 下拉菜单里添加元素
                     }
-                    //默认添加第一组数据
-                    $('#L_serviceCode').val(serviceArray[0].serviceCode)
-                    $('#L_contractId').val(serviceArray[0].id)
-                    $('#L_serviceName').val(serviceArray[0].serviceName)
-                    $('#L_versionNo').val(serviceArray[0].versionNo)
-                    $('#L_detailMemo').val(serviceArray[0].memo)
+                    let cId = getUrlKey('contractId')
+                    if (cId && parseInt(cId) > 0) {
+                        //查询服务契约数据加载到表单中
+                        $.get(_hostUrl + "/contract/" + cId, function (res) {
+                            if (res.responseCode === 200) {
+                                let data = res.data
+                                $('#L_serviceCode').val(data.serviceCode)
+                                $('#L_contractId').val(data.id)
+                                $('#L_serviceName').val(data.serviceName)
+                                $('#L_versionNo').val(data.versionNo)
+                                $('#L_detailMemo').val(data.memo)
+                            }
+                        })
+                    }else{
+                        //默认添加第一组数据
+                        $('#L_serviceCode').val(serviceArray[0].serviceCode)
+                        $('#L_contractId').val(serviceArray[0].id)
+                        $('#L_serviceName').val(serviceArray[0].serviceName)
+                        $('#L_versionNo').val(serviceArray[0].versionNo)
+                        $('#L_detailMemo').val(serviceArray[0].memo)
+                    }
                     $('#addButton').removeClass('layui-btn-disabled')
                 }
             }
@@ -562,64 +577,62 @@
         for (var i = 0; i < groupArray.length; i++) {
             $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
         }
-
-
-        //如果是复制的则需要初始化数据
-        var editData = parent.$("#editApi").val();
-        if (editData != '') {
-            var editArray = JSON.parse(editData)
-            vm.requestParamList = editArray.requestParam
-            vm.responseParamList = editArray.responseParam
-            loadJsonDataToForm(editArray)
-            if (getUrlKey('copy') === '1') {
-                //myId赋值
-                for (var i = 0; i < vm.requestParamList.length; i++) {
-                    vm.requestParamList[i].myId = vm.nextId
-                    vm.requestParamList[i].id = null
-                    vm.nextId++
-                }
-                //添加一行空表单备用
-                for (var i = 0; i < vm.responseParamList.length; i++) {
-                    vm.responseParamList[i].myId = vm.respNextId
-                    vm.responseParamList[i].id = null
-                    vm.respNextId++
-                }
-                vm.requestParamList.push({
-                    myId: vm.nextId++,
-                    paramKey: '',
-                    paramName: '',
-                    paramType: 1,
-                    paramNullFlag: 1,
-                    paramLength: '',
-                    paramValue: '',
-                    paramDesc: '',
-                })
-                vm.responseParamList.push({
-                    myId: vm.respNextId++,
-                    paramKey: '',
-                    paramName: '',
-                    paramType: 1,
-                    paramNullFlag: 1,
-                    paramLength: '',
-                    paramValue: '',
-                    paramDesc: '',
-                })
-            }
-        } else {
-            if(!groupId || groupId===''){
-                $('#L_groupCode').val(groupArray[0].groupCode)
-                $('#L_groupId').val(groupArray[0].id)
-            }else{
-                $('#L_groupId').val(groupId)
-                $.each(groupArray,function (index, item) {
-                    if(parseInt(groupId) === parseInt(item.id)){
-                        $('#L_groupCode').val(item.groupCode)
-                        return false
+            //如果是复制的则需要初始化数据
+            var editData = parent.$("#editApi").val();
+            if (editData && editData != '') {
+                var editArray = JSON.parse(editData)
+                vm.requestParamList = editArray.requestParam
+                vm.responseParamList = editArray.responseParam
+                loadJsonDataToForm(editArray)
+                if (getUrlKey('copy') === '1') {
+                    //myId赋值
+                    for (var i = 0; i < vm.requestParamList.length; i++) {
+                        vm.requestParamList[i].myId = vm.nextId
+                        vm.requestParamList[i].id = null
+                        vm.nextId++
                     }
-                })
+                    //添加一行空表单备用
+                    for (var i = 0; i < vm.responseParamList.length; i++) {
+                        vm.responseParamList[i].myId = vm.respNextId
+                        vm.responseParamList[i].id = null
+                        vm.respNextId++
+                    }
+                    vm.requestParamList.push({
+                        myId: vm.nextId++,
+                        paramKey: '',
+                        paramName: '',
+                        paramType: 1,
+                        paramNullFlag: 1,
+                        paramLength: '',
+                        paramValue: '',
+                        paramDesc: '',
+                    })
+                    vm.responseParamList.push({
+                        myId: vm.respNextId++,
+                        paramKey: '',
+                        paramName: '',
+                        paramType: 1,
+                        paramNullFlag: 1,
+                        paramLength: '',
+                        paramValue: '',
+                        paramDesc: '',
+                    })
+                }
+            } else {
+                if (!groupId || groupId === '') {
+                    $('#L_groupCode').val(groupArray[0].groupCode)
+                    $('#L_groupId').val(groupArray[0].id)
+                } else {
+                    $('#L_groupId').val(groupId)
+                    $.each(groupArray, function (index, item) {
+                        if (parseInt(groupId) === parseInt(item.id)) {
+                            $('#L_groupCode').val(item.groupCode)
+                            return false
+                        }
+                    })
+                }
+                $('#L_projectId').val(parseInt(getCookie('projectId')))
             }
-            $('#L_projectId').val(parseInt(getCookie('projectId')))
-        }
         //根据groupId查询该组下的所有合约信息
         getServiceCode(form)
         form.render()
