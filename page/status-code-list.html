@@ -108,6 +108,11 @@
                                         <i class="iconfont">&#xe6ae;</i>
                                         <cite>系统状态码</cite></a>
                                 </li>
+                                <li id="myCode">
+                                    <a class="backup" href="javascript:;" lay-filter="backup">
+                                        <i class="iconfont">&#xe6b5;</i>
+                                        <cite>我的状态码</cite></a>
+                                </li>
                             </ul>
                         </td>
                     </tr>
@@ -393,6 +398,17 @@
             statusCodeTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
+                }, page: {curr: 1}
+            })
+        }),
+        $('#myCode').click(function (d) {
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的接口数据
+            statusCodeTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId')),
+                    creator: getCookie('username')
                 }, page: {curr: 1}
             })
         })
