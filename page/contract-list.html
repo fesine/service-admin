@@ -188,7 +188,11 @@
     {{#  } }}
 </script>
 <script type="text/html" id="showName">
+    {{#  if(d.apiFlag > 0){ }}
+    <span title="点击查看详情"><a href="javascript:;" style="color: #ff3c0a!important;;">{{d.serviceName}}</a></span>
+    {{# } else { }}
     <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
+    {{#  } }}
 </script>
 <script>
     userTypeRW()

@@ -149,12 +149,54 @@
     {{#  } }}
 </script>
 <script>
+
     userTypeRW()
     layui.use(['table', 'upload','tree'], function () {
         var table = layui.table
             , upload = layui.upload
             , tree = layui.tree
+            ,$ = layui.$
         var groupArray
+        // 获取分组列表
+        $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
+            //如果不存在分组怎么办？
+            if (res.responseCode != 200) {
+                layer.msg(res.responseMsg)
+                checkLogin()
+                return
+            }
+            groupArray = res.data
+            if (!groupArray || groupArray.length == 0) {
+                layer.msg("分组不存在，请先创建分组!")
+                return
+            } else {
+                $('#groupArray').val(JSON.stringify(groupArray))
+                layui.tree({
+                    elem: '#groupTree' //传入元素选择器
+                    , nodes: groupArray
+                    , click: function (item) { //点击节点回调
+                        changeBackground(item.name)
+                        $('#groupId').val(item.id)
+                        // 查询点击分组的接口数据
+                        statusCodeTable.reload({
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: item.id
+                            }, page: {curr: 1}
+                        })
+                        let permissionList = JSON.parse(getCookie('userList'))
+                        for (let i = 0; i < permissionList.length; i++) {
+                            let groupId = permissionList[i].groupId
+                            let userType = permissionList[i].userType
+                            if (parseInt(groupId) === parseInt($('#groupId').val())) {
+                                vm.userType = userType
+                                return false
+                            }
+                        }
+                    }
+                })
+            }
+        })
         //第一个实例
         var statusCodeTable = table.render({
             elem: '#statusCodeList'
@@ -165,8 +207,17 @@
             , page: true //开启分页
             , cols: [[ //表头
                 {field: 'checkbox', title: 'checkbox', width: 40, checkbox: true, align: 'center'}
-                , {field: 'id', title: 'ID', width: 80, sort: true, align: 'center'}
-                , {field: 'code', title: '状态码', width: 240, align: 'center'}
+                , {field: 'groupId', title: '分组', width: 160, align: 'center', templet:function (d) {
+                    let str = '系统状态码'
+                    for(var i = 0;i<groupArray.length;i++){
+                            if(d.groupId === groupArray[i].id){
+                                str = groupArray[i].name
+                                break
+                            }
+                        }
+                        return str
+                    }}
+                , {field: 'code', title: '状态码', width: 160, align: 'center'}
                 , {field: 'codeDesc', title: '描述', width: 400, align: 'center'}
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#statusCodeBar'}
             ]], request: {
@@ -183,7 +234,7 @@
             }
         })
         //加入搜索功能
-        var $ = layui.$, active = {
+        var active = {
             search: function () {
                 statusCodeTable.reload({
                     where: {
@@ -216,11 +267,25 @@
                                     icon: 1,
                                     time: 2000
                                 })
-                                statusCodeTable.reload({
-                                    where: {
+                                let whereObj = {}
+                                if ($('#groupId').val() === '') {
+                                    //所有的状态码
+                                    whereObj = {projectId: parseInt(getCookie('projectId'))}
+                                } else if (parseInt($('#groupId').val()) === -1) {
+                                    //我的状态码
+                                    whereObj = {
+                                        projectId: parseInt(getCookie('projectId')),
+                                        creator: getCookie('username')
+                                    }
+                                } else {
+                                    //正常分组的状态码
+                                    whereObj = {
                                         projectId: parseInt(getCookie('projectId'))
                                         , groupId: parseInt($('#groupId').val())
-                                    }, page: {curr: 1}
+                                    }
+                                }
+                                statusCodeTable.reload({
+                                    where: whereObj, page: {curr: 1}
                                 })
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
@@ -251,11 +316,25 @@
                                     icon: 1,
                                     time: 2000
                                 })
-                                statusCodeTable.reload({
-                                    where: {
+                                let whereObj = {}
+                                if($('#groupId').val() === ''){
+                                    //所有的状态码
+                                    whereObj = {projectId: parseInt(getCookie('projectId'))}
+                                }else if(parseInt($('#groupId').val()) === -1){
+                                    //我的状态码
+                                    whereObj = {
+                                        projectId: parseInt(getCookie('projectId')),
+                                        creator:getCookie('username')
+                                    }
+                                }else{
+                                    //正常分组的状态码
+                                    whereObj = {
                                         projectId: parseInt(getCookie('projectId'))
                                         , groupId: parseInt($('#groupId').val())
-                                    }, page: {curr: 1}
+                                    }
+                                }
+                                statusCodeTable.reload({
+                                    where: whereObj, page: {curr: 1}
                                 })
                             } else {
                                 layer.msg(res.responseMsg, {icon: 2, time: 1500})
@@ -285,7 +364,7 @@
             }
             , choose: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
                 obj.preview(function (index, file, result) {
-                    if ($('#groupId').val() === '') {
+                    if ($('#groupId').val() === '' || parseInt($('#groupId').val()) === -1) {
                         layer.msg('请点击要上传的分组再选择文件', {
                             icon: 2,
                             timeout: 2000
@@ -339,46 +418,6 @@
                 }
             }
         });
-        // 获取分组列表
-        $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
-            //如果不存在分组怎么办？
-            if (res.responseCode != 200) {
-                layer.msg(res.responseMsg)
-                checkLogin()
-                return
-            }
-            groupArray = res.data
-            if (!groupArray || groupArray.length == 0) {
-                layer.msg("分组不存在，请先创建分组!")
-                return
-            } else {
-                $('#groupArray').val(JSON.stringify(groupArray))
-                layui.tree({
-                    elem: '#groupTree' //传入元素选择器
-                    , nodes: groupArray
-                    , click: function (item) { //点击节点回调
-                        changeBackground(item.name)
-                        $('#groupId').val(item.id)
-                        // 查询点击分组的接口数据
-                        statusCodeTable.reload({
-                            where: {
-                                projectId: parseInt(getCookie('projectId'))
-                                , groupId: item.id
-                            },page:{curr:1}
-                        })
-                        let permissionList = JSON.parse(getCookie('userList'))
-                        for (let i = 0; i < permissionList.length; i++) {
-                            let groupId = permissionList[i].groupId
-                            let userType = permissionList[i].userType
-                            if (parseInt(groupId) === parseInt($('#groupId').val())) {
-                                vm.userType = userType
-                                return false
-                            }
-                        }
-                    }
-                })
-            }
-        })
         //监听回收站
         $('#systemCode').click(function (d) {
             $('#groupId').val(0)
@@ -402,7 +441,7 @@
             })
         }),
         $('#myCode').click(function (d) {
-            $('#groupId').val('')
+            $('#groupId').val(-1)
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的接口数据
             statusCodeTable.reload({

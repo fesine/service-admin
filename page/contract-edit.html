@@ -315,6 +315,9 @@
                 if (value.length < 1) {
                     return '服务编号不可为空'
                 }
+                if (value.length > 32) {
+                    return '服务编号长度不能超过32位'
+                }
             },
             serviceName: function (value) {
                 if (value.length < 1) {
