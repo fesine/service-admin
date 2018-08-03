@@ -441,6 +441,17 @@
                     creator: creator,
                 }, page: {curr: 1}
             })
+        }),
+        $('#myCode').click(function (d) {
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的接口数据
+            statusCodeTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId')),
+                    creator: getCookie('username')
+                }, page: {curr: 1}
+            })
         })
 
     })
