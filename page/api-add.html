@@ -163,7 +163,7 @@
                     <div class="layui-form-item" hidden>
                         <input type="text" id="L_id" name="id" class="layui-input">
                         <input type="text" id="L_projectId" name="projectId" class="layui-input">
-                        <input type="text" id="L_contractId" name="contractId" class="layui-input">
+                        <input type="text" id="L_serviceCode" name="serviceCode" class="layui-input">
                         <input type="text" id="L_groupId" name="groupId" class="layui-input">
                     </div>
                     <div class="layui-tab-item layui-show">
@@ -184,13 +184,13 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label for="L_serviceCode" class="layui-form-label"
+                            <label for="L_contractId" class="layui-form-label"
                                    style="width: 100px">
                                 <span class="x-red">*</span>服务编号
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
-                                <select id="L_serviceCode" name="serviceCode"
-                                        lay-filter="serviceCode">
+                                <select id="L_contractId" name="contractId"
+                                        lay-filter="contractId" lay-search>
                                 </select>
                             </div>
                         </div>
@@ -200,6 +200,7 @@
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
                                 <input type="text" id="L_versionNo" name="versionNo" required=""
+                                       readonly=""
                                        lay-verify="versionNo" class="layui-input">
                             </div>
                             <div class="layui-form-mid layui-word-aux">
@@ -208,6 +209,7 @@
                         </div>
                         <div class="layui-form-item">
                             <label for="L_serviceName" class="layui-form-label"
+                                   readonly=""
                                    style="width: 100px">
                                 <span class="x-red">*</span>服务名称
                             </label>
@@ -515,14 +517,14 @@
             if (res.responseCode != 200) {
                 layer.msg(res.responseMg)
             }else{
-                $("#L_serviceCode").find("option").remove();
+                $("#L_contractId").find("option").remove();
                 serviceArray = res.data
                 if(!serviceArray || serviceArray.length === 0){
                     layer.msg('当前分组无可添加的服务接口!')
                     $('#addButton').addClass('layui-btn-disabled')
                 }else{
                     for (var i = 0; i < serviceArray.length; i++) {
-                        $('#L_serviceCode').append(new Option(serviceArray[i].serviceCode, serviceArray[i].serviceCode))// 下拉菜单里添加元素
+                        $('#L_contractId').append(new Option(serviceArray[i].serviceCode, serviceArray[i].id))// 下拉菜单里添加元素
                     }
                     //默认添加第一组数据
                     $('#L_serviceCode').val(serviceArray[0].serviceCode)
@@ -692,13 +694,14 @@
         })
 
         //监控分组选择事件
-        form.on('select(serviceCode)', function (data) {
+        form.on('select(contractId)', function (data) {
             $.each(serviceArray, function (i, item) {
-                if (item.serviceCode == data.value) {
+                if (item.id == data.value) {
                     $('#L_serviceCode').val(item.serviceCode)
                     $('#L_contractId').val(item.id)
                     $('#L_serviceName').val(item.serviceName)
                     $('#L_versionNo').val(item.versionNo)
+                    $('#L_detailMemo').val(item.memo)
                     return
                 }
             })

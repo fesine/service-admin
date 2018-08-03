@@ -106,10 +106,15 @@
                     <tr>
                         <td style="padding: 0px;">
                             <ul>
-                                <li id="allContract">
+                                <li id="allCase">
                                     <a class="backup" href="javascript:;">
                                         <i class="iconfont">&#xe699;</i>
                                         <cite>所有用例</cite></a>
+                                </li>
+                                <li id="myCase">
+                                    <a class="backup" href="javascript:;">
+                                        <i class="iconfont">&#xe6b5;</i>
+                                        <cite>我的用例</cite></a>
                                 </li>
                             </ul>
                         </td>
@@ -283,13 +288,24 @@
             }
         })
 
-        $('#allContract').click(function (d) {
+        $('#allCase').click(function (d) {
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的用例数据
             caseTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
+                }, page: {curr: 1}
+            })
+        })
+        $('#myCase').click(function (d) {
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的用例数据
+            caseTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId')),
+                    creator:getCookie('username')
                 }, page: {curr: 1}
             })
         })

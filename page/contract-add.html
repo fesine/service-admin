@@ -295,6 +295,9 @@
                 if (editData != '') {
                     var editArray = JSON.parse(editData)
                     loadJsonDataToForm(editArray)
+                    //处理服务编号和服务名称
+                    $('#L_serviceCode').val(editArray.serviceCode+'_COPY')
+                    $('#L_serviceName').val(editArray.serviceName + '_COPY')
                     if (editArray.idempotentFlag == 1) {
                         $('#L_idempotentFlag').attr("checked", "")
                         $('#L_id').val('')
@@ -323,6 +326,9 @@
             serviceCode: function (value) {
                 if (value.length < 1) {
                     return '服务编号不可为空'
+                }
+                if (value.length > 32) {
+                    return '服务编号长度不能大于32位'
                 }
             },
             serviceName: function (value) {

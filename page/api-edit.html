@@ -194,10 +194,15 @@
                                 <span class="x-red">*</span>服务编号
                             </label>
                             <div class="layui-input-inline" style="width: 300px;">
-                                <select id="L_serviceCode" name="serviceCode"
-                                        v-model="apiInfo.serviceCode"
-                                        lay-filter="serviceCode">
-                                </select>
+                                <!--<select id="L_serviceCode" name="serviceCode"-->
+                                        <!--v-model="apiInfo.serviceCode"-->
+                                        <!--readonly=""-->
+                                        <!--lay-filter="serviceCode">-->
+                                <!--</select>-->
+                                <input type="text" id="L_serviceCode" name="serviceCode" required=""
+                                       v-model="apiInfo.serviceCode"
+                                       readonly=""
+                                       lay-verify="serviceCode" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -207,6 +212,7 @@
                             <div class="layui-input-inline" style="width: 300px;">
                                 <input type="text" id="L_versionNo" name="versionNo" required=""
                                        v-model="apiInfo.versionNo"
+                                       readonly=""
                                        lay-verify="versionNo" class="layui-input">
                             </div>
                             <div class="layui-form-mid layui-word-aux">
@@ -221,6 +227,7 @@
                             <div class="layui-input-inline" style="width: 300px;">
                                 <input type="text" id="L_serviceName" name="serviceName" required=""
                                        v-model="apiInfo.serviceName"
+                                       readonly=""
                                        lay-verify="serviceName" class="layui-input">
                             </div>
                         </div>
@@ -468,7 +475,6 @@
 </div>
 <script>
     var serviceArray;
-
     function autoClick () {
         layui.use('form', function () {
             var form = layui.form;
@@ -539,21 +545,25 @@
                 }
             }
         }
-        for (var i = 0; i < groupArray.length; i++) {
-            $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
-        }
+
         // //如果是复制的则需要初始化数据
         var editData = parent.$("#editApi").val();
             var editArray = JSON.parse(editData)
-            loadJsonDataToForm(editArray)
-            $.each(groupArray, function (index, item) {
-                if (parseInt(editArray.groupId) === parseInt(item.id)) {
-                    $('#L_groupCode').val(item.groupCode)
-                    return false
+        for (var i = 0; i < groupArray.length; i++) {
+                if(editArray.groupCode === groupArray[i].groupCode ){
+                    $('#L_groupCode').append(new Option(groupArray[i].name, groupArray[i].groupCode))// 下拉菜单里添加元素
+                    break
                 }
-            })
+        }
+            loadJsonDataToForm(editArray)
+            // $.each(groupArray, function (index, item) {
+            //     if (parseInt(editArray.groupId) === parseInt(item.id)) {
+            //         $('#L_groupCode').val(item.groupCode)
+            //         return false
+            //     }
+            // })
         //根据groupId查询该组下的所有合约信息
-        getServiceCode(form)
+        // getServiceCode(form)
         form.render()
         //自定义验证规则
         form.verify({
@@ -576,13 +586,14 @@
 
         //监控分组选择事件
         form.on('select(groupCode)', function (data) {
-            $.each(groupArray, function (i, item) {
-                if (item.groupCode == data.value) {
-                    $('#L_groupId').val(item.id)
-                    getServiceCode(form)
-                    return
-                }
-            })
+            return false
+            // $.each(groupArray, function (i, item) {
+            //     if (item.groupCode == data.value) {
+            //         $('#L_groupId').val(item.id)
+            //         getServiceCode(form)
+            //         return
+            //     }
+            // })
         })
         //选择字段类型监听
         form.on('select(paramType)', function (d) {
@@ -626,20 +637,21 @@
         })
 
         //监控分组选择事件
-        form.on('select(serviceCode)', function (data) {
-            $.each(serviceArray, function (i, item) {
-                if (item.serviceCode == data.value) {
-                    $('#L_serviceCode').val(item.serviceCode)
-                    $('#L_contractId').val(item.id)
-                    $('#L_serviceName').val(item.serviceName)
-                    $('#L_versionNo').val(item.versionNo)
-                    return
-                }
-            })
-        })
+        // form.on('select(serviceCode)', function (data) {
+        //     $.each(serviceArray, function (i, item) {
+        //         if (item.serviceCode == data.value) {
+        //             $('#L_serviceCode').val(item.serviceCode)
+        //             $('#L_contractId').val(item.id)
+        //             $('#L_serviceName').val(item.serviceName)
+        //             $('#L_versionNo').val(item.versionNo)
+        //             return
+        //         }
+        //     })
+        // })
 
         //监听提交
         form.on('submit(edit)', function (data) {
+            // $("#L_groupCode").removeAttr("disabled");
             event.stopPropagation()
             event.preventDefault()
             updateRequestIndex('stop',null)
