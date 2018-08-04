@@ -290,21 +290,24 @@
                     $('#L_consumerGroup').append("<input type='checkbox' name='consumerGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='consumerGroup'>")
 
                 })
-                //如果是复制的则需要初始化数据
-                var editData = parent.$("#editContract").val();
-                if (editData != '') {
-                    var editArray = JSON.parse(editData)
-                    loadJsonDataToForm(editArray)
-                    //处理服务编号和服务名称
-                    $('#L_serviceCode').val(editArray.serviceCode+'_COPY')
-                    $('#L_serviceName').val(editArray.serviceName + '_COPY')
-                    if (editArray.idempotentFlag == 1) {
-                        $('#L_idempotentFlag').attr("checked", "")
-                        $('#L_id').val('')
-                    }
-                    operateTypeValue = getCheckboxValue('operateType')
-                    consumerGroupValue = getCheckboxValue('consumerGroup')
-                    relyGroupValue = getCheckboxValue('relyGroup')
+                if (getUrlKey('copy') === '1') {
+                    $.get(_hostUrl + '/contract/' + parseInt(getUrlKey('id')), function (res) {
+                        if (res.responseCode === 200) {
+                            var editArray = res.data
+                            loadJsonDataToForm(editArray)
+                            //处理服务编号和服务名称
+                            $('#L_serviceCode').val(editArray.serviceCode + '_COPY')
+                            $('#L_serviceName').val(editArray.serviceName + '_COPY')
+                            $('#L_id').val('')
+                            if (editArray.idempotentFlag == 1) {
+                                $('#L_idempotentFlag').attr("checked", "")
+                            }
+                            form.render()
+                            operateTypeValue = getCheckboxValue('operateType')
+                            consumerGroupValue = getCheckboxValue('consumerGroup')
+                            relyGroupValue = getCheckboxValue('relyGroup')
+                        }
+                    })
                 } else {
                     $('#L_groupCode').val(groupArray[0].groupCode)
                     $('#L_groupId').val(groupArray[0].id)

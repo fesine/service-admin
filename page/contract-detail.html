@@ -277,7 +277,7 @@
             var index = parent.layer.getFrameIndex(window.name)
             //关闭当前frame
             parent.layer.close(index)
-            parent.x_admin_show('复制新增','contract-add.html', 500, 500,true)
+            parent.x_admin_show('复制新增','contract-add.html?copy=1&id='+ vm.contractId, 500, 500,true)
         })
         form.on('select', function (data) {
             $.putForm(_hostUrl + '/contract/check', {

@@ -290,16 +290,20 @@
                 }
                 //默认加载第一个
                 //获取选中的数据 进行格式转换，并加载到form表单中
-                var editData = parent.$("#editContract").val();
-                var editArray = JSON.parse(editData)
-                loadJsonDataToForm(editArray)
-                if(editArray.idempotentFlag == 1){
-                    $('#L_idempotentFlag').attr("checked", "")
-                }
-                form.render()//下拉菜单渲染 把内容加载进去
-                operateTypeValue = getCheckboxValue('operateType')
-                consumerGroupValue = getCheckboxValue('consumerGroup')
-                relyGroupValue = getCheckboxValue('relyGroup')
+                $.get(_hostUrl + '/contract/' + parseInt(getUrlKey('id')), function (res) {
+                    if (res.responseCode === 200) {
+                        var editArray = res.data
+                        loadJsonDataToForm(editArray)
+                        if (editArray.idempotentFlag == 1) {
+                            $('#L_idempotentFlag').attr("checked", "")
+                        }
+                        form.render()//下拉菜单渲染 把内容加载进去
+                        operateTypeValue = getCheckboxValue('operateType')
+                        consumerGroupValue = getCheckboxValue('consumerGroup')
+                        relyGroupValue = getCheckboxValue('relyGroup')
+                    }
+                })
+                // var editData = parent.$("#editContract").val();
             }
 
         })

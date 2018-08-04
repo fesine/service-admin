@@ -189,11 +189,15 @@
     {{#  } }}
 </script>
 <script type="text/html" id="showCode">
-    {{#  if(d.apiFlag > 0){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
-    {{# } else { }}
-    <span title="点击查看详情"><a href="javascript:;" style="margin-left: 16px;">{{d.serviceCode}}</a></span>
-    {{#  } }}
+    {{#  if(d.apiFlag > 0 && d.removeFlag == 0){ }}
+        <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
+    {{# } else if(d.removeFlag == 1) { }}
+        <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-black"
+                                                      style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
+    {{#  } else { }}
+    <span title="点击查看详情"><a href="javascript:;"
+                            style="margin-left: 16px;">{{d.serviceCode}}</a></span>
+    {{# } }}
 </script>
 <script type="text/html" id="showName">
     <span title="点击查看详情"><a href="javascript:;">{{d.serviceName}}</a></span>
@@ -208,6 +212,7 @@
     layui.use(['table', 'tree', 'form'], function () {
         var groupArray
         var table = layui.table
+        let removeFlag='',creator= null
         //第一个实例
         var contractTable = table.render({
             elem: '#contractList'
@@ -258,14 +263,18 @@
                     whereObj = {
                         projectId: parseInt(getCookie('projectId')),
                         serviceCode: $("#searchKey").val(),
-                        apiFlag: $("#apiFlag").val()
+                        apiFlag: $("#apiFlag").val(),
+                        removeFlag:removeFlag,
+                        creator:creator
                     }
                 }else{
                     whereObj = {
                         projectId: parseInt(getCookie('projectId')),
                         groupId: groupId, //查询当前选中分组的数据
                         serviceCode: $("#searchKey").val(),
-                        apiFlag: $("#apiFlag").val()
+                        apiFlag: $("#apiFlag").val(),
+                        removeFlag: removeFlag,
+                        creator: creator
                     }
                 }
                 contractTable.reload({
@@ -390,14 +399,6 @@
                                 , groupId: $('#groupId').val()
                             }
                         })
-                        // if(data.starFlag == 1){
-                        //     data.starFlag = 0
-                        //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucang"></use>')
-                        // }else{
-                        //     data.starFlag = 1
-                        //     $(obj.tr[0].cells[1]["innerHTML"]).find("svg").html('<use xlink:href="#icon-jingdiananli_kongwujiaoxing_shoucanghou"></use>')
-                        // }
-                        // table.render()
                     }else{
                         layer.msg(res.responseMsg,{icon:2,timeout:1000})
                     }
@@ -432,6 +433,8 @@
                                 }
                             })
                         }
+                        removeFlag = ''
+                        creator = null
                         // 查询点击分组的契约数据
                         contractTable.reload({
                             where: {
@@ -455,28 +458,32 @@
 
         //监听回收站
         $('#backupContent').click(function (d) {
+            removeFlag = 1
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
             contractTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                    , removeFlag: 1
+                    , removeFlag: removeFlag
                 }, page: {curr: 1}
             })
         })
         $('#myContract').click(function (d) {
+            creator = getCookie('username')
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
             contractTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                    , creator: getCookie('username')
+                    , creator: creator
                 }, page: {curr: 1}
             })
         })
         $('#allContract').click(function (d) {
+            removeFlag = ''
+            creator = null
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
