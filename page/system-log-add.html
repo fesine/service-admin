@@ -109,18 +109,26 @@
         form.on('submit(add)', function (data) {
             event.stopPropagation()
             event.preventDefault()
+            let detail = $('#updateDetail').val()
+            detail +='<br>更新文件列表:<br>'
+            let tableTr = $('#sourceList tr')
+            tableTr.each(function () {
+                var text = $(this).children("td:first").text();
+                detail += text + '<br>'
+            })
+            data.field.updateDetail = detail
             data.field.projectId = parseInt(getCookie('projectId'))
             $.post(_hostUrl + "/systemLog", data.field, function (res) {
                 if (res.responseCode === 201) {
-                    layer.msg('添加系统更新日志成功', {
+                    layer.msg('添加系统更新成功，服务正在更新', {
                         icon: 1,
-                        time: 2000
+                        time: 1000
                     },function () {
                         // 获得frame索引
                         var index = parent.layer.getFrameIndex(window.name)
                         //关闭当前frame
                         parent.layer.close(index)
-                        parent.location.reload()
+                        parent.restart()
                     })
 
                 } else {

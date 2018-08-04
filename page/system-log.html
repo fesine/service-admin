@@ -37,6 +37,9 @@
     </style>
 </head>
 <body>
+<div id="processBar" class="layui-progress layui-progress-big" hidden lay-showpercent="true" lay-filter="demo">
+    <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
+</div>
 <div class="layui-fluid" id="systemLog">
     <div style="margin-top: 20px;">
         <button class="layui-btn add-button layui-btn-normal layui-hide"
@@ -51,9 +54,11 @@
     if (JSON.parse(getCookie('superFlag')) === 1) {
         $('.add-button').removeClass('layui-hide')
     }
-    layui.use(['layer', 'flow'], function () {
+    let element
+    layui.use(['layer', 'flow', 'element'], function () {
         var layer = layui.layer,
             flow = layui.flow
+            element = layui.element
         flow.load({
             elem: '#system-log-data' //指定列表容器
             , end:'没有更多更新日志了'
@@ -104,9 +109,9 @@
             if (res.responseCode === 201) {
                 layer.msg(res.data, {
                     icon: 1,
-                    time: 2000
+                    time: 500
                 },function () {
-                    window.location.reload()
+                    restart()
                 })
 
             } else {
@@ -115,6 +120,18 @@
         }, 'json')
 
         return false
+    }
+    function restart () {
+        $('#processBar').removeAttr('hidden')
+        var n = 0, timer = setInterval(function () {
+            n++
+            if (n > 100) {
+                n = 100;
+                parent.location.href = '../login.html'
+                clearInterval(timer);
+            }
+            element.progress('demo', n + '%');
+        }, 330);
     }
     function delVersion (id,currentFlag,versionNo) {
         if (JSON.parse(getCookie('superFlag')) !== 1) {

@@ -213,6 +213,7 @@
     layui.use(['table', 'tree', 'form'], function () {
         var groupArray
         var table = layui.table
+        let removeFlag = '', creator = null
         //第一个实例
         var apiTable = table.render({
             elem: '#apiList'
@@ -251,12 +252,26 @@
         //加入搜索功能
         var $ = layui.$, active = {
             reload: function () {
-                apiTable.reload({
-                    where: {
+                let groupId = $('#groupId').val()
+                let whereObj = {}
+                if (groupId === '') {
+                    whereObj = {
                         projectId: parseInt(getCookie('projectId')),
-                        userId: parseInt(getCookie('userId')), //查询当前用户所在所有组的数据
-                        serviceCode: $("#searchKey").val()
-                    }, page: {curr: 1}
+                        serviceCode: $("#searchKey").val(),
+                        removeFlag: removeFlag,
+                        creator: creator
+                    }
+                } else {
+                    whereObj = {
+                        projectId: parseInt(getCookie('projectId')),
+                        groupId: groupId, //查询当前选中分组的数据
+                        serviceCode: $("#searchKey").val(),
+                        removeFlag: removeFlag,
+                        creator: creator
+                    }
+                }
+                apiTable.reload({
+                    where: whereObj, page: {curr: 1}
                 })
             }
         };
@@ -294,7 +309,9 @@
                                 where: {
                                     projectId: parseInt(getCookie('projectId'))
                                     , groupId: $('#groupId').val()
-                                }
+                                    , removeFlag: removeFlag
+                                    , creator: creator
+                                }, page: {curr: 1}
                             })
                         } else {
                             layer.msg(res.responseMsg)
@@ -316,8 +333,9 @@
                                 where: {
                                     projectId: parseInt(getCookie('projectId'))
                                     ,groupId:''
-                                    , removeFlag:1
-                                }
+                                    , removeFlag: removeFlag
+                                    , creator: creator
+                                }, page: {curr: 1}
                             })
                         } else {
                             layer.msg(res.responseMsg)
@@ -342,9 +360,11 @@
                             })
                             table.reload('apiList', {
                                 where: {
-                                    projectId: parseInt(getCookie('projectId'))
-                                    , removeFlag: 1
-                                }
+                                    projectId: parseInt(getCookie('projectId')),
+                                    groupId: ''
+                                    , removeFlag: removeFlag
+                                    , creator: creator
+                                }, page: {curr: 1}
                             })
                         } else {
                             layer.msg(res.responseMsg)
@@ -368,8 +388,10 @@
                         table.reload('apiList', {
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
+                                , removeFlag: removeFlag
+                                , creator: creator
                                 , groupId: $('#groupId').val()
-                            }
+                            }, page: {curr: 1}
                         })
                     }else{
                         layer.msg(res.responseMsg,{icon:2,timeout:1000})
@@ -397,10 +419,14 @@
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
                         $('#groupId').val(item.id)
+                        removeFlag = 0
+                        creator = null
                         // 查询点击分组的接口数据
                         apiTable.reload({
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
+                                , removeFlag: removeFlag
+                                , creator: creator
                                 , groupId: item.id
                             }, page: {curr: 1}
                         })
@@ -420,37 +446,48 @@
 
         //监听回收站
         $('#backupContent').click(function (d) {
+            removeFlag = 1
+            creator = ''
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的接口数据
             apiTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                    , removeFlag: 1
-                }, page: {curr: 1}
-            })
-        })
-        $('#allApi').click(function (d) {
-            $('#groupId').val('')
-            changeBackground(d.currentTarget.innerText.substring(1))
-            // 查询点击分组的接口数据
-            apiTable.reload({
-                where: {
-                    projectId: parseInt(getCookie('projectId'))
+                    , removeFlag: removeFlag
+                    , creator: creator
                 }, page: {curr: 1}
             })
         })
         $('#myApi').click(function (d) {
+            creator = getCookie('username')
+            removeFlag = ''
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的接口数据
             apiTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
-                    , creator: getCookie('username')
+                    , removeFlag: removeFlag
+                    , creator: creator
                 }, page: {curr: 1}
             })
         })
+        $('#allApi').click(function (d) {
+            removeFlag = ''
+            creator = ''
+            $('#groupId').val('')
+            changeBackground(d.currentTarget.innerText.substring(1))
+            // 查询点击分组的接口数据
+            apiTable.reload({
+                where: {
+                    projectId: parseInt(getCookie('projectId'))
+                    , removeFlag: removeFlag
+                    , creator: creator
+                }, page: {curr: 1}
+            })
+        })
+
     })
 
     function batchDelete () {

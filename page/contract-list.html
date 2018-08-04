@@ -321,8 +321,9 @@
                                 where: {
                                     projectId: parseInt(getCookie('projectId'))
                                     , groupId: $('#groupId').val()
-                                    , removeFlag: 0
-                                }
+                                    , removeFlag: removeFlag
+                                    , creator: creator
+                                }, page: {curr: 1}
                             })
                         } else {
                             layer.msg(res.responseMsg)
@@ -344,8 +345,9 @@
                                 where: {
                                     projectId: parseInt(getCookie('projectId'))
                                     , groupId: ''
-                                    , removeFlag: 1
-                                }
+                                    , removeFlag: removeFlag
+                                    , creator: creator
+                                }, page: {curr: 1}
                             })
                         } else {
                             layer.msg(res.responseMsg)
@@ -371,8 +373,10 @@
                             table.reload('contractList', {
                                 where: {
                                     projectId: parseInt(getCookie('projectId'))
-                                    , removeFlag:1
-                                }
+                                    , removeFlag: removeFlag
+                                    , creator: creator
+                                    ,groupId:''
+                                }, page: {curr: 1}
                             })
                         } else {
                             layer.msg(res.responseMsg)
@@ -396,8 +400,10 @@
                         table.reload('contractList', {
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
+                                , removeFlag: removeFlag
+                                , creator: creator
                                 , groupId: $('#groupId').val()
-                            }
+                            },page:{curr :1 }
                         })
                     }else{
                         layer.msg(res.responseMsg,{icon:2,timeout:1000})
@@ -433,12 +439,15 @@
                                 }
                             })
                         }
-                        removeFlag = ''
+                        //单独分组查询全部用户、没有移入到回收站的数据
+                        removeFlag = 0
                         creator = null
                         // 查询点击分组的契约数据
                         contractTable.reload({
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
+                                , removeFlag: removeFlag
+                                , creator: creator
                                 , groupId: item.id
                             }, page: {curr: 1}
                         })
@@ -459,6 +468,7 @@
         //监听回收站
         $('#backupContent').click(function (d) {
             removeFlag = 1
+            creator =''
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
@@ -466,17 +476,21 @@
                 where: {
                     projectId: parseInt(getCookie('projectId'))
                     , removeFlag: removeFlag
+                    , creator:creator
                 }, page: {curr: 1}
             })
         })
         $('#myContract').click(function (d) {
+            //我的查询自己所有的数据，包括回收站的
             creator = getCookie('username')
+            removeFlag = ''
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的契约数据
             contractTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
+                    , removeFlag: removeFlag
                     , creator: creator
                 }, page: {curr: 1}
             })
@@ -490,6 +504,8 @@
             contractTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId'))
+                    , removeFlag: removeFlag
+                    , creator: creator
                 }, page: {curr: 1}
             })
         })
