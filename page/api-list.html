@@ -177,12 +177,8 @@
     {{#  } }}
 </script>
 <script type="text/html" id="showCode">
-    {{#  if(d.checkStatus == 0){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
-    {{# } else if(d.checkStatus == 1){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-green" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
-    {{# } else if(d.checkStatus == 2){ }}
-    <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-orange" style="margin-right: 8px;"></span>{{d.serviceCode}}</a></span>
+    {{#  if(d.removeFlag == 0){ }}
+    <span title="点击查看详情"><a href="javascript:;">{{d.serviceCode}}</a></span>
     {{# } else { }}
     <span title="点击查看详情"><a href="javascript:;"><span class="layui-badge-dot layui-bg-black"
                                                       style="margin-right: 5px;"></span>{{d.serviceCode}}</a></span>

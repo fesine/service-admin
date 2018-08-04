@@ -69,6 +69,21 @@
         .req-ul li {
             margin-top: 1px;
         }
+        .req-li:last-child .button{
+            display: none;
+        }
+        .resp-li:last-child .button{
+            display: none;
+        }
+        .api-index{
+            width: 57px;
+            height: 36px;
+            line-height:36px;
+            text-align: center;
+            font-size: 16px;
+            margin: auto;
+            border: 1px solid #E6E6E6;
+        }
     </style>
     <script>
         updateRequestIndex = function (e, ui) {
@@ -80,10 +95,11 @@
             if(!ui){
                 eachArray = $('#requestParamTable').find('li')
             }else{
-                eachArray = $('li.index', ui.item.parent())
+                eachArray = $('li.req-li', ui.item.parent())
             }
             eachArray.each(function (i, item) {
                 var id = item.firstElementChild.firstElementChild.innerText
+                $(item.firstElementChild.firstElementChild.nextElementSibling).html(i+1)
                 temp = requestArray[i]
                 if (temp.myId === parseInt(id)) {
                     tempArray[i] = requestArray[i]
@@ -108,10 +124,11 @@
             if(!ui){
                 eachArray = $('#responseParamTable').find('li')
             }else{
-                eachArray = $('li.index', ui.item.parent())
+                eachArray = $('li.resp-li', ui.item.parent())
             }
             eachArray.each(function (i, item) {
                 var id = item.firstElementChild.firstElementChild.firstElementChild.innerText
+                $(item.firstElementChild.firstElementChild.firstElementChild.nextElementSibling).html(i + 1)
                 temp = responseArray[i]
                 if (temp.myId === parseInt(id)) {
                     tempArray[i] = responseArray[i]
@@ -127,6 +144,7 @@
             vm.responseListUpdate = tempArray
         };
 
+
         $(document).ready(function () {
             var fixHelperModified = function (e, tr) {
                 var $originals = tr.children();
@@ -137,10 +155,16 @@
                 return $helper;
             }
             $("#requestParamTable").sortable({
+                axis:'y',
+                handle:'.move-button',
+                items: ".req-li:not(.req-li:last-child)",
                 helper: fixHelperModified,
                 stop: updateRequestIndex
             }).disableSelection();
             $("#responseParamTable").sortable({
+                axis: 'y',
+                handle: '.move-button',
+                items: ".resp-li:not(.resp-li:last-child)",
                 helper: fixHelperModified,
                 stop: updateResponseIndex
             }).disableSelection();
@@ -261,16 +285,18 @@
                            class="layui-btn  layui-btn-sm layui-btn-danger">参数校验</a>
                         <table class="layui-table">
                             <colgroup>
+                                <col width="60">
                                 <col width="300">
                                 <col width="200">
                                 <col width="105">
                                 <col width="40">
                                 <col width="62">
-                                <col width="240">
+                                <col width="180">
                                 <col>
                             </colgroup>
                             <thead>
                             <tr class="layui-table-cell">
+                                <th>序号</th>
                                 <th><span class="x-red">*</span>参数名</th>
                                 <th><span class="x-red">*</span>参数说明</th>
                                 <th><span class="x-red">*</span>参数类型</th>
@@ -282,11 +308,14 @@
                             </thead>
                         </table>
                         <ul id="requestParamTable" class="req-ul">
-                            <li class="index" v-for='(list,index) in requestParamList'
+                            <li class="req-li" v-for='(list,index) in requestParamList'
                                 :key='list.id'>
                                 <form>
                                     <div class="layui-inline">
                                         <div hidden>{{list.myId}}</div>
+                                        <div class="layui-input-inline api-index">
+                                            {{index+1}}
+                                        </div>
                                         <div class="layui-input-inline"
                                              style="width: 298px;">
                                             <input type="text" name="paramKey" placeholder="参数名"
@@ -336,7 +365,7 @@
                                                    v-model="list.paramLength" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
-                                        <div class="layui-input-inline" style="width: 237px;">
+                                        <div class="layui-input-inline" style="width: 177px;">
                                             <input type="text" name="paramValue" placeholder="示例"
                                                    v-model="list.paramValue" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
@@ -348,8 +377,8 @@
                                             <div class="req-manager-button">
                                                 <a href="javascript:;" style="font-size: 12px;margin-left: -2px;"
                                                    @click="addParamDesc($event,1)">更多设置</a>
-                                                <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
-                                                <a href="javascript:;"
+                                                <a class="button move-button" href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
+                                                <a class="button" href="javascript:;"
                                                    @click='removeRequestParam(index,$event)'><i
                                                         class="iconfont">&#xe69d;</i></a>
                                             </div>
@@ -369,16 +398,18 @@
                            class="layui-btn  layui-btn-sm layui-btn-danger">参数校验</a>
                         <table class="layui-table">
                             <colgroup>
+                                <col width="60">
                                 <col width="300">
                                 <col width="200">
                                 <col width="105">
                                 <col width="40">
                                 <col width="62">
-                                <col width="240">
+                                <col width="180">
                                 <col>
                             </colgroup>
                             <thead>
                             <tr class="layui-table-cell">
+                                <th>序号</th>
                                 <th><span class="x-red">*</span>参数名</th>
                                 <th><span class="x-red">*</span>参数说明</th>
                                 <th><span class="x-red">*</span>参数类型</th>
@@ -390,11 +421,14 @@
                             </thead>
                         </table>
                         <ul id="responseParamTable" class="req-ul">
-                            <li class="index" v-for='(list,index) in responseParamList'
+                            <li class="resp-li" v-for='(list,index) in responseParamList'
                                 :key='list.id'>
                                 <form>
                                     <div class="layui-inline">
                                         <div hidden>{{list.myId}}</div>
+                                        <div class="layui-input-inline api-index">
+                                            {{index+1}}
+                                        </div>
                                         <div class="layui-input-inline"
                                              style="width: 298px;">
                                             <input type="text" name="paramKey" placeholder="参数名"
@@ -444,7 +478,7 @@
                                                    v-model="list.paramLength" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
                                         </div>
-                                        <div class="layui-input-inline" style="width: 237px;">
+                                        <div class="layui-input-inline" style="width: 177px;">
                                             <input type="text" name="paramValue" placeholder="示例"
                                                    v-model="list.paramValue" lay-filter="lastRow"
                                                    autocomplete="off" class="layui-input lastRow">
@@ -456,8 +490,8 @@
                                             <div class="req-manager-button">
                                                 <a href="javascript:;" style="font-size: 12px;margin-left: -2px;"
                                                    @click="addParamDesc($event,2)">更多设置</a>
-                                                <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
-                                                <a href="javascript:;"
+                                                <a class="button move-button" href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
+                                                <a class="button" href="javascript:;"
                                                    @click='removeResponseParam(index,$event)'><i
                                                         class="iconfont">&#xe69d;</i></a>
                                             </div>

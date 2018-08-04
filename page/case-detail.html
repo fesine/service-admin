@@ -93,6 +93,8 @@
                 }
             $('#apiListTable tbody').sortable({
                 helper: fixHelperModified,
+                axis: 'y',
+                handle: '.move-button',
                 stop: updateApiIndex
             }).disableSelection()
         })
@@ -144,7 +146,7 @@
                             <div class="req-manager-button">
                                 <div style="display: none">{{item.myId}}</div>
                                 <div style="display: none">{{item.apiId}}</div>
-                                <a href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
+                                <a class="move-button" href="javascript:;"><i class="iconfont">&#xe6fd;</i></a>
                                 <a href="javascript:;"
                                    @click='editApi(index,$event)'><i
                                         class="iconfont">&#xe69e;</i>修改</a>
