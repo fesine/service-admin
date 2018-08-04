@@ -96,7 +96,7 @@
             <div class="layui-tab-item layui-show">
                 <div class="layui-row">
                     <div>
-                        <div>
+                        <div v-if="removeFlag == 0">
                             <fieldset class="layui-elem-field">
                                 <legend>管理操作</legend>
                                 <div id="show-form" class="layui-hide" style="float: left;">
@@ -136,7 +136,7 @@
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
                                     <a href="javascript:;" title="编辑接口" @click="editApi(apiInfo.id)"
-                                       v-if="userType < 3">
+                                       v-if="userType < 3 && removeFlag == 0">
                                     <i class="iconfont">&#xe69e;</i>
                                     </a>
                                     <a class="change-rely-service" href="javascript:;"
@@ -207,6 +207,7 @@
                                 <option value="">选择测试环境</option>
                                 <option value="0">mock测试</option>
                             </select>
+                            <div v-if="removeFlag == 0">
                             <div>
                             <br>
                             <button class="layui-btn layui-btn-warm layui-btn-fluid"
@@ -222,18 +223,19 @@
                             </button></div>
                             <div>
                                 <br>
-                            <button class="layui-btn layui-btn-danger layui-btn-fluid"
-                                    @click="testHistory($event)"
-                                    lay-submit
-                                    lay-filter="testHistory">测试历史
-                            </button>
-                            </div>
-                            <div>
-                                <br>
                                 <button class="layui-btn layui-btn-fluid"
                                         @click="zkList($event)"
                                         lay-submit
                                         lay-filter="zkList">查看消费者提供者
+                                </button>
+                            </div>
+                            </div>
+                            <div>
+                                <br>
+                                <button class="layui-btn layui-btn-danger layui-btn-fluid"
+                                        @click="testHistory($event)"
+                                        lay-submit
+                                        lay-filter="testHistory">测试历史
                                 </button>
                             </div>
                         </form>
@@ -272,7 +274,7 @@
     <input hidden type="text" id="checkParamResult">
 </div>
 <script type="text/html" id="historyBar">
-    {{# if(d.currentFlag == 0 && vm.userType < 2){ }}
+    {{# if(d.currentFlag == 0 && vm.userType < 2 && vm.removeFlag == 0){ }}
     <a class="layui-btn layui-btn-xs" id="changeCurrent">切换</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even id="delete">删除</a>
     {{# } }}
@@ -602,6 +604,7 @@
                 groupId: '',
                 superFlag: -1,
                 userType: 0,
+                removeFlag: 1,
                 historyId: -1,
                 convertFlag: 1,
                 requestParamJson: {},
@@ -649,6 +652,7 @@
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
+                        this.removeFlag = this.apiInfo.removeFlag
                         parent.$('#editApi').val(JSON.stringify(response.data.data))
                         layui.use(['form', 'table'], function () {
                             $ = layui.jquery
@@ -685,6 +689,7 @@
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.apiInfo = response.data.data
+                        this.removeFlag = this.apiInfo.removeFlag
                         if (this.apiInfo.length === 0) {
                             this.apiInfo.consumerList = null
                         }

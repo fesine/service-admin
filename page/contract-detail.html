@@ -99,11 +99,11 @@
                                           class="layui-badge-dot layui-bg-black"
                                           style="margin-left: 5px;margin-bottom: 12px;"></span>
                                     <a href="javascript:;" title="编辑契约" @click="editContract(contract.id)"
-                                       v-if="userType < 3">
+                                       v-if="userType < 3 && removeFlag == 0">
                                         <i class="iconfont">&#xe69e;</i>
                                     </a>
                                     <a class="change-rely-service" href="javascript:;" v-if="contract.apiId" @click="openApi(contract.apiId)" title="点击查看接口信息">[接口]</a>
-                                    <a class="change-rely-service" href="javascript:;" v-else-if="userType < 3" @click="addApi()" title="为当前契约添加接口">[<i
+                                    <a class="change-rely-service" href="javascript:;" v-else-if="userType < 3 && removeFlag == 0" @click="addApi()" title="为当前契约添加接口">[<i
                                             class="iconfont">&#xe6b9;</i>]</a>
                                 </h1>
                                 <p class="contract_info">创建者：{{contract.creator}}
@@ -176,7 +176,7 @@
                     </div>
                     <div class="layui-col-md3 contract_rely">
                         <blockquote class="layui-elem-quote">
-                            <div >
+                            <div v-if="removeFlag == 0">
                                 <fieldset class="layui-elem-field">
                                     <legend>管理操作</legend>
                                     <div id="show-form" class="layui-hide">
@@ -242,7 +242,7 @@
     </div>
 </div>
 <script type="text/html" id="historyBar">
-    {{# if(d.currentFlag == 0 && vm.userType < 2){ }}
+    {{# if(d.currentFlag == 0 && vm.userType < 2 && vm.removeFlag == 0){ }}
     <a class="layui-btn layui-btn-xs" id="changeCurrent">切换</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-even id="delete">删除</a>
     {{# } }}
@@ -419,6 +419,7 @@
                 groupId: '',
                 superFlag: -1,
                 userType: 0,
+                removeFlag: 1,
                 historyId: -1
             }
         },//过滤器
@@ -447,6 +448,7 @@
                 axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.contract = response.data.data
+                        this.removeFlag = this.contract.removeFlag
                         this.consumerList = response.data.data.consumerList
                         if(this.contract.consumerList.length === 0){
                             this.contract.consumerList = null
@@ -482,6 +484,7 @@
                 axios.get(_hostUrl + '/contract/' + this.contractId).then(response => {
                     if (response.data.responseCode == 200) {
                         this.contract = response.data.data
+                        this.removeFlag = this.contract.removeFlag
                         if (this.contract.length === 0) {
                             this.contract.consumerList = null
                         }
