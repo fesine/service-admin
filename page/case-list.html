@@ -159,6 +159,7 @@
     layui.use(['table', 'tree', 'form'], function () {
         var groupArray
         var table = layui.table
+        let creator = '', groupId=''
         //第一个实例
         var caseTable = table.render({
             elem: '#caseList'
@@ -176,9 +177,10 @@
                 ,{field: 'id', title: 'ID', width: 48,  align: 'center'}
                 , {field: 'caseName', title: '用例名称',  align: 'center',
                     event: 'detail', templet: '#showName'}
+                , {field: 'creator', title: '创建人',  align: 'center', event: 'detail',width:100}
                 , {field: 'lastUpdateTime', title: '更新时间',  align: 'center',
-                    event: 'detail', templet: '#showTime',width:180}
-                , {title: '操作',  align: 'center', toolbar: '#caseBar', width: 230}
+                    event: 'detail', templet: '#showTime',width:175}
+                , {title: '操作',  align: 'center', toolbar: '#caseBar', width: 175}
             ]]
             , response: {
                 statusName: 'responseCode' //数据状态的字段名称，默认：code
@@ -195,7 +197,9 @@
                 caseTable.reload({
                     where: {
                         projectId: parseInt(getCookie('projectId')),
-                        caseName: $("#searchKey").val()
+                        caseName: $("#searchKey").val(),
+                        groupId:groupId,
+                        creator:creator
                     }, page: {curr: 1}
                 })
             }
@@ -225,7 +229,13 @@
                                 icon: 1,
                                 time: 2000
                             })
-                            table.reload('caseList')
+                            caseTable.reload({
+                                where: {
+                                    projectId: parseInt(getCookie('projectId')),
+                                    groupId: groupId,
+                                    creator: creator
+                                }, page: {curr: 1}
+                            })
                         } else {
                             layer.msg(res.responseMsg)
                         }
@@ -268,6 +278,8 @@
                     , click: function (item) { //点击节点回调
                         changeBackground(item.name)
                         $('#groupId').val(item.id)
+                        groupId = item.id
+                        creator = ''
                         //查询自己所在分组身份
                         if (vm.superFlag != 1) {
                             $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
@@ -279,8 +291,9 @@
                         // 查询点击分组的用例数据
                         caseTable.reload({
                             where: {
-                                projectId: parseInt(getCookie('projectId'))
-                                , groupId: item.id
+                                projectId: parseInt(getCookie('projectId')),
+                                groupId: groupId,
+                                creator: creator
                             }, page: {curr: 1}
                         })
                     }
@@ -289,6 +302,8 @@
         })
 
         $('#allCase').click(function (d) {
+            groupId = ''
+            creator = ''
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的用例数据
@@ -299,13 +314,16 @@
             })
         })
         $('#myCase').click(function (d) {
+            groupId = ''
+            creator = getCookie('username')
             $('#groupId').val('')
             changeBackground(d.currentTarget.innerText.substring(1))
             // 查询点击分组的用例数据
             caseTable.reload({
                 where: {
                     projectId: parseInt(getCookie('projectId')),
-                    creator:getCookie('username')
+                    groupId: groupId,
+                    creator: creator
                 }, page: {curr: 1}
             })
         })

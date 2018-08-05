@@ -187,7 +187,9 @@
                                 icon: 1,
                                 time: 2000
                             });
-                            table.reload('newMessageList');
+                            table.reload('newMessageList',{
+                                page:{curr:1}
+                            });
                             //重新渲染历史消息表
                             allMessageTable.reload();
                         } else {
