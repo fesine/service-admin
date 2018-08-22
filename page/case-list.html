@@ -151,6 +151,7 @@
     <span title="点击查看详情"><a href="javascript:;">{{d.lastUpdateTime}}</a></span>
 </script>
 <script>
+    $('#groupTree').height($(window).height() - 250)
     function addContract () {
         $('#editCase').val('')
         x_admin_show('添加用例', './case-add.html', 500, 250)

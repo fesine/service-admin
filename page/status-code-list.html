@@ -151,6 +151,7 @@
 <script>
 
     userTypeRW()
+    $('#groupTree').height($(window).height() - 250)
     layui.use(['table', 'upload','tree'], function () {
         var table = layui.table
             , upload = layui.upload
@@ -253,7 +254,6 @@
                 var $eleForm = $("<form method='get'></form>");
                 $eleForm.attr("action", "../assets/zip/template.zip");
                 $(document.body).append($eleForm);
-
                 //提交表单，实现下载
                 $eleForm.submit();
             },
