@@ -262,7 +262,7 @@
                 .firstElementChild).next()[0].innerText;
             //通过id获取请求参数
             $.get(_hostUrl+'/api/requestParam/'+parseInt(apiId),function (res) {
-                if(res.responseCode === 200){
+                if(res.code === 200){
                     requestParamData = res.data
                     if (vm.convertFlag === 1) {
                         let str = arrayToJson(requestParamData)
@@ -305,7 +305,7 @@
             this.projectId = getUrlKey('projectId')
             this.caseName = getUrlKey('caseName')
             axios.get(_hostUrl + '/test/configApis/' + this.caseConfId).then(response => {
-                if (response.data.responseCode == 200) {
+                if (response.data.code == 200) {
                     this.apiDataList = response.data.data
                     for (var i = 0; i < this.apiDataList.length; i++) {
                         this.apiDataList[i].myId = this.nextId
@@ -315,7 +315,7 @@
                 }
             })
             axios.get(_hostUrl + '/envs').then(response => {
-                if (response.data.responseCode == 200) {
+                if (response.data.code == 200) {
                     let envArray = response.data.data
                     layui.use(['form', 'table'], function () {
                         $ = layui.jquery
@@ -355,7 +355,7 @@
                         apiDataList: JSON.stringify(this.apiDataListUpdate)
                     }
                 }).then((res) => {
-                    if (res.data.responseCode === 201) {
+                    if (res.data.code === 201) {
                         this.saveFlag = true
                         //登记成功
                         layer.msg('操作成功', {
@@ -363,7 +363,7 @@
                             timeout: 2000
                         })
                     } else {
-                        layer.msg(res.data.responseMsg, {
+                        layer.msg(res.data.msg, {
                             icon: 2,
                             timeout: 2000
                         })
@@ -419,19 +419,19 @@
                     }, function (res) {
                         // let data = res.data
                         $("body").mLoading("hide");//显示loading组件
-                        if (res.responseCode === 200) {
+                        if (res.code === 200) {
                                 layer.msg('测试启动成功', {
                                     icon: 1,
                                     time: 2000
                                 })
                             $('#responseParamArea').val('通过测试历史查看测试结果!')
                         }else{
-                            layer.msg(res.responseMsg, {
+                            layer.msg(res.msg, {
                                 icon: 2,
                                 time: 2000
                             })
                         }
-                        // if (res.responseCode === 200) {
+                        // if (res.code === 200) {
                         //     if (data.body.length > 1) {
                         //         data.body = JSON.parse(data.body)
                         //     }
@@ -440,7 +440,7 @@
                         //         icon: 1,
                         //         time: 2000
                         //     })
-                        // } else if (res.responseCode === 400) {
+                        // } else if (res.code === 400) {
                         //     $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
                         //     layer.msg('测试失败', {
                         //         icon: 2,
@@ -448,9 +448,9 @@
                         //     })
                         // } else {
                         //     try{
-                        //         $('#responseParamArea').val(JSON.stringify(JSON.parse(res.responseMsg), null, '\t'))
+                        //         $('#responseParamArea').val(JSON.stringify(JSON.parse(res.msg), null, '\t'))
                         //     }catch (e){
-                        //         $('#responseParamArea').val(res.responseMsg)
+                        //         $('#responseParamArea').val(res.msg)
                         //     }
                         //     layer.msg('测试出现异常', {
                         //         icon: 2,

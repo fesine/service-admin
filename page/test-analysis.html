@@ -155,7 +155,7 @@
                     + '&projectId=' + this.testInfo.projectId+'&dateType='+ dateType+'&dateValue='+ dateValue
                 //获取统计数据
                 axios.get(url).then(response => {
-                    if (response.data.responseCode == 200) {
+                    if (response.data.code == 200) {
                         this.successData = response.data.data.successData
                         this.subData = response.data.data.subData
                         this.timeData = response.data.data.timeData

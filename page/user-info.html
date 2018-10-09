@@ -103,9 +103,9 @@
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#userInfoBar'}
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -117,14 +117,14 @@
                 layer.confirm('确定退出分组[<span style="color: red">' + data.groupName + '</span>]?', function (index) {
                     $.deleteJSON(_hostUrl + "/partner/quit/" + data.projectUserId
                         , null, function (res) {
-                            if (res.responseCode == 204) {
+                            if (res.code == 204) {
                                 layer.msg('您已退出分组成功', {
                                     icon: 1,
                                     time: 2000
                                 })
                                 table.reload('projectGroupList')
                             } else {
-                                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                                layer.msg(res.msg, {icon: 2, time: 1500})
                             }
                         })
                 })

@@ -106,7 +106,7 @@
         $.post(_hostUrl+'/systemLog/change',{
             id: id
         },function (res) {
-            if (res.responseCode === 201) {
+            if (res.code === 201) {
                 layer.msg(res.data, {
                     icon: 1,
                     time: 500
@@ -115,7 +115,7 @@
                 })
 
             } else {
-                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                layer.msg(res.msg, {icon: 2, time: 1500})
             }
         }, 'json')
 
@@ -153,8 +153,8 @@
             title: '彻底删除历史版本'
         }, function (index) {
             $.deleteForm(_hostUrl + '/systemLog/' + id + '/' + versionNo, null, function (res) {
-                if (res.responseCode === 204) {
-                    layer.msg(res.responseMsg, {
+                if (res.code === 204) {
+                    layer.msg(res.msg, {
                         icon: 1,
                         time: 2000
                     }, function () {
@@ -162,7 +162,7 @@
                     })
 
                 } else {
-                    layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                    layer.msg(res.msg, {icon: 2, time: 1500})
                 }
             })
         })

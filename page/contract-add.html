@@ -284,7 +284,7 @@
         }
         //获取所有可能的消费者分组信息
         $.get(_hostUrl + '/groups/' + parseInt(getCookie('projectId')), function (res) {
-            if (res.responseCode == 200) {
+            if (res.code == 200) {
                 $.each(res.data.resultList, function (index, item) {
                     $('#L_relyGroup').append("<input type='checkbox' name='relyGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='relyGroup'>")
                     $('#L_consumerGroup').append("<input type='checkbox' name='consumerGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='consumerGroup'>")
@@ -292,7 +292,7 @@
                 })
                 if (getUrlKey('copy') === '1') {
                     $.get(_hostUrl + '/contract/' + parseInt(getUrlKey('id')), function (res) {
-                        if (res.responseCode === 200) {
+                        if (res.code === 200) {
                             var editArray = res.data
                             loadJsonDataToForm(editArray)
                             //处理服务编号和服务名称
@@ -395,7 +395,7 @@
             data.field.idempotentFlag= idempotentFlagValue
             data.field.id=null
             $.post(_hostUrl + '/contract', data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加契约成功', {
                         icon: 1,
                         time: 2000
@@ -419,7 +419,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             })
             return false

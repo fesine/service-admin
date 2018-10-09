@@ -265,7 +265,7 @@
             , layer = layui.layer
         //获取所有的分组信息
         $.get(_hostUrl + '/groups/' + parseInt(getCookie('projectId')), function (res) {
-            if (res.responseCode == 200) {
+            if (res.code == 200) {
                 $.each(res.data.resultList, function (index, item) {
                     $('#L_relyGroup').append("<input type='checkbox' name='relyGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='relyGroup'>")
                     $('#L_consumerGroup').append("<input type='checkbox' name='consumerGroup' value='" + item.groupCode + "' title='" + item.groupName + "' lay-skin='primary' lay-filter='consumerGroup'>")
@@ -291,7 +291,7 @@
                 //默认加载第一个
                 //获取选中的数据 进行格式转换，并加载到form表单中
                 $.get(_hostUrl + '/contract/' + parseInt(getUrlKey('id')), function (res) {
-                    if (res.responseCode === 200) {
+                    if (res.code === 200) {
                         var editArray = res.data
                         loadJsonDataToForm(editArray)
                         if (editArray.idempotentFlag == 1) {
@@ -386,7 +386,7 @@
                 data.field.operateType = operateTypeValue
                 data.field.idempotentFlag = idempotentFlagValue
                 $.putForm(_hostUrl + '/contract?updateDesc=' + value, data.field, function (res) {
-                    if (res.responseCode == 201) {
+                    if (res.code == 201) {
                         layer.msg('修改契约成功', {
                             icon: 1,
                             time: 2000
@@ -410,7 +410,7 @@
                             })
                         })
                     } else {
-                        layer.msg(res.responseMsg)
+                        layer.msg(res.msg)
                     }
                 })
             })

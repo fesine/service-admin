@@ -162,8 +162,8 @@
         // 获取分组列表
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
             //如果不存在分组怎么办？
-            if (res.responseCode != 200) {
-                layer.msg(res.responseMsg)
+            if (res.code != 200) {
+                layer.msg(res.msg)
                 checkLogin()
                 return
             }
@@ -230,9 +230,9 @@
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -268,7 +268,7 @@
                 layer.confirm('确定删除吗?', function (index) {
                     $.deleteJSON(_hostUrl + "/code?id=" + ids + "&projectId=" + parseInt(getCookie('projectId'))
                         , null, function (res) {
-                            if (res.responseCode == 204) {
+                            if (res.code == 204) {
                                 layer.msg('删除成功', {
                                     icon: 1,
                                     time: 2000
@@ -281,7 +281,7 @@
                                     }, page: {curr: 1}
                                 })
                             } else {
-                                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                                layer.msg(res.msg, {icon: 2, time: 1500})
                             }
                         })
                 })
@@ -304,7 +304,7 @@
                 layer.confirm('确定删除状态码[<span style="color: red">' + data.code + '</span>]?', function (index) {
                     $.deleteJSON(_hostUrl + "/code?id=" + data.id + "&projectId=" + parseInt(getCookie('projectId'))
                         , null, function (res) {
-                            if (res.responseCode == 204) {
+                            if (res.code == 204) {
                                 layer.msg('删除成功', {
                                     icon: 1,
                                     time: 2000
@@ -317,7 +317,7 @@
                                     }, page: {curr: 1}
                                 })
                             } else {
-                                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                                layer.msg(res.msg, {icon: 2, time: 1500})
                             }
                         })
                 })
@@ -327,7 +327,7 @@
             }
         })
         //执行文件上传实例
-        upload.render({
+       var uploadListIns = upload.render({
             elem: '#importFile' //绑定元素
             , accept: 'file'
             , exts: 'xls|xlsx|config'
@@ -349,6 +349,7 @@
                             icon: 2,
                             timeout: 2000
                         })
+                        uploadListIns.config.elem.next()[0].value = '';
                         return false
                     }else if($('#groupId').val() !== '0'){
                         //判断点击分组是否有操作权限
@@ -361,6 +362,7 @@
                                     icon: 2,
                                     timeout: 2000
                                 })
+                                uploadListIns.config.elem.next()[0].value = '';
                                 return false
                             }
                         }
@@ -381,7 +383,7 @@
                 });
             }
             , done: function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('成功上传了['+ res.data+']条状态码!', {
                         icon: 1,
                         time: 2000
@@ -394,7 +396,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.responseMsg, {icon: 2, timeout: 1000})
+                    layer.msg(res.msg, {icon: 2, timeout: 1000})
                 }
             }
         });

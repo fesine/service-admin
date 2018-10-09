@@ -104,7 +104,7 @@
     function getUserList(groupId, form) {
         //获取成员数据
         $.get(_hostUrl + '/users/' + groupId, function (res) {
-            if (res.responseCode == 200) {
+            if (res.code == 200) {
                 $("#L_userId").find("option").remove();
                 var userArray = res.data
                 for (var i = 0; i < userArray.length; i++) {
@@ -169,7 +169,7 @@
         //监听提交
         form.on('submit(add)', function (data) {
             $.post(_hostUrl + '/partner/invite', data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加成员成功', {
                         icon: 1,
                         time: 2000
@@ -189,7 +189,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             })
             return false

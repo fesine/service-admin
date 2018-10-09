@@ -102,9 +102,9 @@
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#newMessageBar'}
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -159,9 +159,9 @@
                 , {title: '操作', fixed: 'right', align: 'center', toolbar: '#allMessageBar'}
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -182,7 +182,7 @@
                 var ids = checkedArr.join(',');
                 $.putJSON(_hostUrl + "/msgs/" + ids
                     , null, function (res) {
-                        if (res.responseCode == 201) {
+                        if (res.code == 201) {
                             layer.msg('您已标记成功！', {
                                 icon: 1,
                                 time: 2000
@@ -193,7 +193,7 @@
                             //重新渲染历史消息表
                             allMessageTable.reload();
                         } else {
-                            layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                            layer.msg(res.msg, {icon: 2, time: 1500})
                         }
                     })
             }
@@ -244,14 +244,14 @@
                 layer.confirm('确定删除消息吗?', function (index) {
                     $.deleteJSON(_hostUrl + "/msg/" + data.id
                         , null, function (res) {
-                            if (res.responseCode == 204) {
+                            if (res.code == 204) {
                                 layer.msg('删除成功', {
                                     icon: 1,
                                     time: 2000
                                 });
                                 table.reload('newMessageList');
                             } else {
-                                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                                layer.msg(res.msg, {icon: 2, time: 1500})
                             }
                         })
                 })
@@ -298,14 +298,14 @@
                 layer.confirm('确定删除消息吗?', function (index) {
                     $.deleteJSON(_hostUrl + "/msg/" + data.id
                         , null, function (res) {
-                            if (res.responseCode == 204) {
+                            if (res.code == 204) {
                                 layer.msg('删除成功', {
                                     icon: 1,
                                     time: 2000
                                 });
                                 table.reload('allMessageList');
                             } else {
-                                layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                                layer.msg(res.msg, {icon: 2, time: 1500})
                             }
                         })
                 })

@@ -70,8 +70,8 @@
                 //监听提交
               form.on('submit(login)', function(data){
                   $.post(_hostUrl+'/login', data.field, function (res) {
-                      if (res.responseCode != 200) {
-                          layer.msg(res.responseMsg, {time: 2000});
+                      if (res.code != 200) {
+                          layer.msg(res.msg, {time: 2000});
                           return
                       }
                       if(res.data.user.enableFlag != 1) {

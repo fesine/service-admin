@@ -216,7 +216,7 @@
     });
     function updateMsgCount () {
     $.get(_hostUrl + "/msgs").then(response => {
-            if (response.responseCode === 200) {
+            if (response.code === 200) {
                 if(response.data){
                     vm.msgCount = response.data.totalRecord
                 }else{
@@ -246,14 +246,14 @@
             this.nickName = getCookie('nickName')
             this.superFlag = getCookie('superFlag')
             axios.get(_hostUrl + "/msgs").then(response => {
-                if (response.data.responseCode === 200) {
+                if (response.data.code === 200) {
                     if(response.data.data){
                         this.msgCount = response.data.data.totalRecord
                     }
                 }
             })
             axios.get(_hostUrl + "/systemLogs/checkUpdate").then(response => {
-                if (response.data.responseCode === 200) {
+                if (response.data.code === 200) {
                     if(response.data.data){
                         this.systemLogCount = response.data.data
                     }
@@ -263,7 +263,7 @@
         methods: {
             logout() {
                 axios.get(_hostUrl + '/logout').then(response => {
-                    if (response.data.responseCode == 200) {
+                    if (response.data.code == 200) {
                         clearCookies()
                         layer.msg('退出成功', {icon: 1, time: 1000}, function () {
                             location.href = '../login.html'

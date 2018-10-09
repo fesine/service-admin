@@ -53,7 +53,7 @@
           this.groupCode = getUrlKey('groupCode')
           axios.get(_hostUrl + '/test//caseSingle/zkList?envId=' + this.envId
           +'&serviceCode='+this.serviceCode+'&groupCode='+ this.groupCode).then(response => {
-              if (response.data.responseCode == 200) {
+              if (response.data.code == 200) {
                   this.providerList = response.data.data.providerList
                   this.consumerList = response.data.data.consumerList
               }

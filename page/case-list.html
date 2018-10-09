@@ -184,9 +184,9 @@
                 , {title: '操作',  align: 'center', toolbar: '#caseBar', width: 175}
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -225,7 +225,7 @@
                     title: '彻底删除用例'
                 }, function (index) {
                     $.deleteForm(_hostUrl + '/test/caseConfig/'+ data.id, null, function (res) {
-                        if (res.responseCode == 204) {
+                        if (res.code == 204) {
                             layer.msg('彻底删除成功!', {
                                 icon: 1,
                                 time: 2000
@@ -238,7 +238,7 @@
                                 }, page: {curr: 1}
                             })
                         } else {
-                            layer.msg(res.responseMsg)
+                            layer.msg(res.msg)
                         }
                     })
                 })
@@ -262,8 +262,8 @@
         // 获取分组列表
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
             //如果不存在分组怎么办？
-            if(res.responseCode != 200){
-                layer.msg(res.responseMsg)
+            if(res.code != 200){
+                layer.msg(res.msg)
                 checkLogin()
                 return
             }
@@ -284,7 +284,7 @@
                         //查询自己所在分组身份
                         if (vm.superFlag != 1) {
                             $.get(_hostUrl + '/partner/' + item.id + '/' + parseInt(getCookie('userId')), function (res) {
-                                if (res.responseCode == 200) {
+                                if (res.code == 200) {
                                     myFlag = res.data
                                 }
                             })

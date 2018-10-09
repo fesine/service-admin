@@ -233,7 +233,7 @@
                 url = _hostUrl + '/projects/normal/'+parseInt(getCookie('userId'))
             }
                 axios.get(url).then(response => {
-                    if (response.data.responseCode == 200) {
+                    if (response.data.code == 200) {
                         var projectIds = response.data.data.resultList
                         this.projectId = response.data.data.resultList[0].id
                         setCookie('projectStatus','1')
@@ -247,7 +247,7 @@
                             $('#selectPid').val(projectIds[0].id)
                             form.render()
                         })
-                    } else if (response.data.responseCode == 401) {
+                    } else if (response.data.code == 401) {
                         layui.layer.msg('登录已失效', {
                             icon: 2,
                             timeout: 2000
@@ -263,11 +263,11 @@
         watch: {
             projectId () {
                 axios.get(_hostUrl + '/project/summary/' + parseInt(this.projectId)).then(response => {
-                    if (response.data.responseCode == 200) {
+                    if (response.data.code == 200) {
                         this.projectInfo = response.data.data
                         setCookie('projectId', this.projectId)
                         setCookie('projectStatus', this.projectInfo.projectStatus)
-                    }else if (response.data.responseCode == 401){
+                    }else if (response.data.code == 401){
                         layui.layer.msg('登录已失效',{
                             icon:2,
                             timeout:2000

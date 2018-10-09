@@ -78,7 +78,7 @@
             //监听提交
             form.on('submit(add)', function (data) {
                 $.post(_hostUrl + "/register", data.field, function (res) {
-                    if (res.responseCode == 201) {
+                    if (res.code == 201) {
                         layer.msg('添加用户成功，默认密码123456', {
                             icon: 1,
                             time: 2000
@@ -91,7 +91,7 @@
                             table.reload('userList')
                         });
                     } else {
-                        layer.msg(res.responseMsg)
+                        layer.msg(res.msg)
                     }
                 }, 'json')
                 return false

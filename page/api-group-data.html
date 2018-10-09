@@ -82,7 +82,7 @@
     mycharts.setOption(option)
     mycharts.showLoading();
     $.get(_hostUrl + '/api/count/'+getUrlKey('projectId'),function (res) {
-        if (res.responseCode == 200) {
+        if (res.code == 200) {
             mycharts.hideLoading();
             mycharts.setOption({
                 legend: {

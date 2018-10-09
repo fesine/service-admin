@@ -164,7 +164,7 @@
     mycharts.setOption(option)
     mycharts.showLoading();
     $.get(_hostUrl + '/contract/rely/' + getUrlKey('id'),function (res) {
-        if (res.responseCode == 200) {
+        if (res.code == 200) {
             mycharts.hideLoading();
             mycharts.setOption({        //加载数据图表
                 series: [{

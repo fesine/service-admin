@@ -128,7 +128,7 @@
                 headerParams:JSON.stringify(vm.testHeaderList)
             }
             $.post(_hostUrl + '/testHeader', params, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加报文头成功!', {
                         icon: 1,
                         time: 2000
@@ -139,7 +139,7 @@
                         parent.layer.close(index)
                     })
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             })
             return false
@@ -164,7 +164,7 @@
             this.caseGroupId = getUrlKey('caseGroupId')
             this.apiId = getUrlKey('apiId')
             $.get(_hostUrl + '/testHeaders?caseGroupId='+ this.caseGroupId+'&apiId='+ this.apiId, function (res){
-                if (res.responseCode === 200 && res.data.length > 0) {
+                if (res.code === 200 && res.data.length > 0) {
                     _this.testHeaderList = new Array()
                     let array = res.data
                     for(var i = 0;i < array.length;i++){

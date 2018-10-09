@@ -218,9 +218,9 @@
                 }
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -299,8 +299,8 @@
         })
         // 获取环境列表
         $.get(_hostUrl + '/envs/tree/' + parseInt(getCookie('projectId')), function (res) {
-            if(res.responseCode != 200){
-                layer.msg(res.responseMsg)
+            if(res.code != 200){
+                layer.msg(res.msg)
                 checkLogin()
                 return
             }

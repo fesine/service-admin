@@ -183,7 +183,7 @@
         //监听提交
         form.on('submit(add)', function (data) {
             $.post(_hostUrl + '/partner/invite/new', data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加成员成功', {
                         icon: 1,
                         time: 2000
@@ -203,7 +203,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             })
             return false

@@ -109,7 +109,7 @@
                                 <a class="testDetail_content_item" v-else>失败</a>
                                 <br>
                                 <a class="testDetail_content_title">响应码：</a>
-                                <a class="testDetail_content_item">{{testDetail.responseCode}}</a>
+                                <a class="testDetail_content_item">{{testDetail.code}}</a>
                                 <br>
                                 <a class="testDetail_content_title">请求头参数：</a>
                                 <a class="testDetail_content_item">{{testDetail.requestHeader}}</a>
@@ -121,7 +121,7 @@
                                 <a class="testDetail_content_item">{{testDetail.responseParam}}</a>
                                 <br>
                                 <a class="testDetail_content_title">全部响应信息：</a>
-                                <a class="testDetail_content_item">{{testDetail.responseMsg}}</a>
+                                <a class="testDetail_content_item">{{testDetail.msg}}</a>
                                 <br>
                                 <a class="testDetail_content_title">异常类型：</a>
                                 <a class="testDetail_content_item">{{testDetail.exceptionType | convertExceptionType}}</a>

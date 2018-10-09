@@ -88,7 +88,7 @@
         //监听提交
         form.on('submit(edit)', function (data) {
             $.putForm(_hostUrl + '/partner/role', data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('角色修改成功', {
                         icon: 1,
                         time: 2000
@@ -103,7 +103,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             })
             return false

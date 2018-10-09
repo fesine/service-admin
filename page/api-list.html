@@ -78,17 +78,20 @@
     <div class="x-body">
         <xblock>
         <div class="layui-row">
-            <div class="layui-col-xs3 admin-permission"
+            <div class="layui-col-xs4 admin-permission"
                  v-show="projectStatus == 1 && (superFlag == 1 || userType < 3)">
                 <button class="layui-btn"
                         onclick="addApi()">
                     <i class="layui-icon"></i>新增接口
                 </button>
+                <button class="layui-btn layui-btn-warm" id="importFile">
+                    <i class="layui-icon">&#xe67c;</i>导入接口文档
+                </button>
                 <!--<button class="layui-btn layui-btn-danger" onclick="delAll()"><i-->
                         <!--class="layui-icon"></i>批量删除-->
                 <!--</button>-->
             </div>
-            <div class="layui-col-xs9">
+            <div class="layui-col-xs8">
                     <div class="layui-inline" style="width: 240px;">
                         <input id="searchKey" type="text" name="searchKey" placeholder="请输入接口名或编号模糊查询" autocomplete="off" class="layui-input">
                     </div>
@@ -194,7 +197,7 @@
         //清空缓存数据
         $('#editApi').val('')
         if(JSON.parse(getCookie('userList')).length>0){
-            if(JSON.parse(getCookie('userList'))[0].userType > 1){
+            if(JSON.parse(getCookie('userList'))[0].userType > 2){
                 layer.msg('您没有权限添加接口!', {
                     icon: 2,
                     timeout: 2000
@@ -211,9 +214,9 @@
         }
         x_admin_show('添加接口', './api-add.html', 600, 550, true)
     }
-    layui.use(['table', 'tree', 'form'], function () {
+    layui.use(['table', 'tree', 'form','upload'], function () {
         var groupArray
-        var table = layui.table
+        var table = layui.table,upload=layui.upload
         let removeFlag = '', creator = null
         //第一个实例
         var apiTable = table.render({
@@ -242,9 +245,9 @@
                 , {title: '操作',  align: 'center', toolbar: '#apiBar', width: 130}
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -301,7 +304,7 @@
                         groupId: data.groupId
                     }
                     $.putForm(_hostUrl + '/api/remove', params, function (res) {
-                        if (res.responseCode == 201) {
+                        if (res.code == 201) {
                             layer.msg('移除到回收站成功!', {
                                 icon: 1,
                                 time: 2000
@@ -315,7 +318,7 @@
                                 }, page: {curr: 1}
                             })
                         } else {
-                            layer.msg(res.responseMsg)
+                            layer.msg(res.msg)
                         }
                     })
                 })
@@ -325,7 +328,7 @@
                     title: '彻底删除接口'
                 }, function (index) {
                     $.deleteForm(_hostUrl + '/api/delete/' + data.projectId + '/' + data.groupId + '/' + data.id, null, function (res) {
-                        if (res.responseCode == 204) {
+                        if (res.code == 204) {
                             layer.msg('彻底删除成功!', {
                                 icon: 1,
                                 time: 2000
@@ -339,7 +342,7 @@
                                 }, page: {curr: 1}
                             })
                         } else {
-                            layer.msg(res.responseMsg)
+                            layer.msg(res.msg)
                         }
                     })
                 })
@@ -354,7 +357,7 @@
                         groupId: data.groupId
                     }
                     $.putForm(_hostUrl + '/api/recover', params, function (res) {
-                        if (res.responseCode == 201) {
+                        if (res.code == 201) {
                             layer.msg('恢复成功!', {
                                 icon: 1,
                                 time: 2000
@@ -368,7 +371,7 @@
                                 }, page: {curr: 1}
                             })
                         } else {
-                            layer.msg(res.responseMsg)
+                            layer.msg(res.msg)
                         }
                     })
                 })
@@ -385,7 +388,7 @@
                     groupId: data.groupId
                 }
                 $.putForm(_hostUrl + '/api/star', params, function (res) {
-                    if (res.responseCode == 201) {
+                    if (res.code == 201) {
                         table.reload('apiList', {
                             where: {
                                 projectId: parseInt(getCookie('projectId'))
@@ -395,16 +398,81 @@
                             }, page: {curr: 1}
                         })
                     }else{
-                        layer.msg(res.responseMsg,{icon:2,timeout:1000})
+                        layer.msg(res.msg,{icon:2,timeout:1000})
                     }
                 })
             }
         })
+        var uploadListIns = upload.render({
+            elem: '#importFile' //绑定元素
+            , accept: 'file'
+            , exts: 'xls|xlsx'
+            //在选择的时候过滤文件格式
+            , acceptMime: '.xls,.xlsx'
+            , title: '请选择Excel'
+            , url: _hostUrl + '/api/import' //上传接口
+            , auto: false
+            , data: {
+                projectId: parseInt(getCookie('projectId')),
+                creator: getCookie('username'),
+                groupId: function () {
+                    return parseInt($('#groupId').val())
+                }
+            }
+            , choose: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                obj.preview(function (index, file, result) {
+                    if ($('#groupId').val() === '' || parseInt($('#groupId').val()) === -1) {
+                        layer.msg('请点击要上传的分组再选择文件', {
+                            icon: 2,
+                            timeout: 2000
+                        })
+                        uploadListIns.config.elem.next()[0].value = '';
+                        return false
+                    } else if ($('#groupId').val() !== '0') {
+                        //判断点击分组是否有操作权限
+                        let permissionList = JSON.parse(getCookie('userList'))
+                        for (let i = 0; i < permissionList.length; i++) {
+                            let groupId = permissionList[i].groupId
+                            let userType = permissionList[i].userType
+                            if (parseInt(groupId) === parseInt($('#groupId').val()) && userType > 2) {
+                                layer.msg('您在当前分组没有操作权限', {
+                                    icon: 2,
+                                    timeout: 2000
+                                })
+                                uploadListIns.config.elem.next()[0].value = '';
+                                return false
+                            }
+                        }
+                        obj.upload(index, file); //满足条件调用上传方法
+                        return true
+                    }else{
+                        return false
+                    }
+                });
+            }
+            , done: function (res) {
+                if (res.code == 201) {
+                    layer.msg('成功上传了[' + res.data + ']个接口!', {
+                        icon: 1,
+                        time: 2000
+                    }, function () {
+                        apiTable.reload({
+                            where: {
+                                projectId: parseInt(getCookie('projectId'))
+                                , groupId: parseInt($('#groupId').val())
+                            }, page: {curr: 1}
+                        })
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 2, timeout: 1000})
+                }
+            }
+        });
         // 获取分组列表
         $.get(_hostUrl + '/groups/tree/' + parseInt(getCookie('projectId')), function (res) {
             //如果不存在分组怎么办？
-            if(res.responseCode != 200){
-                layer.msg(res.responseMsg)
+            if(res.code != 200){
+                layer.msg(res.msg)
                 checkLogin()
                 return
             }

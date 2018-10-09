@@ -94,7 +94,7 @@
         form.on('submit(add)', function (data) {
             data.field.projectId = parseInt(getCookie('projectId'))
             $.post(_hostUrl + "/test/caseConfig", data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加用例成功', {
                         icon: 1,
                         time: 2000
@@ -117,7 +117,7 @@
                     })
 
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             }, 'json')
 

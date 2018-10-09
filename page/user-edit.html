@@ -85,7 +85,7 @@
         //监听提交
         form.on('submit(edit)', function (data) {
             $.putForm(_hostUrl + "/user", data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('修改成员成功', {
                         icon: 1,
                         time: 2000
@@ -98,7 +98,7 @@
                         table.reload('userList')
                     });
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             }, 'json')
             return false

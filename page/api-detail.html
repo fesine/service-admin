@@ -317,9 +317,9 @@
             elem: '#requestParamTable'
             , url: _hostUrl + '/api/requestParam/' + getUrlKey('id')  //数据接口
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , dataName: 'data'
             }
             , cols: [[ //表头
@@ -384,9 +384,9 @@
             elem: '#responseParamTable'
             , url: _hostUrl + '/api/responseParam/' + getUrlKey('id')  //数据接口
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , dataName: 'data'
             }
             , done: function (res, curr, count) {
@@ -457,7 +457,7 @@
                 groupId: vm.apiInfo.groupId,
                 checkStatus: data.value
             }, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     vm.apiInfo.checkStatus = data.value
                     layer.msg('审核操作成功', {
                         icon: 1,
@@ -514,9 +514,9 @@
                 }
             ]]
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -546,14 +546,14 @@
                     id: historyId
                 }
                 $.putForm(_hostUrl + '/api/history', params, function (res) {
-                    if (res.responseCode == 201) {
+                    if (res.code == 201) {
                         layer.msg('切换成功!', {
                             icon: 1,
                             time: 2000
                         })
                         vm.historyId = historyId
                     } else {
-                        layer.msg(res.responseMsg)
+                        layer.msg(res.msg)
                     }
                 })
             })
@@ -565,14 +565,14 @@
                 title: '删除历史记录'
             }, function (index) {
                 $.deleteForm(_hostUrl + '/api/history/' + data, null, function (res) {
-                    if (res.responseCode == 204) {
+                    if (res.code == 204) {
                         layer.msg('删除成功!', {
                             icon: 1,
                             time: 2000
                         })
                         table.reload('historyList')
                     } else {
-                        layer.msg(res.responseMsg)
+                        layer.msg(res.msg)
                     }
                 })
             })
@@ -628,7 +628,7 @@
                 this.groupId = '-1'
             }
             axios.get(_hostUrl + '/envs').then(response => {
-                if (response.data.responseCode == 200) {
+                if (response.data.code == 200) {
                     let envArray = response.data.data
                     layui.use(['form', 'table'], function () {
                         $ = layui.jquery
@@ -650,7 +650,7 @@
                     return
                 }
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
-                    if (response.data.responseCode == 200) {
+                    if (response.data.code == 200) {
                         this.apiInfo = response.data.data
                         this.removeFlag = this.apiInfo.removeFlag
                         parent.$('#editApi').val(JSON.stringify(response.data.data))
@@ -687,7 +687,7 @@
                     return
                 }
                 axios.get(_hostUrl + '/api/' + this.apiId).then(response => {
-                    if (response.data.responseCode == 200) {
+                    if (response.data.code == 200) {
                         this.apiInfo = response.data.data
                         this.removeFlag = this.apiInfo.removeFlag
                         if (this.apiInfo.length === 0) {
@@ -771,7 +771,7 @@
                     }, function (res) {
                         $("body").mLoading("hide");//显示loading组件
                         let data = res.data
-                        if (res.responseCode === 200) {
+                        if (res.code === 200) {
                             if(data.body.length>1){
                                 data.body = JSON.parse(data.body)
                             }
@@ -780,14 +780,14 @@
                                 icon: 1,
                                 time: 2000
                             })
-                        } else if(res.responseCode === 400){
+                        } else if(res.code === 400){
                             $('#responseParamArea').val(JSON.stringify(data, null, '\t'))
                             layer.msg('测试失败', {
                                 icon: 2,
                                 time: 2000
                             })
                         }else{
-                            $('#responseParamArea').val(res.responseMsg)
+                            $('#responseParamArea').val(res.msg)
                             layer.msg('测试出现异常', {
                                 icon: 2,
                                 time: 2000

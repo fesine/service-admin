@@ -298,10 +298,10 @@
                                 :key='list.id'>
                                 <form class="layui-form">
                                     <div class="layui-inline">
-                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline api-index">
                                             {{index+1}}
                                         </div>
+                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline"
                                              style="width: 298px;">
                                             <input type="text" name="paramKey" placeholder="参数名"
@@ -325,18 +325,18 @@
                                                     lay-verify="paramType" lay-search>
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
-                                                <option value="14">array/list</option>
-                                                <option value="9">decimal</option>
-                                                <option value="10">date</option>
-                                                <option value="11">datetime</option>
                                                 <option value="3">float</option>
                                                 <option value="4">double</option>
                                                 <option value="5">byte</option>
                                                 <option value="6">short</option>
                                                 <option value="7">long</option>
                                                 <option value="8">boolean</option>
+                                                <option value="9">decimal</option>
+                                                <option value="10">date</option>
+                                                <option value="11">datetime</option>
                                                 <option value="12">json</option>
                                                 <option value="13">object</option>
+                                                <option value="14">array/list</option>
                                                 <option value="15">file</option>
                                             </select>
                                         </div>
@@ -415,10 +415,10 @@
                                 :key='list.id'>
                                 <form class="layui-form">
                                     <div class="layui-inline">
-                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline api-index">
                                             {{index+1}}
                                         </div>
+                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline"
                                              style="width: 298px;">
                                             <input type="text" name="paramKey" placeholder="参数名"
@@ -442,18 +442,18 @@
                                                     lay-verify="paramType" lay-search>
                                                 <option value="1">string</option>
                                                 <option value="2">int</option>
-                                                <option value="14">array/list</option>
-                                                <option value="9">decimal</option>
-                                                <option value="10">date</option>
-                                                <option value="11">datetime</option>
                                                 <option value="3">float</option>
                                                 <option value="4">double</option>
                                                 <option value="5">byte</option>
                                                 <option value="6">short</option>
                                                 <option value="7">long</option>
                                                 <option value="8">boolean</option>
+                                                <option value="9">decimal</option>
+                                                <option value="10">date</option>
+                                                <option value="11">datetime</option>
                                                 <option value="12">json</option>
                                                 <option value="13">object</option>
+                                                <option value="14">array/list</option>
                                                 <option value="15">file</option>
                                             </select>
                                         </div>
@@ -536,7 +536,7 @@
             layer = layui.layer
         })
         $.get(_hostUrl + '/contracts/' + parseInt(getCookie('projectId')) + '/' + $('#L_groupId').val(), function (res) {
-            if (res.responseCode != 200) {
+            if (res.code != 200) {
                 layer.msg(res.responseMg)
             }else{
                 $("#L_contractId").find("option").remove();
@@ -552,7 +552,7 @@
                     if (cId && parseInt(cId) > 0) {
                         //查询服务契约数据加载到表单中
                         $.get(_hostUrl + "/contract/" + cId, function (res) {
-                            if (res.responseCode === 200) {
+                            if (res.code === 200) {
                                 let data = res.data
                                 $('#L_serviceCode').val(data.serviceCode)
                                 $('#L_contractId').val(data.id)
@@ -757,7 +757,7 @@
             data.field.requestParamArray= JSON.stringify(vm.requestListUpdate)
             data.field.responseParamArray= JSON.stringify(vm.responseListUpdate)
             $.post(_hostUrl + '/api', data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加接口成功', {
                         icon: 1,
                         time: 2000
@@ -781,7 +781,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.responseMsg)
+                    layer.msg(res.msg)
                 }
             })
             return false

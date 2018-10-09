@@ -105,7 +105,7 @@
             }
             data.field.projectId = parseInt(getCookie('projectId'))
             $.post(_hostUrl + "/env", data.field, function (res) {
-                if (res.responseCode == 201) {
+                if (res.code == 201) {
                     layer.msg('添加环境成功', {
                         icon: 1,
                         time: 2000
@@ -118,7 +118,7 @@
                         table.reload('environmentList')
                     });
                 } else {
-                    layer.msg(res.responseMsg, {icon: 2, time: 1500})
+                    layer.msg(res.msg, {icon: 2, time: 1500})
                 }
             }, 'json')
             return false

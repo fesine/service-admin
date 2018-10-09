@@ -99,9 +99,9 @@
                 , limitName: 'pageSize' //每页数据量的参数名，默认：limit
             }
             , response: {
-                statusName: 'responseCode' //数据状态的字段名称，默认：code
+                statusName: 'code' //数据状态的字段名称，默认：code
                 , statusCode: 200 //成功的状态码，默认：0
-                , msgName: 'responseMsg' //状态信息的字段名称，默认：msg
+                , msgName: 'msg' //状态信息的字段名称，默认：msg
                 , rootName: 'data'
                 , countName: 'totalRecord'
                 , dataName: 'resultList'
@@ -124,14 +124,14 @@
                     title: '移除成员'
                 }, function (index) {
                     $.deleteJSON(_hostUrl + "/partner/remove" + data.id, null, function (res) {
-                        if (res.responseCode == 204) {
+                        if (res.code == 204) {
                             layer.msg('移除成功', {
                                 icon: 1,
                                 time: 2000
                             })
                             table.reload('partnerList')
                         } else {
-                            layer.msg(res.responseMsg)
+                            layer.msg(res.msg)
                         }
                     })
                 })
