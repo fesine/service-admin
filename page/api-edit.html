@@ -517,6 +517,10 @@
         });
     }
     function onInput (e,flag) {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
         let lastId
         let checkId
         if(flag === 1){
@@ -773,7 +777,11 @@
                 respNextId: 0
             }
         },
-        beforeCreate () {
+        mounted() {
+            layui.use('form', function () {
+                var form = layui.form;
+                form.render();
+            });
         },
         //渲染之前加载cookie数据
         beforeMount () {
@@ -859,6 +867,10 @@
                     paramValue: '',
                     paramDesc: '',
                 })
+                layui.use('form', function () {
+                    var form = layui.form;
+                    form.render();
+                });
             },
             removeRequestParam (index, e) {
                 e.stopPropagation()
@@ -887,6 +899,10 @@
                     paramValue: '',
                     paramDesc: '',
                 })
+                layui.use('form', function () {
+                    var form = layui.form;
+                    form.render();
+                });
             },
             removeResponseParam (index, e) {
                 e.stopPropagation()
