@@ -783,7 +783,7 @@
             $.get(_hostUrl+'/api/'+getUrlKey('id'),function (res) {
                 if(res.code != 200){
                     layui.use('layer',function () {
-                        layui.layer.msg(res.msg,{icon:2,timeout:2000},function () {
+                        layui.layer.msg(res.msg,{icon:2,time:2000},function () {
                             checkLogin()
                         })
                     })

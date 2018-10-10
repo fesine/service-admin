@@ -344,7 +344,7 @@
                 //判断第一个是否取的是前置接口数据
                 let firstObj = this.apiDataListUpdate[0]
                 if(firstObj.requestParamFlag === 1 || firstObj.requestParamFlag === '1'){
-                    layer.msg('第一个执行的接口取参方式不能为取前置接口值，请修改后再保存!',{icon:2,timeout:2000})
+                    layer.msg('第一个执行的接口取参方式不能为取前置接口值，请修改后再保存!',{icon:2,time:2000})
                     return
                 }
                 axios({
@@ -360,12 +360,12 @@
                         //登记成功
                         layer.msg('操作成功', {
                             icon: 1,
-                            timeout: 2000
+                            time: 2000
                         })
                     } else {
                         layer.msg(res.data.msg, {
                             icon: 2,
-                            timeout: 2000
+                            time: 2000
                         })
                     }
                 })

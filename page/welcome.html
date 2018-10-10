@@ -250,7 +250,7 @@
                     } else if (response.data.code == 401) {
                         layui.layer.msg('登录已失效', {
                             icon: 2,
-                            timeout: 2000
+                            time: 2000
                         }, function () {
                             parent.location.href = '../login.html'
                         })
@@ -270,7 +270,7 @@
                     }else if (response.data.code == 401){
                         layui.layer.msg('登录已失效',{
                             icon:2,
-                            timeout:2000
+                            time:2000
                         },function () {
                             parent.location.href = '../login.html'
                         })

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+    <style>
+        .p-ul{
+            margin: 10px 20px;
+        }
+        .p-ul h3{
+            font-weight: bolder;
+            color: #a10000;
+        }
+        .sub-ul li:last-child{
+            margin-bottom: 5px;
+        }
+        .sub-ul a{
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="error-list">
+    <ul class="p-ul">
+        <li v-for="(item,key) in errorList">
+            <ul class="sub-ul"><h3>sheet名称：{{key}}，异常信息：</h3>
+            <li v-for="(subItem,index) in item">
+                <a>&nbsp;&nbsp;&nbsp;{{index+1}}、{{subItem}}</a>
+            </li>
+            </ul>
+        </li>
+    </ul>
+
+</div>
+<script>
+    let vm = new Vue({
+        el: '#error-list',
+        data() {
+            return {
+                errorList: []
+            }
+        },
+        beforeMount(){
+            this.errorList = JSON.parse(parent.$('#errList').val())
+        }
+    })
+</script>
+</body>
+
+</html>

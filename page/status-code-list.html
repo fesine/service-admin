@@ -347,7 +347,7 @@
                     if ($('#groupId').val() === '' || parseInt($('#groupId').val()) === -1) {
                         layer.msg('请点击要上传的分组再选择文件', {
                             icon: 2,
-                            timeout: 2000
+                            time: 2000
                         })
                         uploadListIns.config.elem.next()[0].value = '';
                         return false
@@ -360,7 +360,7 @@
                             if (parseInt(groupId) === parseInt($('#groupId').val()) && userType > 2) {
                                 layer.msg('您在当前分组没有操作权限', {
                                     icon: 2,
-                                    timeout: 2000
+                                    time: 2000
                                 })
                                 uploadListIns.config.elem.next()[0].value = '';
                                 return false
@@ -373,7 +373,7 @@
                         if(getCookie('superFlag') !== '1'){
                             layer.msg('您不是超级管理员，无法导入系统状态码', {
                                 icon: 2,
-                                timeout: 2000
+                                time: 2000
                             })
                             return false
                         }
@@ -396,7 +396,7 @@
                         })
                     })
                 } else {
-                    layer.msg(res.msg, {icon: 2, timeout: 1000})
+                    layer.msg(res.msg, {icon: 2, time: 1000})
                 }
             }
         });

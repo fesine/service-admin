@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务接口管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript"
+            src="../lib/vue/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/store.js"></script>
+    <script type="text/javascript" src="../js/cookies.js"></script>
+    <script src="../lib/vue/vue.min.js"></script>
+    <script src="../lib/vue/axios.min.js"></script>
+</head>
+
+<body>
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form  layui-form-pane">
+        <div class="layui-upload">
+            <button type="button" class="layui-btn layui-btn-normal" id="sourceBtn">选择文件</button>
+            <div class="layui-upload-list">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>文件名</th>
+                        <th>大小</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="sourceList"></tbody>
+                </table>
+            </div>
+            <button type="button" class="layui-btn layui-btn-danger" id="checkSourceBtn">文档校验</button>
+            <button type="button" class="layui-btn  layui-btn-normal layui-btn-disabled" onclick="importApi()" id="uploadSourceBtn">接口导入</button>
+        </div>
+    </form>
+</div>
+<input hidden id="errList" value=""/>
+<script>
+    var mapKey
+    function importApi(){
+        $.post(_hostUrl + '/api/import', {
+            detailMemo: mapKey
+        }, function (res) {
+            if (res.code == 201) {
+                layer.msg('接口全部导入成功', {
+                    icon: 1,
+                    time: 2000
+                })
+            } else {
+                layer.msg(res.msg)
+            }
+        })
+        return false
+    }
+
+    function openErrorList() {
+        x_admin_show('异常提示列表', './api-excel-error.html', 600, 450, true)
+    }
+
+    layui.use(['form', 'layer','upload','util'], function () {
+        $ = layui.jquery
+        var form = layui.form
+            , layer = layui.layer
+            , upload = layui.upload
+            , util = layui.util
+        //多文件列表示例
+        var demoListView = $('#sourceList')
+            , checkListIns = upload.render({
+            elem: '#sourceBtn'
+            , accept: 'file'
+            , exts: 'xls|xlsx'
+            //在选择的时候过滤文件格式
+            , acceptMime: '.xls,.xlsx'
+            , title: '请选择Excel'
+            , url: _hostUrl + '/api/import/check' //上传接口
+            , auto: false
+            , data: {
+                projectId: parseInt(getCookie('projectId')),
+                groupId: function () {
+                    return getUrlKey('groupId')
+                }
+            }
+            , bindAction: '#checkSourceBtn'
+            , choose: function (obj) {
+                event.stopPropagation()
+                event.preventDefault()
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                $('#sourceBtn').addClass('layui-btn-disabled')
+                //读取本地文件
+                obj.preview(function (index, file, result) {
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '</td>'
+                        , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                        , '<td>等待上传</td>'
+                        , '<td>'
+                        , '<button class="layui-btn layui-btn-mini layui-btn-danger demo-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+
+                    //单个重传
+                    tr.find('.demo-reload').on('click', function () {
+                        obj.upload(index, file);
+                    });
+
+                    //删除
+                    tr.find('.demo-delete').on('click', function () {
+                        $('#uploadSourceBtn').addClass('layui-btn-disabled')
+                        $('#sourceBtn').removeClass('layui-btn-disabled')
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        checkListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+
+                    demoListView.append(tr);
+                });
+            }
+            , done: function (res, index, upload) {
+                var tr = demoListView.find('tr#upload-' + index)
+                    , tds = tr.children();
+                if (res.code === 200) { //上传成功
+                    tds.eq(2).html('<span style="color: #5FB878;">校验成功</span>');
+                    // tds.eq(3).html(''); //清空操作
+                    $('#uploadSourceBtn').removeClass('layui-btn-disabled')
+                    mapKey = res.data
+                    return true
+                }else if(res.code === 400){
+                    tds.eq(2).html('<a style="color: #FF5722;" href="javascript:;" onclick="openErrorList()">校验失败</a>');
+                    layer.msg('校验失败', {
+                        icon: 2,
+                        time: 1000
+                    },function () {
+                        $('#errList').val(JSON.stringify(res.data))
+                        openErrorList()
+                    })
+                    return false
+                }
+                this.error(index, upload);
+            }
+            , error: function (index, upload) {
+                var tr = demoListView.find('tr#upload-' + index)
+                    , tds = tr.children();
+                tds.eq(2).html('<span style="color: #FF5722;">文件有误</span>');
+                layer.msg('文件有误', {
+                    icon: 2,
+                    time: 1000
+                })
+            }
+        });
+    })
+</script>
+</body>
+
+</html>
