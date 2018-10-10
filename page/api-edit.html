@@ -312,10 +312,10 @@
                                 :key='list.id'>
                                 <form>
                                     <div class="layui-inline">
+                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline api-index">
                                             {{index+1}}
                                         </div>
-                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline"
                                              style="width: 298px;">
                                             <input type="text" name="paramKey" placeholder="参数名"
@@ -425,10 +425,10 @@
                                 :key='list.id'>
                                 <form>
                                     <div class="layui-inline">
+                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline api-index">
                                             {{index+1}}
                                         </div>
-                                        <div hidden>{{list.myId}}</div>
                                         <div class="layui-input-inline"
                                              style="width: 298px;">
                                             <input type="text" name="paramKey" placeholder="参数名"
@@ -632,7 +632,7 @@
         //选择字段类型监听
         form.on('select(paramType)', function (d) {
             var id = d.elem.parentElement.previousElementSibling.previousElementSibling
-                .previousElementSibling.innerText
+                .previousElementSibling.previousElementSibling.innerText
             //d.elem.parentElement.parentElement.parentElement.parentElement.parentElement.id
             var tempArray
             if(d.elem.parentElement.parentElement.parentElement.parentElement.id === 'requestParamTable'){

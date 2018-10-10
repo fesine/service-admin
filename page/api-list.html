@@ -279,7 +279,7 @@
                 })
             }
         };
-        $('.layui-col-xs9 .layui-btn').on('click', function () {
+        $('.layui-col-xs8 .layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
@@ -414,7 +414,6 @@
             , auto: false
             , data: {
                 projectId: parseInt(getCookie('projectId')),
-                creator: getCookie('username'),
                 groupId: function () {
                     return parseInt($('#groupId').val())
                 }
@@ -452,7 +451,7 @@
             }
             , done: function (res) {
                 if (res.code == 201) {
-                    layer.msg('成功上传了[' + res.data + ']个接口!', {
+                    layer.msg('接口全部上传成功!', {
                         icon: 1,
                         time: 2000
                     }, function () {
